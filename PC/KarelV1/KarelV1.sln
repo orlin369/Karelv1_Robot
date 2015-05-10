@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KarelV1", "KarelV1.csproj", "{2AA774E1-D685-4884-9A01-8FD5E31A164B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiO_CS_KarelV1_TEST", "..\DiO_CS_KarelV1_TEST\DiO_CS_KarelV1_TEST.csproj", "{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DistanceSensorGraphics", "..\DiO_CS_DistanceSensorGraphics _v0.0.1\DistanceSensorGraphics\DistanceSensorGraphics.csproj", "{D6E88655-05F6-450E-89AF-5BCC2C1A5227}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2AA774E1-D685-4884-9A01-8FD5E31A164B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA774E1-D685-4884-9A01-8FD5E31A164B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA774E1-D685-4884-9A01-8FD5E31A164B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA774E1-D685-4884-9A01-8FD5E31A164B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6E88655-05F6-450E-89AF-5BCC2C1A5227}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6E88655-05F6-450E-89AF-5BCC2C1A5227}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6E88655-05F6-450E-89AF-5BCC2C1A5227}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6E88655-05F6-450E-89AF-5BCC2C1A5227}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
