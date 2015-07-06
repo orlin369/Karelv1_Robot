@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Diagrams;
+using KarelRobot;
 
 namespace DiO_CS_KarelV1_TEST
 {
@@ -15,7 +16,7 @@ namespace DiO_CS_KarelV1_TEST
 
         #region Variables
 
-        Karel.KarelV1 myRobot;
+        private KarelV1 myRobot;
 
         /// <summary>
         /// Data generator.
@@ -107,7 +108,7 @@ namespace DiO_CS_KarelV1_TEST
                 // COM55 - Bluetooth
                 // COM67 - Cabel
                 // COM73 - cabel
-                this.myRobot = new Karel.KarelV1("COM79");
+                this.myRobot = new KarelV1("COM82");
                 //this.myRobot.Message += myRobot_Message;
                 this.myRobot.Sensors += myRobot_Sensors;
                 this.myRobot.UltraSonicSensor += myRobot_UltraSonicSensor;
@@ -127,7 +128,7 @@ namespace DiO_CS_KarelV1_TEST
 
         #region Robot
 
-        private void myRobot_Message(object sender, Karel.StringEventArgs e)
+        private void myRobot_Message(object sender, StringEventArgs e)
         {
 
             string infoLine = String.Format("{0} -> {1}", this.GetDateTime(), e.Message);
@@ -135,7 +136,7 @@ namespace DiO_CS_KarelV1_TEST
             this.AddStatus(infoLine + "\r\n", Color.White);
         }
 
-        private void myRobot_GreatingsMessage(object sender, Karel.StringEventArgs e)
+        private void myRobot_GreatingsMessage(object sender, StringEventArgs e)
         {
 
             string infoLine = String.Format("{0} -> {1}", this.GetDateTime(), e.Message);
@@ -151,7 +152,7 @@ namespace DiO_CS_KarelV1_TEST
             this.AddStatus(infoLine + "\r\n", Color.White);
         }
 
-        private void myRobot_UltraSonicSensor(object sender, Karel.UltraSonicSensorEventArgs e)
+        private void myRobot_UltraSonicSensor(object sender, UltraSonicSensorEventArgs e)
         {
             string infoLine = String.Format("{0} -> Ultrasonic Sensor: {1} {2}", this.GetDateTime(), e.Position, e.Distance);
             this.AddStatus(infoLine + "\r\n", Color.White);
@@ -195,7 +196,7 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
-        private void myRobot_Sensors(object sender, Karel.SensorsEventArgs e)
+        private void myRobot_Sensors(object sender, SensorsEventArgs e)
         {
             string infoLine = String.Format("{0} -> Sensors: {1} {2}", this.GetDateTime(), e.Left, e.Right);
             this.AddStatus(infoLine + "\r\n", Color.White);
@@ -292,7 +293,6 @@ namespace DiO_CS_KarelV1_TEST
         {
             this.myDiagram.Draw(e.Graphics);
             this.myDiagram.DrawLine(e.Graphics, this.maxDistanceIndex);
-            
         }
 
     }

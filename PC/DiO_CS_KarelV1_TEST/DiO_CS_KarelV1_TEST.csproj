@@ -44,6 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Diagrams\CircularDiagram.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Diagrams\CircularDiagram.Designer.cs">
+      <DependentUpon>CircularDiagram.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Diagrams\DigramDataGenerator.cs" />
+    <Compile Include="Diagrams\HSR04.cs" />
+    <Compile Include="KarelRobot\KarelV1.cs" />
+    <Compile Include="KarelRobot\SensorsEventArgs.cs" />
+    <Compile Include="KarelRobot\StringEventArgs.cs" />
+    <Compile Include="KarelRobot\UltraSonicSensorEventArgs.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -52,6 +64,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Diagrams\CircularDiagram.resx">
+      <DependentUpon>CircularDiagram.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -74,16 +89,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\DiO_CS_DistanceSensorGraphics _v0.0.1\DistanceSensorGraphics\DistanceSensorGraphics.csproj">
-      <Project>{d6e88655-05f6-450e-89af-5bcc2c1a5227}</Project>
-      <Name>DistanceSensorGraphics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\KarelV1\KarelV1.csproj">
-      <Project>{2aa774e1-d685-4884-9a01-8fd5e31a164b}</Project>
-      <Name>KarelV1</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

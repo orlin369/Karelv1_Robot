@@ -8,7 +8,7 @@ using System.Threading;
 using System.Diagnostics;
 
 
-namespace Karel
+namespace KarelRobot
 {
     public class KarelV1 : IDisposable
     {
@@ -174,7 +174,7 @@ namespace Karel
         {
             lock (this.requestLock)
             {
-                if (this.isConnected)
+                if (this.isConnected && this.port.IsOpen)
                 {
                     this.port.DtrEnable = true;
                     Thread.Sleep(200);
@@ -191,24 +191,18 @@ namespace Karel
         {
             string direction = "";
 
-            lock (this.requestLock)
+            if (value > 0)
             {
-                if (value > 0)
-                {
-                    direction = "+";
-                }
-
-                if (value <= 0)
-                {
-                    //direction = "-";
-                }
-
-                if (port.IsOpen)
-                {
-                    string command = String.Format("?M{0}{1:D3}", direction, value);
-                    this.SendRequest(command);
-                }
+                direction = "+";
             }
+
+            if (value <= 0)
+            {
+                //direction = "-";
+            }
+
+            string command = String.Format("?M{0}{1:D3}", direction, value);
+            this.SendRequest(command);
         }
 
         /// <summary>
@@ -218,25 +212,18 @@ namespace Karel
         public void Rotate(int value)
         {
             string direction = "";
-
-            lock (this.requestLock)
+            if (value > 0)
             {
-                if (value > 0)
-                {
-                    direction = "+";
-                }
-
-                if (value <= 0)
-                {
-                    //direction = "-";
-                }
-
-                if (port.IsOpen)
-                {
-                    string command = String.Format("?R{0}{1:D3}", direction, value);
-                    this.SendRequest(command);
-                }
+                direction = "+";
             }
+
+            if (value <= 0)
+            {
+                //direction = "-";
+            }
+            
+            string command = String.Format("?R{0}{1:D3}", direction, value);
+            this.SendRequest(command);
         }
 
         /// <summary>
@@ -244,14 +231,8 @@ namespace Karel
         /// </summary>
         public void Stop()
         {
-            lock (this.requestLock)
-            {
-                if (port.IsOpen)
-                {
-                    string command = "?STOP";
-                    this.SendRequest(command);
-                }
-            }
+           string command = "?STOP";
+           this.SendRequest(command);
         }
 
         /// <summary>
@@ -259,49 +240,31 @@ namespace Karel
         /// </summary>
         public void GetSensors()
         {
-            lock (this.requestLock)
-            {
-                if (port.IsOpen)
-                {
-                    string command = "?SENSORS";
-                    this.SendRequest(command);
-                }
-            }
+            string command = "?SENSORS";
+            this.SendRequest(command);
         }
 
         public void GetUltraSonic(int position)
         {
             //?US180\n
-            lock (this.requestLock)
+            if (position > 180)
             {
-                if (position > 180)
-                {
-                    throw new ArgumentException(String.Format("Position must be less then 181, actual {0}", position));
-                }
-
-                if (position < 0)
-                {
-                    throw new ArgumentException(String.Format("Position must be great then -1, actual {0}", position));
-                }
-
-                if (port.IsOpen)
-                {
-                    string command = String.Format("?US{0:D3}", position);
-                    this.SendRequest(command);
-                }
+                throw new ArgumentException(String.Format("Position must be less then 181, actual {0}", position));
             }
+
+            if (position < 0)
+            {
+                throw new ArgumentException(String.Format("Position must be great then -1, actual {0}", position));
+            }
+                
+            string command = String.Format("?US{0:D3}", position);
+            this.SendRequest(command);
         }
 
         public void GetUltraSonic()
         {
-            lock (this.requestLock)
-            {
-                if (port.IsOpen)
-                {
-                    string command = "?USA";
-                    this.SendRequest(command);
-                }
-            }
+            string command = "?USA";
+            this.SendRequest(command);
         }
 
         #endregion
@@ -349,19 +312,22 @@ namespace Karel
 
         private void SendRequest(string request)
         {
-            try
+            lock (this.requestLock)
             {
-                if (this.isConnected)
+                try
                 {
-                    this.port.WriteLine(request);
+                    if (this.isConnected && port.IsOpen)
+                    {
+                        this.port.WriteLine(request);
+                    }
                 }
-            }
-            catch (Exception exception)
-            {
-                this.isConnected = false;
-                this.timeOut = 0;
-                // Reconnect.
-                this.Connect();
+                catch (Exception exception)
+                {
+                    this.isConnected = false;
+                    this.timeOut = 0;
+                    // Reconnect.
+                    this.Connect();
+                }
             }
         }
 
@@ -436,8 +402,6 @@ namespace Karel
         }
 
         #endregion
-
-
 
     }
 }
