@@ -16,6 +16,14 @@ namespace DiO_CS_KarelV1_TEST
 
         #region Variables
 
+        /// <summary>
+        /// Robot seral port name.
+        /// </summary>
+        private string robotSerialPortName = "";
+
+        /// <summary>
+        /// Robot communication.
+        /// </summary>
         private KarelV1 myRobot;
 
         /// <summary>
@@ -23,6 +31,9 @@ namespace DiO_CS_KarelV1_TEST
         /// </summary>
         private DigramDataGenerator dataGenerator = new DigramDataGenerator();
 
+        /// <summary>
+        /// Circular diagram.
+        /// </summary>
         private CircularDiagram myDiagram;
 
         /// <summary>
@@ -30,8 +41,15 @@ namespace DiO_CS_KarelV1_TEST
         /// </summary>
         private double[] sensorData = new double[181];
 
+        /// <summary>
+        /// Maximum distance index.
+        /// </summary>
         private int maxDistanceIndex = 0;
-        private double maxDistance = -100;
+
+        /// <summary>
+        /// Maximum distance value.
+        /// </summary>
+        private double maxDistanceValue = -100;
 
         #endregion
 
@@ -45,6 +63,69 @@ namespace DiO_CS_KarelV1_TEST
         #endregion
 
         #region Private
+
+        private void ConnectToRobot()
+        {
+            try
+            {
+                // COM55 - Bluetooth
+                // COM67 - Cabel
+                // COM73 - cabel
+                this.myRobot = new KarelV1(this.robotSerialPortName);
+                //this.myRobot.Message += myRobot_Message;
+                this.myRobot.Sensors += myRobot_Sensors;
+                this.myRobot.UltraSonicSensor += myRobot_UltraSonicSensor;
+                this.myRobot.Stoped += myRobot_Stoped;
+                this.myRobot.GreatingsMessage += myRobot_GreatingsMessage;
+                this.myRobot.Connect();
+                this.myRobot.Reset();
+            }
+            catch (Exception exception)
+            {
+                this.txtState.Text = exception.Message;
+                MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void DisconnectFromRobot()
+        {
+            try
+            {
+                if (this.myRobot != null && this.myRobot.IsConnected)
+                {
+                    this.myRobot.Disconnect();
+                }
+            }
+            catch (Exception exception)
+            {
+                //this.AddLogRow(exception.ToString());
+            }
+        }
+
+        private void SearchForPorts()
+        {
+            this.portsToolStripMenuItem.DropDown.Items.Clear();
+
+            string[] portNames = System.IO.Ports.SerialPort.GetPortNames();
+
+            if (portNames.Length == 0)
+            {
+                return;
+            }
+
+            foreach (string item in portNames)
+            {
+                //store the each retrieved available prot names into the MenuItems...
+                this.portsToolStripMenuItem.DropDown.Items.Add(item);
+            }
+
+            foreach (ToolStripMenuItem item in this.portsToolStripMenuItem.DropDown.Items)
+            {
+                item.Click += mItPorts_Click;
+                item.Enabled = true;
+                item.Checked = false;
+            }
+        }
 
         /// <summary>
         /// Set the status label in the main form.
@@ -92,40 +173,6 @@ namespace DiO_CS_KarelV1_TEST
 
         #endregion
 
-        #region MainForm
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-            // Double buffer optimization.
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-
-            //
-            this.myDiagram = new CircularDiagram(this.pbSensorView.Size);
-            this.myDiagram.DiagramName = "Ultra Sonic Sensor";
-            try
-            {
-                // COM55 - Bluetooth
-                // COM67 - Cabel
-                // COM73 - cabel
-                this.myRobot = new KarelV1("COM82");
-                //this.myRobot.Message += myRobot_Message;
-                this.myRobot.Sensors += myRobot_Sensors;
-                this.myRobot.UltraSonicSensor += myRobot_UltraSonicSensor;
-                this.myRobot.Stoped += myRobot_Stoped;
-                this.myRobot.GreatingsMessage += myRobot_GreatingsMessage;
-                this.myRobot.Connect();
-                this.myRobot.Reset();
-            }
-            catch (Exception exception)
-            {
-                this.txtState.Text = exception.Message;
-                MessageBox.Show(exception.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        #endregion
-
         #region Robot
 
         private void myRobot_Message(object sender, StringEventArgs e)
@@ -167,9 +214,9 @@ namespace DiO_CS_KarelV1_TEST
 
                     for (int index = 0; index < this.sensorData.Length; index++)
                     {
-                        if (maxDistance < this.sensorData[index])
+                        if (maxDistanceValue < this.sensorData[index])
                         {
-                            maxDistance = this.sensorData[index];
+                            maxDistanceValue = this.sensorData[index];
                             this.maxDistanceIndex = index;
                         }
                     }
@@ -186,9 +233,9 @@ namespace DiO_CS_KarelV1_TEST
                 for (int index = 0; index < this.sensorData.Length; index++)
                 {
 
-                    if (maxDistance < this.sensorData[index])
+                    if (maxDistanceValue < this.sensorData[index])
                     {
-                        maxDistance = this.sensorData[index];
+                        maxDistanceValue = this.sensorData[index];
                         this.maxDistanceIndex = index;
                     }
                 }
@@ -200,6 +247,27 @@ namespace DiO_CS_KarelV1_TEST
         {
             string infoLine = String.Format("{0} -> Sensors: {1} {2}", this.GetDateTime(), e.Left, e.Right);
             this.AddStatus(infoLine + "\r\n", Color.White);
+        }
+
+        #endregion
+
+        #region MainForm
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Double buffer optimization.
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            //
+            this.myDiagram = new CircularDiagram(this.pbSensorView.Size);
+            this.myDiagram.DiagramName = "Ultra Sonic Sensor";
+
+            this.SearchForPorts();
+        }
+
+        private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.DisconnectFromRobot();
         }
 
         #endregion
@@ -268,10 +336,10 @@ namespace DiO_CS_KarelV1_TEST
                 {
                     for (int index = 0; index < this.sensorData.Length; index++)
                     {
-                        maxDistance = this.sensorData[index] = 0.0d;
+                        maxDistanceValue = this.sensorData[index] = 0.0d;
                     }
 
-                    this.maxDistance = -100;
+                    this.maxDistanceValue = -100;
                     this.maxDistanceIndex = 0;
 
                     this.myRobot.GetUltraSonic();
@@ -289,11 +357,45 @@ namespace DiO_CS_KarelV1_TEST
 
         #endregion
 
+        #region pbSensorView
+
         private void pbSensorView_Paint(object sender, PaintEventArgs e)
         {
             this.myDiagram.Draw(e.Graphics);
             this.myDiagram.DrawLine(e.Graphics, this.maxDistanceIndex);
         }
+
+        #endregion
+
+        #region Menu Item
+
+        private void mItPorts_Click(object sender, EventArgs e)
+        {
+            this.DisconnectFromRobot();
+            ToolStripMenuItem item = (ToolStripMenuItem)sender;
+            this.robotSerialPortName = item.Text;
+            this.ConnectToRobot();
+            
+            if (this.myRobot.IsConnected)
+            {
+                item.Checked = true;
+                //this.lblIsConnected.Text = String.Format("Connected@{0}", this.robotSerialPortName);
+            }
+            else
+            {
+                item.Checked = false;
+                //this.lblIsConnected.Text = "Not Connected";
+            }
+        }
+
+        private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.SearchForPorts();
+        }
+        
+        #endregion
+
+
 
     }
 }

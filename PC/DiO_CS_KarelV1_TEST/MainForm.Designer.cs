@@ -39,12 +39,16 @@
             this.btnReset = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.pbSensorView = new System.Windows.Forms.PictureBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.portsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).BeginInit();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnForward
             // 
-            this.btnForward.Location = new System.Drawing.Point(125, 12);
+            this.btnForward.Location = new System.Drawing.Point(125, 44);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(60, 60);
             this.btnForward.TabIndex = 0;
@@ -54,7 +58,7 @@
             // 
             // btnLeft
             // 
-            this.btnLeft.Location = new System.Drawing.Point(59, 78);
+            this.btnLeft.Location = new System.Drawing.Point(59, 110);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(60, 60);
             this.btnLeft.TabIndex = 1;
@@ -64,7 +68,7 @@
             // 
             // btnBackward
             // 
-            this.btnBackward.Location = new System.Drawing.Point(125, 144);
+            this.btnBackward.Location = new System.Drawing.Point(125, 176);
             this.btnBackward.Name = "btnBackward";
             this.btnBackward.Size = new System.Drawing.Size(60, 60);
             this.btnBackward.TabIndex = 2;
@@ -74,7 +78,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Location = new System.Drawing.Point(125, 78);
+            this.btnStop.Location = new System.Drawing.Point(125, 110);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(60, 60);
             this.btnStop.TabIndex = 3;
@@ -84,7 +88,7 @@
             // 
             // btnRight
             // 
-            this.btnRight.Location = new System.Drawing.Point(191, 78);
+            this.btnRight.Location = new System.Drawing.Point(191, 110);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(60, 60);
             this.btnRight.TabIndex = 4;
@@ -94,7 +98,7 @@
             // 
             // btnGetSensors
             // 
-            this.btnGetSensors.Location = new System.Drawing.Point(257, 12);
+            this.btnGetSensors.Location = new System.Drawing.Point(257, 44);
             this.btnGetSensors.Name = "btnGetSensors";
             this.btnGetSensors.Size = new System.Drawing.Size(60, 60);
             this.btnGetSensors.TabIndex = 5;
@@ -104,16 +108,16 @@
             // 
             // txtState
             // 
-            this.txtState.Location = new System.Drawing.Point(12, 418);
+            this.txtState.Location = new System.Drawing.Point(12, 450);
             this.txtState.Multiline = true;
             this.txtState.Name = "txtState";
             this.txtState.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtState.Size = new System.Drawing.Size(1111, 192);
+            this.txtState.Size = new System.Drawing.Size(1111, 160);
             this.txtState.TabIndex = 6;
             // 
             // btnGetUltrasonic
             // 
-            this.btnGetUltrasonic.Location = new System.Drawing.Point(257, 78);
+            this.btnGetUltrasonic.Location = new System.Drawing.Point(257, 110);
             this.btnGetUltrasonic.Name = "btnGetUltrasonic";
             this.btnGetUltrasonic.Size = new System.Drawing.Size(60, 60);
             this.btnGetUltrasonic.TabIndex = 7;
@@ -123,7 +127,7 @@
             // 
             // btnReset
             // 
-            this.btnReset.Location = new System.Drawing.Point(59, 12);
+            this.btnReset.Location = new System.Drawing.Point(59, 44);
             this.btnReset.Name = "btnReset";
             this.btnReset.Size = new System.Drawing.Size(60, 60);
             this.btnReset.TabIndex = 8;
@@ -133,7 +137,7 @@
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(257, 144);
+            this.textBox1.Location = new System.Drawing.Point(257, 176);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(60, 20);
             this.textBox1.TabIndex = 9;
@@ -141,12 +145,37 @@
             // pbSensorView
             // 
             this.pbSensorView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbSensorView.Location = new System.Drawing.Point(323, 12);
+            this.pbSensorView.Location = new System.Drawing.Point(323, 44);
             this.pbSensorView.Name = "pbSensorView";
             this.pbSensorView.Size = new System.Drawing.Size(800, 400);
             this.pbSensorView.TabIndex = 10;
             this.pbSensorView.TabStop = false;
             this.pbSensorView.Paint += new System.Windows.Forms.PaintEventHandler(this.pbSensorView_Paint);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectionToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1133, 24);
+            this.menuStrip1.TabIndex = 11;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // connectionToolStripMenuItem
+            // 
+            this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.portsToolStripMenuItem});
+            this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.connectionToolStripMenuItem.Text = "Connection";
+            this.connectionToolStripMenuItem.Click += new System.EventHandler(this.connectionToolStripMenuItem_Click);
+            // 
+            // portsToolStripMenuItem
+            // 
+            this.portsToolStripMenuItem.Name = "portsToolStripMenuItem";
+            this.portsToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
+            this.portsToolStripMenuItem.Text = "Ports";
             // 
             // MainForm
             // 
@@ -164,10 +193,15 @@
             this.Controls.Add(this.btnBackward);
             this.Controls.Add(this.btnLeft);
             this.Controls.Add(this.btnForward);
+            this.Controls.Add(this.menuStrip1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "KarelV1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).EndInit();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -186,6 +220,9 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.PictureBox pbSensorView;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem connectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem portsToolStripMenuItem;
     }
 }
 
