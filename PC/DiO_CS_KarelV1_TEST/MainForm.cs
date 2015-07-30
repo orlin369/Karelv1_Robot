@@ -395,7 +395,5 @@ namespace DiO_CS_KarelV1_TEST
         
         #endregion
 
-
-
     }
 }
