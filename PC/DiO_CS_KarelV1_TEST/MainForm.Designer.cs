@@ -28,73 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnForward = new System.Windows.Forms.Button();
-            this.btnLeft = new System.Windows.Forms.Button();
-            this.btnBackward = new System.Windows.Forms.Button();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.btnRight = new System.Windows.Forms.Button();
             this.btnGetSensors = new System.Windows.Forms.Button();
             this.txtState = new System.Windows.Forms.TextBox();
             this.btnGetUltrasonic = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.pbSensorView = new System.Windows.Forms.PictureBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.portsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).BeginInit();
+            this.pbSensorView = new System.Windows.Forms.PictureBox();
+            this.btnRight = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.btnBackward = new System.Windows.Forms.Button();
+            this.btnLeft = new System.Windows.Forms.Button();
+            this.btnForward = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).BeginInit();
             this.SuspendLayout();
-            // 
-            // btnForward
-            // 
-            this.btnForward.Location = new System.Drawing.Point(125, 44);
-            this.btnForward.Name = "btnForward";
-            this.btnForward.Size = new System.Drawing.Size(60, 60);
-            this.btnForward.TabIndex = 0;
-            this.btnForward.Text = "/\\";
-            this.btnForward.UseVisualStyleBackColor = true;
-            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
-            // 
-            // btnLeft
-            // 
-            this.btnLeft.Location = new System.Drawing.Point(59, 110);
-            this.btnLeft.Name = "btnLeft";
-            this.btnLeft.Size = new System.Drawing.Size(60, 60);
-            this.btnLeft.TabIndex = 1;
-            this.btnLeft.Text = "<";
-            this.btnLeft.UseVisualStyleBackColor = true;
-            this.btnLeft.Click += new System.EventHandler(this.btnLeft_Click);
-            // 
-            // btnBackward
-            // 
-            this.btnBackward.Location = new System.Drawing.Point(125, 176);
-            this.btnBackward.Name = "btnBackward";
-            this.btnBackward.Size = new System.Drawing.Size(60, 60);
-            this.btnBackward.TabIndex = 2;
-            this.btnBackward.Text = "\\/";
-            this.btnBackward.UseVisualStyleBackColor = true;
-            this.btnBackward.Click += new System.EventHandler(this.btnBackward_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.Location = new System.Drawing.Point(125, 110);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(60, 60);
-            this.btnStop.TabIndex = 3;
-            this.btnStop.Text = "STOP";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // btnRight
-            // 
-            this.btnRight.Location = new System.Drawing.Point(191, 110);
-            this.btnRight.Name = "btnRight";
-            this.btnRight.Size = new System.Drawing.Size(60, 60);
-            this.btnRight.TabIndex = 4;
-            this.btnRight.Text = ">";
-            this.btnRight.UseVisualStyleBackColor = true;
-            this.btnRight.Click += new System.EventHandler(this.btnRight_Click);
             // 
             // btnGetSensors
             // 
@@ -142,23 +92,13 @@
             this.textBox1.Size = new System.Drawing.Size(60, 20);
             this.textBox1.TabIndex = 9;
             // 
-            // pbSensorView
-            // 
-            this.pbSensorView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbSensorView.Location = new System.Drawing.Point(323, 44);
-            this.pbSensorView.Name = "pbSensorView";
-            this.pbSensorView.Size = new System.Drawing.Size(800, 400);
-            this.pbSensorView.TabIndex = 10;
-            this.pbSensorView.TabStop = false;
-            this.pbSensorView.Paint += new System.Windows.Forms.PaintEventHandler(this.pbSensorView_Paint);
-            // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1133, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1127, 24);
             this.menuStrip1.TabIndex = 11;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -177,11 +117,71 @@
             this.portsToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
             this.portsToolStripMenuItem.Text = "Ports";
             // 
+            // pbSensorView
+            // 
+            this.pbSensorView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbSensorView.Location = new System.Drawing.Point(323, 44);
+            this.pbSensorView.Name = "pbSensorView";
+            this.pbSensorView.Size = new System.Drawing.Size(800, 400);
+            this.pbSensorView.TabIndex = 10;
+            this.pbSensorView.TabStop = false;
+            this.pbSensorView.Paint += new System.Windows.Forms.PaintEventHandler(this.pbSensorView_Paint);
+            // 
+            // btnRight
+            // 
+            this.btnRight.Image = global::DiO_CS_KarelV1_TEST.ButtonsImages.ArrowRight;
+            this.btnRight.Location = new System.Drawing.Point(191, 110);
+            this.btnRight.Name = "btnRight";
+            this.btnRight.Size = new System.Drawing.Size(60, 60);
+            this.btnRight.TabIndex = 4;
+            this.btnRight.UseVisualStyleBackColor = true;
+            this.btnRight.Click += new System.EventHandler(this.btnRight_Click);
+            // 
+            // btnStop
+            // 
+            this.btnStop.Image = global::DiO_CS_KarelV1_TEST.ButtonsImages.Stop;
+            this.btnStop.Location = new System.Drawing.Point(125, 110);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(60, 60);
+            this.btnStop.TabIndex = 3;
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // btnBackward
+            // 
+            this.btnBackward.Image = global::DiO_CS_KarelV1_TEST.ButtonsImages.ArrowDown;
+            this.btnBackward.Location = new System.Drawing.Point(125, 176);
+            this.btnBackward.Name = "btnBackward";
+            this.btnBackward.Size = new System.Drawing.Size(60, 60);
+            this.btnBackward.TabIndex = 2;
+            this.btnBackward.UseVisualStyleBackColor = true;
+            this.btnBackward.Click += new System.EventHandler(this.btnBackward_Click);
+            // 
+            // btnLeft
+            // 
+            this.btnLeft.Image = global::DiO_CS_KarelV1_TEST.ButtonsImages.ArrowLeft;
+            this.btnLeft.Location = new System.Drawing.Point(59, 110);
+            this.btnLeft.Name = "btnLeft";
+            this.btnLeft.Size = new System.Drawing.Size(60, 60);
+            this.btnLeft.TabIndex = 1;
+            this.btnLeft.UseVisualStyleBackColor = true;
+            this.btnLeft.Click += new System.EventHandler(this.btnLeft_Click);
+            // 
+            // btnForward
+            // 
+            this.btnForward.Image = global::DiO_CS_KarelV1_TEST.ButtonsImages.ArrowUp;
+            this.btnForward.Location = new System.Drawing.Point(125, 44);
+            this.btnForward.Name = "btnForward";
+            this.btnForward.Size = new System.Drawing.Size(60, 60);
+            this.btnForward.TabIndex = 0;
+            this.btnForward.UseVisualStyleBackColor = true;
+            this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1133, 638);
+            this.ClientSize = new System.Drawing.Size(1127, 638);
             this.Controls.Add(this.pbSensorView);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnReset);
@@ -199,9 +199,9 @@
             this.Text = "KarelV1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbSensorView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

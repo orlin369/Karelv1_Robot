@@ -186,7 +186,7 @@ namespace KarelRobot
         /// <summary>
         /// Move the robots.
         /// </summary>
-        /// <param name="value">Value of the movment tenth of the mm.</param>
+        /// <param name="value">Value of the movment tenth of the [mm].</param>
         public void Move(int value)
         {
             string direction = "";

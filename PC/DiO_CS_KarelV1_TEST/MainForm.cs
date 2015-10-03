@@ -11,6 +11,9 @@ using KarelRobot;
 
 namespace DiO_CS_KarelV1_TEST
 {
+    /// <summary>
+    /// Main form of robot controller.
+    /// </summary>
     public partial class MainForm : Form
     {
 
@@ -55,6 +58,9 @@ namespace DiO_CS_KarelV1_TEST
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainForm()
         {
             InitializeComponent();
@@ -64,6 +70,9 @@ namespace DiO_CS_KarelV1_TEST
 
         #region Private
 
+        /// <summary>
+        /// Connect to the robot.
+        /// </summary>
         private void ConnectToRobot()
         {
             try
@@ -87,6 +96,9 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
+        /// <summary>
+        /// Disconnect from the robot.
+        /// </summary>
         private void DisconnectFromRobot()
         {
             try
@@ -102,6 +114,9 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
+        /// <summary>
+        /// Search serial port.
+        /// </summary>
         private void SearchForPorts()
         {
             this.portsToolStripMenuItem.DropDown.Items.Clear();
@@ -133,7 +148,7 @@ namespace DiO_CS_KarelV1_TEST
         /// <param name="status">Text to be written.</param>
         private void SetStatus(string text, Color textColor)
         {
-            // + "\r\n"
+            // + Environment.NewLine
             if (this.txtState.InvokeRequired)
             {
                 this.txtState.BeginInvoke((MethodInvoker)delegate()
@@ -149,6 +164,11 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
+        /// <summary>
+        /// Add a status to the status list..
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="textColor"></param>
         private void AddStatus(string text, Color textColor)
         {
             if (this.txtState.InvokeRequired)
@@ -166,6 +186,10 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
+        /// <summary>
+        /// Return curret data and time.
+        /// </summary>
+        /// <returns></returns>
         private string GetDateTime()
         {
             return DateTime.Now.ToString("yyyy.MM.dd/HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo);
@@ -177,32 +201,26 @@ namespace DiO_CS_KarelV1_TEST
 
         private void myRobot_Message(object sender, StringEventArgs e)
         {
-
             string infoLine = String.Format("{0} -> {1}", this.GetDateTime(), e.Message);
-
-            this.AddStatus(infoLine + "\r\n", Color.White);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
         }
 
         private void myRobot_GreatingsMessage(object sender, StringEventArgs e)
         {
-
             string infoLine = String.Format("{0} -> {1}", this.GetDateTime(), e.Message);
-
-            this.AddStatus(infoLine + "\r\n", Color.White);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
         }
 
         private void myRobot_Stoped(object sender, EventArgs e)
         {
-
             string infoLine = String.Format("{0} -> Stoped", this.GetDateTime());
-
-            this.AddStatus(infoLine + "\r\n", Color.White);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
         }
 
         private void myRobot_UltraSonicSensor(object sender, UltraSonicSensorEventArgs e)
         {
-            string infoLine = String.Format("{0} -> Ultrasonic Sensor: {1} {2}", this.GetDateTime(), e.Position, e.Distance);
-            this.AddStatus(infoLine + "\r\n", Color.White);
+            string infoLine = String.Format("{0} -> Ultrasonic Sensor: {1}[deg] {2}[mm]", this.GetDateTime(), e.Position, e.Distance);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
 
             if (this.pbSensorView.InvokeRequired)
             {
@@ -214,12 +232,13 @@ namespace DiO_CS_KarelV1_TEST
 
                     for (int index = 0; index < this.sensorData.Length; index++)
                     {
-                        if (maxDistanceValue < this.sensorData[index])
+                        if (this.maxDistanceValue < this.sensorData[index])
                         {
-                            maxDistanceValue = this.sensorData[index];
+                            this.maxDistanceValue = this.sensorData[index];
                             this.maxDistanceIndex = index;
                         }
                     }
+
                     this.pbSensorView.Refresh();
 
                 });
@@ -232,10 +251,9 @@ namespace DiO_CS_KarelV1_TEST
 
                 for (int index = 0; index < this.sensorData.Length; index++)
                 {
-
-                    if (maxDistanceValue < this.sensorData[index])
+                    if (this.maxDistanceValue < this.sensorData[index])
                     {
-                        maxDistanceValue = this.sensorData[index];
+                        this.maxDistanceValue = this.sensorData[index];
                         this.maxDistanceIndex = index;
                     }
                 }
@@ -246,7 +264,7 @@ namespace DiO_CS_KarelV1_TEST
         private void myRobot_Sensors(object sender, SensorsEventArgs e)
         {
             string infoLine = String.Format("{0} -> Sensors: {1} {2}", this.GetDateTime(), e.Left, e.Right);
-            this.AddStatus(infoLine + "\r\n", Color.White);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
         }
 
         #endregion
@@ -257,6 +275,15 @@ namespace DiO_CS_KarelV1_TEST
         {
             // Double buffer optimization.
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            // Font configuration.
+            foreach (Control control in this.Controls)
+            {
+                if (control.GetType() == typeof(Button))
+                {
+                    control.Font = new Font(FontFamily.GenericSansSerif, 10.0F, FontStyle.Bold);
+                }
+            }
 
             //
             this.myDiagram = new CircularDiagram(this.pbSensorView.Size);
@@ -276,39 +303,43 @@ namespace DiO_CS_KarelV1_TEST
 
         private void btnForward_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
+                // 10 mm
                 this.myRobot.Move(100);
             }
         }
 
         private void btnBackward_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
+                // -10 mm
                 this.myRobot.Move(-100);
             }
         }
 
         private void btnLeft_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
+                // -10 deg
                 this.myRobot.Rotate(-100);
             }
         }
 
         private void btnRight_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
+                // 10 deg
                 this.myRobot.Rotate(100);
             }
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
                 this.myRobot.Stop();
             }
@@ -316,7 +347,7 @@ namespace DiO_CS_KarelV1_TEST
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
                 this.myRobot.GetSensors();
             }
@@ -324,7 +355,7 @@ namespace DiO_CS_KarelV1_TEST
 
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
                 int position = 0;
 
@@ -349,7 +380,7 @@ namespace DiO_CS_KarelV1_TEST
 
         private void btnReset_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null)
+            if (this.myRobot != null && this.myRobot.IsConnected)
             {
                 this.myRobot.Reset();
             }
