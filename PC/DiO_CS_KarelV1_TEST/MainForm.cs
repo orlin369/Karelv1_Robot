@@ -359,8 +359,13 @@ namespace DiO_CS_KarelV1_TEST
             {
                 int position = 0;
 
-                if (int.TryParse(this.textBox1.Text, out position))
+                if (int.TryParse(this.tbSensorPosition.Text, out position))
                 {
+                    if (position > 180 || position < 0)
+                    {
+                        return;
+                    }
+
                     this.myRobot.GetUltraSonic(position);
                 }
                 else
@@ -370,7 +375,7 @@ namespace DiO_CS_KarelV1_TEST
                         maxDistanceValue = this.sensorData[index] = 0.0d;
                     }
 
-                    this.maxDistanceValue = -100;
+                    this.maxDistanceValue = double.MinValue;
                     this.maxDistanceIndex = 0;
 
                     this.myRobot.GetUltraSonic();
@@ -383,6 +388,14 @@ namespace DiO_CS_KarelV1_TEST
             if (this.myRobot != null && this.myRobot.IsConnected)
             {
                 this.myRobot.Reset();
+            }
+        }
+
+        private void tbSensorPosition_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Enter)
+            {
+                this.btnGetUltrasonic_Click(sender, new EventArgs());
             }
         }
 
@@ -406,19 +419,24 @@ namespace DiO_CS_KarelV1_TEST
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             this.robotSerialPortName = item.Text;
             this.ConnectToRobot();
-            
+
             if (this.myRobot.IsConnected)
             {
+                this.lblIsConnected.Text = String.Format("Connected: {0}", robotSerialPortName);
                 item.Checked = true;
-                //this.lblIsConnected.Text = String.Format("Connected@{0}", this.robotSerialPortName);
             }
             else
             {
+                this.lblIsConnected.Text = "Not Connected";
                 item.Checked = false;
-                //this.lblIsConnected.Text = "Not Connected";
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.SearchForPorts();
