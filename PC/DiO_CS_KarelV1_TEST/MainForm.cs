@@ -8,6 +8,9 @@ using System.Text;
 using System.Windows.Forms;
 using Diagrams;
 using KarelRobot;
+using Utils;
+using System.Threading;
+using KarelRobot.Events;
 
 namespace DiO_CS_KarelV1_TEST
 {
@@ -54,6 +57,18 @@ namespace DiO_CS_KarelV1_TEST
         /// </summary>
         private double maxDistanceValue = -100;
 
+        /// <summary>
+        /// Update camera timer.
+        /// </summary>
+        private System.Windows.Forms.Timer cameraUpdateTimer;
+
+        /// <summary>
+        /// IP Camera for the glyph recogniser.
+        /// </summary>
+        private ImageSource.IpCamera ipCamera;
+
+        private Bitmap capturedImage;
+
         #endregion
 
         #region Constructor
@@ -64,6 +79,10 @@ namespace DiO_CS_KarelV1_TEST
         public MainForm()
         {
             InitializeComponent();
+
+            this.cameraUpdateTimer = new System.Windows.Forms.Timer();
+            this.cameraUpdateTimer.Stop();
+            this.cameraUpdateTimer.Tick += this.cameraUpdateTimer_Tick;
         }
 
         #endregion
@@ -86,6 +105,7 @@ namespace DiO_CS_KarelV1_TEST
                 this.myRobot.UltraSonicSensor += myRobot_UltraSonicSensor;
                 this.myRobot.Stoped += myRobot_Stoped;
                 this.myRobot.GreatingsMessage += myRobot_GreatingsMessage;
+                this.myRobot.MotionState += myRobot_MotionState;
                 this.myRobot.Connect();
                 this.myRobot.Reset();
             }
@@ -187,12 +207,92 @@ namespace DiO_CS_KarelV1_TEST
         }
 
         /// <summary>
+        /// Set left sensor progres bar.
+        /// </summary>
+        /// <param name="value"></param>
+        private void SetLeftSensor(int value)
+        {
+            if (this.prbRightSensor.InvokeRequired)
+            {
+                this.prbRightSensor.BeginInvoke((MethodInvoker)delegate()
+                {
+                    this.prbRightSensor.Value = value;
+                });
+            }
+            else
+            {
+                this.prbRightSensor.Value = value;
+            }
+        }
+
+        /// <summary>
+        /// Set righr sensor progres bar.
+        /// </summary>
+        /// <param name="value"></param>
+        private void SetRightSensor(int value)
+        {
+            if (this.prbRightSensor.InvokeRequired)
+            {
+                this.prbRightSensor.BeginInvoke((MethodInvoker)delegate()
+                {
+                    this.prbRightSensor.Value = value;
+                });
+            }
+            else
+            {
+                this.prbRightSensor.Value = value;
+            }
+        }
+
+        /// <summary>
         /// Return curret data and time.
         /// </summary>
         /// <returns></returns>
         private string GetDateTime()
         {
             return DateTime.Now.ToString("yyyy.MM.dd/HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+        }
+
+        /// <summary>
+        /// Capture the navigation video camera.
+        /// </summary>
+        private void CaptureCamera()
+        {
+            // IP Camera:    http://http://192.168.1.1/cgi-bin/image.jpg
+            // Mobile phone: http://192.168.0.104:8080/photoaf.jpg
+
+            Uri uri;
+            bool isValidUri = Uri.TryCreate(this.tbCameraIP.Text, UriKind.Absolute, out uri);
+            if (!isValidUri)
+            {
+                return;
+            }
+
+            if (this.ipCamera == null)
+            {
+                this.ipCamera = new ImageSource.IpCamera(uri);
+                //this.ipCamera.Torch = true;
+            }
+
+            if (uri != this.ipCamera.URI)
+            {
+                this.ipCamera = new ImageSource.IpCamera(uri);
+                //this.ipCamera.Torch = true;
+            }
+
+            if (this.capturedImage != null) this.capturedImage.Dispose();
+
+            try
+            {
+                this.capturedImage = this.ipCamera.Capture();
+
+                this.pbGlyph.Image = AppUtils.FitImage(this.capturedImage, this.pbGlyph.Size);
+            }
+            catch(Exception exception)
+            {
+                this.AddStatus(exception.ToString(), Color.White);
+                return;
+            }
         }
 
         #endregion
@@ -264,6 +364,14 @@ namespace DiO_CS_KarelV1_TEST
         private void myRobot_Sensors(object sender, SensorsEventArgs e)
         {
             string infoLine = String.Format("{0} -> Sensors: {1} {2}", this.GetDateTime(), e.Left, e.Right);
+            this.AddStatus(infoLine + Environment.NewLine, Color.White);
+            this.SetLeftSensor((int)Math.Floor(e.Left));
+            this.SetRightSensor((int)Math.Floor(e.Right));
+        }
+
+        private void myRobot_MotionState(object sender, MotionStateEventArgs e)
+        {
+            string infoLine = String.Format("{0} -> Position: A:{1} D:{2}", this.GetDateTime(), e.Alpha, e.Distance);
             this.AddStatus(infoLine + Environment.NewLine, Color.White);
         }
 
@@ -399,6 +507,27 @@ namespace DiO_CS_KarelV1_TEST
             }
         }
 
+        private void btnGetRobotPos_Click(object sender, EventArgs e)
+        {
+            if (this.myRobot != null && this.myRobot.IsConnected)
+            {
+                // -10 mm
+                this.myRobot.GetPosition();
+            }
+        }
+
+        private void btnCapture_Click(object sender, EventArgs e)
+        {
+            Thread captureThread = new Thread(
+                new ThreadStart(
+                    delegate()
+                    {
+                        this.CaptureCamera();
+                    }
+            ));
+            captureThread.Start();
+        }
+
         #endregion
 
         #region pbSensorView
@@ -443,6 +572,42 @@ namespace DiO_CS_KarelV1_TEST
         }
         
         #endregion
+
+        #region chkCameraCapture
+
+        private void chkCameraCapture_CheckedChanged(object sender, EventArgs e)
+        {
+            int interval = 500;
+            bool IsValidTime = int.TryParse(this.tbCameraUpdateTime.Text, out interval);
+            if (!IsValidTime)
+            {
+                return;
+            }
+
+            this.cameraUpdateTimer.Interval = interval;
+
+            if (this.chkCameraCapture.Checked)
+            {
+                this.cameraUpdateTimer.Start();
+            }
+            else
+            {
+                this.cameraUpdateTimer.Stop();
+            }
+
+            this.btnCapture.Enabled = !this.chkCameraCapture.Checked;
+        }
+
+        #endregion
+
+        #region Camera Update Timer
+
+        private void cameraUpdateTimer_Tick(object sender, EventArgs e)
+        {
+            this.CaptureCamera();
+        }
+
+        #endregion.Events
 
     }
 }

@@ -6,12 +6,19 @@ using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
+using KarelRobot.Events;
 
 
 namespace KarelRobot
 {
     public class KarelV1 : IDisposable
     {
+
+        /// <summary>
+        /// Decimal separator depending of the culture.
+        /// </summary>
+        private static char DecimalSeparator = Convert.ToChar(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
+
 
         #region Variables
 
@@ -78,6 +85,8 @@ namespace KarelRobot
         public event EventHandler<EventArgs> Stoped;
 
         public event EventHandler<StringEventArgs> GreatingsMessage;
+
+        public event EventHandler<MotionStateEventArgs> MotionState;
 
         #endregion
 
@@ -267,6 +276,12 @@ namespace KarelRobot
             this.SendRequest(command);
         }
 
+        public void GetPosition()
+        {
+            string command = "?POSITION";
+            this.SendRequest(command);
+        }
+
         #endregion
 
         #region Private
@@ -341,6 +356,9 @@ namespace KarelRobot
 
                 if (tokens.Length > 0)
                 {
+
+                    #region SENSORS
+
                     if (tokens[0] == "SENSORS")
                     {
                         if (tokens[1] == "L" && tokens[3] == "R")
@@ -348,18 +366,20 @@ namespace KarelRobot
                             float left = 0.0f; 
                             float right = 0.0f;
 
-
                             if ((float.TryParse(tokens[2], out left)) && (float.TryParse(tokens[4], out right)))
                             {
-                                ;
-                            }
-
-                            if (this.Sensors != null)
-                            {
-                                this.Sensors(this, new SensorsEventArgs(left, right));
+                                if (this.Sensors != null)
+                                {
+                                    this.Sensors(this, new SensorsEventArgs(left, right));
+                                }
                             }
                         }
                     }
+
+                    #endregion
+
+                    #region STOP
+
                     if (tokens[0] == "STOP")
                     {
                         if (this.Stoped != null)
@@ -367,6 +387,10 @@ namespace KarelRobot
                             this.Stoped(this, new EventArgs());
                         }
                     }
+
+                    #endregion
+
+                    #region ULTRA SONIC
 
                     if (tokens[0] == "US")
                     {
@@ -388,7 +412,44 @@ namespace KarelRobot
                             this.UltraSonicSensor(this, new UltraSonicSensorEventArgs(position, distance));
                         }
                     }
-                    //
+
+                    #endregion
+
+                    #region POSITION
+
+                    if (tokens[0] == "POSITION")
+                    {
+                        double alpha = 0;
+                        double distance = 0.0d;
+
+                        tokens[2] = KarelV1.CorrectDecDelimiter(tokens[2]);
+                        tokens[4] = KarelV1.CorrectDecDelimiter(tokens[4]);
+
+                        if (tokens[1] == "D")
+                        {
+                            if (!double.TryParse(tokens[2], out distance))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (tokens[3] == "A")
+                        {
+                            if (!double.TryParse(tokens[2], out alpha))
+                            {
+                                return;
+                            }
+                        }
+
+                        if (this.MotionState != null)
+                        {
+                            this.MotionState(this, new MotionStateEventArgs(alpha, distance));
+                        }
+                    }
+
+                    #endregion
+
+                    #region GREATINGS
 
                     if (tokens[0].Contains("GREATINGS"))
                     {
@@ -397,8 +458,24 @@ namespace KarelRobot
                             this.GreatingsMessage(this, new StringEventArgs(tokens[1]));
                         }
                     }
+
+                    #endregion
+
                 }
             }
+        }
+
+        /// <summary>
+        /// Replace no metter , or . with correct regional decimal delimiter.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string CorrectDecDelimiter(string value)
+        {
+            value = value.Replace(',', KarelV1.DecimalSeparator);
+            value = value.Replace('.', KarelV1.DecimalSeparator);
+
+            return value;
         }
 
         #endregion

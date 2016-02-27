@@ -47,11 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ButtonsImages.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ButtonsImages.resx</DependentUpon>
-    </Compile>
     <Compile Include="Diagrams\CircularDiagram.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -60,10 +55,18 @@
     </Compile>
     <Compile Include="Diagrams\DigramDataGenerator.cs" />
     <Compile Include="Diagrams\HSR04.cs" />
+    <Compile Include="Images.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ImageSource\ICaptureDevice.cs" />
+    <Compile Include="ImageSource\IpCamera.cs" />
+    <Compile Include="KarelRobot\Events\MotionStateEventArgs.cs" />
     <Compile Include="KarelRobot\KarelV1.cs" />
-    <Compile Include="KarelRobot\SensorsEventArgs.cs" />
-    <Compile Include="KarelRobot\StringEventArgs.cs" />
-    <Compile Include="KarelRobot\UltraSonicSensorEventArgs.cs" />
+    <Compile Include="KarelRobot\Events\SensorsEventArgs.cs" />
+    <Compile Include="KarelRobot\Events\StringEventArgs.cs" />
+    <Compile Include="KarelRobot\Events\UltraSonicSensorEventArgs.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,12 +75,13 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ButtonsImages.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ButtonsImages.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Compile Include="Util\AppUtils.cs" />
     <EmbeddedResource Include="Diagrams\CircularDiagram.resx">
       <DependentUpon>CircularDiagram.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Images.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -117,6 +121,7 @@
     <None Include="Resources\Stop.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Capture.png" />
     <Content Include="rsz_robotics-icon-vector.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
