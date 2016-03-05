@@ -7,18 +7,12 @@ using System.IO.Ports;
 using System.Threading;
 using System.Diagnostics;
 using KarelRobot.Events;
-
+using KarelRobot.Utils;
 
 namespace KarelRobot
 {
     public class KarelV1 : IDisposable
     {
-
-        /// <summary>
-        /// Decimal separator depending of the culture.
-        /// </summary>
-        private static char DecimalSeparator = Convert.ToChar(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator);
-
 
         #region Variables
 
@@ -42,6 +36,9 @@ namespace KarelRobot
         /// </summary>
         private bool isConnected = false;
 
+        /// <summary>
+        /// Name of the port.
+        /// </summary>
         private string portName = String.Empty;
 
         /// <summary>
@@ -86,7 +83,7 @@ namespace KarelRobot
 
         public event EventHandler<StringEventArgs> GreatingsMessage;
 
-        public event EventHandler<MotionStateEventArgs> MotionState;
+        public event EventHandler<RobotPositionEventArgs> MotionState;
 
         #endregion
 
@@ -198,19 +195,7 @@ namespace KarelRobot
         /// <param name="value">Value of the movment tenth of the [mm].</param>
         public void Move(int value)
         {
-            string direction = "";
-
-            if (value > 0)
-            {
-                direction = "+";
-            }
-
-            if (value <= 0)
-            {
-                //direction = "-";
-            }
-
-            string command = String.Format("?M{0}{1:D3}", direction, value);
+            string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
             this.SendRequest(command);
         }
 
@@ -220,18 +205,7 @@ namespace KarelRobot
         /// <param name="value">Value of the rotation tenth of the degree.</param>
         public void Rotate(int value)
         {
-            string direction = "";
-            if (value > 0)
-            {
-                direction = "+";
-            }
-
-            if (value <= 0)
-            {
-                //direction = "-";
-            }
-            
-            string command = String.Format("?R{0}{1:D3}", direction, value);
+            string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
             this.SendRequest(command);
         }
 
@@ -253,6 +227,10 @@ namespace KarelRobot
             this.SendRequest(command);
         }
 
+        /// <summary>
+        /// Get ultra sonic sensor.
+        /// </summary>
+        /// <param name="position">Position of the sensor.</param>
         public void GetUltraSonic(int position)
         {
             //?US180\n
@@ -270,12 +248,18 @@ namespace KarelRobot
             this.SendRequest(command);
         }
 
+        /// <summary>
+        /// Get ultra sonic sensor.
+        /// </summary>
         public void GetUltraSonic()
         {
             string command = "?USA";
             this.SendRequest(command);
         }
 
+        /// <summary>
+        /// Get position of the robot.
+        /// </summary>
         public void GetPosition()
         {
             string command = "?POSITION";
@@ -287,44 +271,9 @@ namespace KarelRobot
         #region Private
 
         /// <summary>
-        /// Data recievce event.
+        /// Send request to device.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
-        {
-            // Wait ...
-            Thread.Sleep(50);
-
-            if (sender != null)
-            {
-                // Make serial port to get data from.
-                SerialPort sp = (SerialPort)sender;
-
-                //string indata = sp.ReadLine();
-                string inData = sp.ReadExisting();
-
-                //TODO: Parse the incommning string from the serial port.
-                // POS will be the index of the array.
-                // CM will be the data in the cell.
-                //string[] tokens = inData.Split(this.delimiterChars);
-
-                //Console.WriteLine("Data: {0};\r\nTokens: {1}", indata, tokens.Length);
-
-                //Console.WriteLine("Test: {0}", indata);
-
-                if (this.Message != null)
-                {
-                    this.Message(this, new StringEventArgs(inData));
-                }
-
-                this.ResponseParser(inData);
-
-                // Discart the duffer.
-                sp.DiscardInBuffer();
-            }
-        }
-
+        /// <param name="request">Request string.</param>
         private void SendRequest(string request)
         {
             lock (this.requestLock)
@@ -346,6 +295,40 @@ namespace KarelRobot
             }
         }
 
+        /// <summary>
+        /// Data recievce event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        {
+            // Wait ...
+            Thread.Sleep(50);
+
+            if (sender != null)
+            {
+                // Make serial port to get data from.
+                SerialPort sp = (SerialPort)sender;
+
+                //string indata = sp.ReadLine();
+                string inData = sp.ReadExisting();
+
+                if (this.Message != null)
+                {
+                    this.Message(this, new StringEventArgs(inData));
+                }
+
+                this.ResponseParser(inData);
+
+                // Discart the duffer.
+                sp.DiscardInBuffer();
+            }
+        }
+
+        /// <summary>
+        /// Parse response message from the device.
+        /// </summary>
+        /// <param name="response">Response string.</param>
         private void ResponseParser(string response)
         {
             if (response.Contains("#") && response.Contains("\r\n"))
@@ -394,15 +377,15 @@ namespace KarelRobot
 
                     if (tokens[0] == "US")
                     {
-                        int position = 0;
-                        double distance = 0.0d;
+                        float position = 0.0f;
+                        float distance = 0.0f;
 
                         if (tokens[2].Contains("."))
                         {
                             tokens[2] = tokens[2].Replace('.', ',');
                         }
 
-                        if((int.TryParse(tokens[1], out position)) && (double.TryParse(tokens[2], out distance)))
+                        if((float.TryParse(tokens[1], out position)) && (float.TryParse(tokens[2], out distance)))
                         {
                             distance /= 1000;
                         }
@@ -422,20 +405,16 @@ namespace KarelRobot
                         double alpha = 0;
                         double distance = 0.0d;
 
-                        tokens[2] = KarelV1.CorrectDecDelimiter(tokens[2]);
-                        tokens[4] = KarelV1.CorrectDecDelimiter(tokens[4]);
-
-                        if (tokens[1] == "D")
+                        if (tokens[1] == "D" && tokens[3] == "A")
                         {
+                            tokens[2] = RobotUtils.CorrectDecDelimiter(tokens[2]);
                             if (!double.TryParse(tokens[2], out distance))
                             {
                                 return;
                             }
-                        }
 
-                        if (tokens[3] == "A")
-                        {
-                            if (!double.TryParse(tokens[2], out alpha))
+                            tokens[4] = RobotUtils.CorrectDecDelimiter(tokens[4]);
+                            if (!double.TryParse(tokens[4], out alpha))
                             {
                                 return;
                             }
@@ -443,7 +422,7 @@ namespace KarelRobot
 
                         if (this.MotionState != null)
                         {
-                            this.MotionState(this, new MotionStateEventArgs(alpha, distance));
+                            this.MotionState(this, new RobotPositionEventArgs(alpha, distance));
                         }
                     }
 
@@ -463,19 +442,6 @@ namespace KarelRobot
 
                 }
             }
-        }
-
-        /// <summary>
-        /// Replace no metter , or . with correct regional decimal delimiter.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static string CorrectDecDelimiter(string value)
-        {
-            value = value.Replace(',', KarelV1.DecimalSeparator);
-            value = value.Replace('.', KarelV1.DecimalSeparator);
-
-            return value;
         }
 
         #endregion

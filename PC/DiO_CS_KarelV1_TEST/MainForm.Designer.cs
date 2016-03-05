@@ -38,7 +38,7 @@
             this.tblControls = new System.Windows.Forms.TableLayoutPanel();
             this.txtState = new System.Windows.Forms.TextBox();
             this.gpbControls = new System.Windows.Forms.GroupBox();
-            this.btnGetRobotPos = new System.Windows.Forms.Button();
+            this.btnTastDatabase = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.btnRight = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -59,15 +59,17 @@
             this.lblURL = new System.Windows.Forms.Label();
             this.lblUTInterval = new System.Windows.Forms.Label();
             this.tbCameraUpdateTime = new System.Windows.Forms.TextBox();
-            this.chkCameraCapture = new System.Windows.Forms.CheckBox();
+            this.chkContinuesCapture = new System.Windows.Forms.CheckBox();
             this.tbCameraIP = new System.Windows.Forms.TextBox();
             this.btnCapture = new System.Windows.Forms.Button();
             this.pbGlyph = new System.Windows.Forms.PictureBox();
             this.tbpSensors = new System.Windows.Forms.TabPage();
             this.pnlSensors = new System.Windows.Forms.Panel();
+            this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
+            this.lblRobotPosition = new System.Windows.Forms.Label();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -130,8 +132,8 @@
             // tblMain
             // 
             this.tblMain.ColumnCount = 2;
-            this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.32646F));
-            this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.67354F));
+            this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 29.20962F));
+            this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 70.79037F));
             this.tblMain.Controls.Add(this.tblControls, 0, 0);
             this.tblMain.Controls.Add(this.tcSensorsFunctions, 1, 0);
             this.tblMain.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -155,7 +157,7 @@
             this.tblControls.RowCount = 2;
             this.tblControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 54.73251F));
             this.tblControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.26749F));
-            this.tblControls.Size = new System.Drawing.Size(508, 486);
+            this.tblControls.Size = new System.Drawing.Size(419, 486);
             this.tblControls.TabIndex = 0;
             // 
             // txtState
@@ -165,12 +167,12 @@
             this.txtState.Multiline = true;
             this.txtState.Name = "txtState";
             this.txtState.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtState.Size = new System.Drawing.Size(502, 215);
+            this.txtState.Size = new System.Drawing.Size(413, 215);
             this.txtState.TabIndex = 7;
             // 
             // gpbControls
             // 
-            this.gpbControls.Controls.Add(this.btnGetRobotPos);
+            this.gpbControls.Controls.Add(this.btnTastDatabase);
             this.gpbControls.Controls.Add(this.btnReset);
             this.gpbControls.Controls.Add(this.btnRight);
             this.gpbControls.Controls.Add(this.btnStop);
@@ -181,20 +183,20 @@
             this.gpbControls.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.gpbControls.Location = new System.Drawing.Point(3, 3);
             this.gpbControls.Name = "gpbControls";
-            this.gpbControls.Size = new System.Drawing.Size(502, 259);
+            this.gpbControls.Size = new System.Drawing.Size(413, 259);
             this.gpbControls.TabIndex = 0;
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
             // 
-            // btnGetRobotPos
+            // btnTastDatabase
             // 
-            this.btnGetRobotPos.Location = new System.Drawing.Point(164, 177);
-            this.btnGetRobotPos.Name = "btnGetRobotPos";
-            this.btnGetRobotPos.Size = new System.Drawing.Size(73, 73);
-            this.btnGetRobotPos.TabIndex = 22;
-            this.btnGetRobotPos.Text = "Pos";
-            this.btnGetRobotPos.UseVisualStyleBackColor = true;
-            this.btnGetRobotPos.Click += new System.EventHandler(this.btnGetRobotPos_Click);
+            this.btnTastDatabase.Location = new System.Drawing.Point(164, 19);
+            this.btnTastDatabase.Name = "btnTastDatabase";
+            this.btnTastDatabase.Size = new System.Drawing.Size(73, 73);
+            this.btnTastDatabase.TabIndex = 22;
+            this.btnTastDatabase.Text = "Test DB";
+            this.btnTastDatabase.UseVisualStyleBackColor = true;
+            this.btnTastDatabase.Click += new System.EventHandler(this.btnTastDatabase_Click);
             // 
             // btnReset
             // 
@@ -263,10 +265,10 @@
             this.tcSensorsFunctions.Controls.Add(this.tbpSensors);
             this.tcSensorsFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcSensorsFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tcSensorsFunctions.Location = new System.Drawing.Point(517, 3);
+            this.tcSensorsFunctions.Location = new System.Drawing.Point(428, 3);
             this.tcSensorsFunctions.Name = "tcSensorsFunctions";
             this.tcSensorsFunctions.SelectedIndex = 0;
-            this.tcSensorsFunctions.Size = new System.Drawing.Size(935, 486);
+            this.tcSensorsFunctions.Size = new System.Drawing.Size(1024, 486);
             this.tcSensorsFunctions.TabIndex = 1;
             // 
             // tbpSonar
@@ -275,7 +277,7 @@
             this.tbpSonar.Location = new System.Drawing.Point(4, 25);
             this.tbpSonar.Name = "tbpSonar";
             this.tbpSonar.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSonar.Size = new System.Drawing.Size(927, 457);
+            this.tbpSonar.Size = new System.Drawing.Size(1016, 457);
             this.tbpSonar.TabIndex = 0;
             this.tbpSonar.Text = "Sonar";
             this.tbpSonar.UseVisualStyleBackColor = true;
@@ -283,8 +285,8 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 87.8393F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 12.1607F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 90.00989F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 9.990108F));
             this.tableLayoutPanel1.Controls.Add(this.pbSensorView, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -293,7 +295,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(921, 451);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1010, 451);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // pbSensorView
@@ -302,7 +304,7 @@
             this.pbSensorView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbSensorView.Location = new System.Drawing.Point(3, 3);
             this.pbSensorView.Name = "pbSensorView";
-            this.pbSensorView.Size = new System.Drawing.Size(802, 445);
+            this.pbSensorView.Size = new System.Drawing.Size(903, 445);
             this.pbSensorView.TabIndex = 12;
             this.pbSensorView.TabStop = false;
             this.pbSensorView.Paint += new System.Windows.Forms.PaintEventHandler(this.pbSensorView_Paint);
@@ -313,9 +315,9 @@
             this.panel1.Controls.Add(this.tbSensorPosition);
             this.panel1.Controls.Add(this.btnGetUltrasonic);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(811, 3);
+            this.panel1.Location = new System.Drawing.Point(912, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(107, 445);
+            this.panel1.Size = new System.Drawing.Size(95, 445);
             this.panel1.TabIndex = 13;
             // 
             // lblDegreeSensor
@@ -336,11 +338,11 @@
             // 
             // btnGetUltrasonic
             // 
+            this.btnGetUltrasonic.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor2;
             this.btnGetUltrasonic.Location = new System.Drawing.Point(3, 3);
             this.btnGetUltrasonic.Name = "btnGetUltrasonic";
             this.btnGetUltrasonic.Size = new System.Drawing.Size(73, 73);
             this.btnGetUltrasonic.TabIndex = 24;
-            this.btnGetUltrasonic.Text = "Ultra Sonic";
             this.btnGetUltrasonic.UseVisualStyleBackColor = true;
             this.btnGetUltrasonic.Click += new System.EventHandler(this.btnGetUltrasonic_Click);
             // 
@@ -350,7 +352,7 @@
             this.tbpGlyph.Location = new System.Drawing.Point(4, 25);
             this.tbpGlyph.Name = "tbpGlyph";
             this.tbpGlyph.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpGlyph.Size = new System.Drawing.Size(927, 457);
+            this.tbpGlyph.Size = new System.Drawing.Size(1016, 457);
             this.tbpGlyph.TabIndex = 1;
             this.tbpGlyph.Text = "Glyph";
             this.tbpGlyph.UseVisualStyleBackColor = true;
@@ -368,7 +370,7 @@
             this.tblGlyph.RowCount = 1;
             this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblGlyph.Size = new System.Drawing.Size(921, 451);
+            this.tblGlyph.Size = new System.Drawing.Size(1010, 451);
             this.tblGlyph.TabIndex = 0;
             // 
             // pnlGlyphControl
@@ -376,13 +378,13 @@
             this.pnlGlyphControl.Controls.Add(this.lblURL);
             this.pnlGlyphControl.Controls.Add(this.lblUTInterval);
             this.pnlGlyphControl.Controls.Add(this.tbCameraUpdateTime);
-            this.pnlGlyphControl.Controls.Add(this.chkCameraCapture);
+            this.pnlGlyphControl.Controls.Add(this.chkContinuesCapture);
             this.pnlGlyphControl.Controls.Add(this.tbCameraIP);
             this.pnlGlyphControl.Controls.Add(this.btnCapture);
             this.pnlGlyphControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlGlyphControl.Location = new System.Drawing.Point(745, 3);
+            this.pnlGlyphControl.Location = new System.Drawing.Point(817, 3);
             this.pnlGlyphControl.Name = "pnlGlyphControl";
-            this.pnlGlyphControl.Size = new System.Drawing.Size(173, 445);
+            this.pnlGlyphControl.Size = new System.Drawing.Size(190, 445);
             this.pnlGlyphControl.TabIndex = 0;
             // 
             // lblURL
@@ -409,18 +411,18 @@
             this.tbCameraUpdateTime.Name = "tbCameraUpdateTime";
             this.tbCameraUpdateTime.Size = new System.Drawing.Size(40, 22);
             this.tbCameraUpdateTime.TabIndex = 22;
-            this.tbCameraUpdateTime.Text = "100";
+            this.tbCameraUpdateTime.Text = "500";
             // 
-            // chkCameraCapture
+            // chkContinuesCapture
             // 
-            this.chkCameraCapture.AutoSize = true;
-            this.chkCameraCapture.Location = new System.Drawing.Point(12, 213);
-            this.chkCameraCapture.Name = "chkCameraCapture";
-            this.chkCameraCapture.Size = new System.Drawing.Size(139, 20);
-            this.chkCameraCapture.TabIndex = 21;
-            this.chkCameraCapture.Text = "Camera Capture";
-            this.chkCameraCapture.UseVisualStyleBackColor = true;
-            this.chkCameraCapture.CheckedChanged += new System.EventHandler(this.chkCameraCapture_CheckedChanged);
+            this.chkContinuesCapture.AutoSize = true;
+            this.chkContinuesCapture.Location = new System.Drawing.Point(12, 213);
+            this.chkContinuesCapture.Name = "chkContinuesCapture";
+            this.chkContinuesCapture.Size = new System.Drawing.Size(153, 20);
+            this.chkContinuesCapture.TabIndex = 21;
+            this.chkContinuesCapture.Text = "Continues Capture";
+            this.chkContinuesCapture.UseVisualStyleBackColor = true;
+            this.chkContinuesCapture.CheckedChanged += new System.EventHandler(this.chkContinuesCapture_CheckedChanged);
             // 
             // tbCameraIP
             // 
@@ -429,7 +431,8 @@
             this.tbCameraIP.Name = "tbCameraIP";
             this.tbCameraIP.Size = new System.Drawing.Size(161, 45);
             this.tbCameraIP.TabIndex = 20;
-            this.tbCameraIP.Text = "http://192.168.0.101:8080/photoaf.jpg";
+            this.tbCameraIP.Text = "https://scontent-vie1-1.xx.fbcdn.net/hphotos-xlt1/v/t1.0-9/473_10201482439540779_" +
+    "3601827889724477532_n.jpg?oh=310e1862af7b481da70be9ec3bca9563&oe=5753D41A";
             // 
             // btnCapture
             // 
@@ -447,7 +450,7 @@
             this.pbGlyph.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbGlyph.Location = new System.Drawing.Point(3, 3);
             this.pbGlyph.Name = "pbGlyph";
-            this.pbGlyph.Size = new System.Drawing.Size(736, 445);
+            this.pbGlyph.Size = new System.Drawing.Size(808, 445);
             this.pbGlyph.TabIndex = 1;
             this.pbGlyph.TabStop = false;
             // 
@@ -456,21 +459,33 @@
             this.tbpSensors.Controls.Add(this.pnlSensors);
             this.tbpSensors.Location = new System.Drawing.Point(4, 25);
             this.tbpSensors.Name = "tbpSensors";
-            this.tbpSensors.Size = new System.Drawing.Size(927, 457);
+            this.tbpSensors.Size = new System.Drawing.Size(1016, 457);
             this.tbpSensors.TabIndex = 2;
             this.tbpSensors.Text = "Sensors";
             this.tbpSensors.UseVisualStyleBackColor = true;
             // 
             // pnlSensors
             // 
+            this.pnlSensors.Controls.Add(this.lblRobotPosition);
+            this.pnlSensors.Controls.Add(this.btnGetRobotPos);
             this.pnlSensors.Controls.Add(this.prbRightSensor);
             this.pnlSensors.Controls.Add(this.prbLeftSensor);
             this.pnlSensors.Controls.Add(this.btnGetSensors);
             this.pnlSensors.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlSensors.Location = new System.Drawing.Point(0, 0);
             this.pnlSensors.Name = "pnlSensors";
-            this.pnlSensors.Size = new System.Drawing.Size(927, 457);
+            this.pnlSensors.Size = new System.Drawing.Size(1016, 457);
             this.pnlSensors.TabIndex = 0;
+            // 
+            // btnGetRobotPos
+            // 
+            this.btnGetRobotPos.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor3;
+            this.btnGetRobotPos.Location = new System.Drawing.Point(131, 164);
+            this.btnGetRobotPos.Name = "btnGetRobotPos";
+            this.btnGetRobotPos.Size = new System.Drawing.Size(73, 73);
+            this.btnGetRobotPos.TabIndex = 23;
+            this.btnGetRobotPos.UseVisualStyleBackColor = true;
+            this.btnGetRobotPos.Click += new System.EventHandler(this.btnGetRobotPos_Click);
             // 
             // prbRightSensor
             // 
@@ -485,18 +500,29 @@
             this.prbLeftSensor.Location = new System.Drawing.Point(25, 47);
             this.prbLeftSensor.Maximum = 1023;
             this.prbLeftSensor.Name = "prbLeftSensor";
+            this.prbLeftSensor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.prbLeftSensor.RightToLeftLayout = true;
             this.prbLeftSensor.Size = new System.Drawing.Size(100, 23);
             this.prbLeftSensor.TabIndex = 21;
             // 
             // btnGetSensors
             // 
+            this.btnGetSensors.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor1;
             this.btnGetSensors.Location = new System.Drawing.Point(131, 26);
             this.btnGetSensors.Name = "btnGetSensors";
             this.btnGetSensors.Size = new System.Drawing.Size(73, 73);
             this.btnGetSensors.TabIndex = 20;
-            this.btnGetSensors.Text = "L/R Sens";
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
+            // 
+            // lblRobotPosition
+            // 
+            this.lblRobotPosition.AutoSize = true;
+            this.lblRobotPosition.Location = new System.Drawing.Point(22, 164);
+            this.lblRobotPosition.Name = "lblRobotPosition";
+            this.lblRobotPosition.Size = new System.Drawing.Size(68, 16);
+            this.lblRobotPosition.TabIndex = 24;
+            this.lblRobotPosition.Text = "Position:";
             // 
             // MainForm
             // 
@@ -533,6 +559,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbGlyph)).EndInit();
             this.tbpSensors.ResumeLayout(false);
             this.pnlSensors.ResumeLayout(false);
+            this.pnlSensors.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -572,13 +599,15 @@
         private System.Windows.Forms.PictureBox pbGlyph;
         private System.Windows.Forms.Button btnCapture;
         private System.Windows.Forms.TextBox tbCameraIP;
-        private System.Windows.Forms.CheckBox chkCameraCapture;
+        private System.Windows.Forms.CheckBox chkContinuesCapture;
         private System.Windows.Forms.TextBox tbCameraUpdateTime;
         private System.Windows.Forms.Label lblURL;
         private System.Windows.Forms.Label lblUTInterval;
-        private System.Windows.Forms.Button btnGetRobotPos;
         private System.Windows.Forms.ProgressBar prbRightSensor;
         private System.Windows.Forms.ProgressBar prbLeftSensor;
+        private System.Windows.Forms.Button btnGetRobotPos;
+        private System.Windows.Forms.Button btnTastDatabase;
+        private System.Windows.Forms.Label lblRobotPosition;
     }
 }
 

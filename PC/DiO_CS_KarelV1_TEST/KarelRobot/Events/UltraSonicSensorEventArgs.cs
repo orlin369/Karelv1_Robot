@@ -7,8 +7,8 @@ namespace KarelRobot.Events
 {
     public class UltraSonicSensorEventArgs : EventArgs
     {
-        public int Position { get; private set; }
-        public double Distance { get; private set; }
+        public float Position { get; private set; }
+        public float Distance { get; private set; }
 
         public UltraSonicSensorEventArgs()
         {
@@ -16,7 +16,7 @@ namespace KarelRobot.Events
             this.Distance = 0.0f;
         }
 
-        public UltraSonicSensorEventArgs(int position, double distance)
+        public UltraSonicSensorEventArgs(float position, float distance)
         {
             this.Position = position;
             this.Distance = distance;

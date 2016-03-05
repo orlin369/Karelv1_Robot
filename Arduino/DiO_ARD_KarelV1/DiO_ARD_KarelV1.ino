@@ -21,17 +21,17 @@
 // I2C
 #include <Wire.h>
 
-// Motor Shiels
+// Motor driver/shield
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_PWMServoDriver.h"
 
-// Motor driver
+// Motor regulators
 #include <AccelStepper.h>
 
 // Servo driver
 #include <Servo.h>
 
-//
+// String and standart functions.
 #include <String.h>
 #include <stdlib.h>
 
@@ -41,7 +41,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Small distance sensor pin index.
 //////////////////////////////////////////////////////////////////////////
-#define SENSOR_LEFT 6
+#define SENSOR_LEFT  6
 #define SENSOR_RIGHT 7
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,49 +62,27 @@
 #define SERVO_PIN 9
 
 //////////////////////////////////////////////////////////////////////////
-// Ultra soic sensor: HC-SR04
-//////////////////////////////////////////////////////////////////////////
-Ultrasonic UltraSonic(SENSOR_PIN_TRIG, SENSOR_PIN_ECHO);
-
-//////////////////////////////////////////////////////////////////////////
 // Motor shield address
 //////////////////////////////////////////////////////////////////////////
 char ShieldAddress = 0x60;
 char MotorSteps = 200;
+
 // Rotation parameters.
 float MaxRotSpeed = 200.0;
-float MaxRotAccel = 200.0;
+float MaxRotAccel = 100.0;
 
 // Translation parameters.
 float MaxTransSpeed = 200.0;
-float MaxTransAccel = 200.0;
-
-//
-#if (MICROSTEPS == 8)
-  float linearScale = 0.8324975;
-  float rotationScale = 0.6356202;
-#elif (MICROSTEPS == 16)
-  float linearScale = 0.41624875;
-  float rotationScale = 0.31781;
-#else
-  float linearScale = 1.0;
-  float rotationScale = 1.0;
-#endif
-
-//
-String IncommingCommnad = "";
+float MaxTransAccel = 100.0;
 
 //
 boolean Echo = false;
 
 //
-char printl[256];
+char PrintArr[256];
 
-// 
-long linearMove = 0.0;
-
-// 
-long rotationMove = 0.0;
+// Ultra soic sensor: HC-SR04
+Ultrasonic UltraSonic(SENSOR_PIN_TRIG, SENSOR_PIN_ECHO);
 
 // Create driver for the motor shield.
 Adafruit_MotorShield MotorShield(ShieldAddress);  
@@ -123,7 +101,6 @@ Servo SensorServo;
 //////////////////////////////////////////////////////////////////////////
 void setup()
 {
-
   // Initialize the digital pin as an output.
   pinMode(SENSOR_LEFT , INPUT);
   pinMode(SENSOR_RIGHT, INPUT);
@@ -139,7 +116,7 @@ void setup()
    
   // Setup Serial port at 9600 bps.
   Serial.begin(9600);         
-  Serial.println("#GREATINGS;Hello Orlin ... ");
+  Serial.println("#GREATINGS;I am Karel v1 ");
   
   // ...
   Rotation.setMaxSpeed(MaxRotSpeed);
@@ -163,7 +140,9 @@ void loop()
 // Read incomming data from the serial buffer.
 //////////////////////////////////////////////////////////////////////////  
 void ReadCommand()
-{
+{  
+  static String IncommingCommnad = "";
+  
   // Fill the command data buffer with command.
   while(Serial.available())
   {
@@ -182,7 +161,7 @@ void ReadCommand()
       ParseCommand(IncommingCommnad);
     }
     // Print command for feedback.
-    if(Echo == true)
+    if(Echo)
     {
       Serial.print("Cmd; ");
       Serial.println(IncommingCommnad);
@@ -221,18 +200,19 @@ boolean ValidateCommand(String command)
   
   boolean state = false;
   // Number value.
-  int numValue = 0;
-  // ?M+180\n
-  if(command[0] == '?' && command[6] == '\n')
+  static int numValue;
+  numValue = 0;
+  // ?M+1800\n
+  if(command[0] == '?' && command[7] == '\n')
   {
     if(command[2] == '-' || command[2] == '+')
     {
       if(command[1] == 'M')
       {
         // Convert commands from string to numbers.
-        numValue = atoi(command.substring(3, 6).c_str());
+        numValue = atoi(command.substring(3, 7).c_str());
 
-        if(numValue <= 999 && numValue >= -999)
+        if(numValue <= 9999 && numValue >= -9999)
         {
           // If is valid.
           state = true;
@@ -240,7 +220,7 @@ boolean ValidateCommand(String command)
       }
       if(command[1] == 'R')
       {
-        if(numValue <= 180 && numValue >= -180)
+        if(numValue <= 9999 && numValue >= -9999)
         {
           // If is valid.
           state = true;
@@ -248,7 +228,6 @@ boolean ValidateCommand(String command)
       }
     }
   }
-  
   // ?US180\n
   if(command[0] == '?' && command[6] == '\n')
   {
@@ -263,7 +242,6 @@ boolean ValidateCommand(String command)
       }
     }
   }
-  
   if(command == "?SENSORS\n")
   {
     // If is valid.
@@ -292,57 +270,61 @@ boolean ValidateCommand(String command)
 void ParseCommand(String command)
 {
   // Number value.
-  int numValue = 0;
+  static int steps;
+  static long r;
+  static long t;
+  static float cmMsec;
+  static long microsec;
+  
+  steps = 0;
+  r = 0;
+  t = 0;
+  cmMsec = 0;
+  microsec = 0;
   
   // Convert commands from string to numbers.
-  numValue = atoi(command.substring(3, 6).c_str());
+  steps = atoi(command.substring(3, 7).c_str());
   
   if(command[1] == 'M')
   {
     if(command[2] == '-')
     {
-      linearMove -= numValue;
+      steps *= -1;
     }
     else if(command[2] == '+')
     {
-      linearMove += numValue;
+      ;
     }
-
-    float steps = linearMove / linearScale;
     
-    Translation.moveTo(steps);
-    
-    // Set the motor value.
-    //Translation.moveTo(steps);
-
+    Translation.move(steps);
   }
   else if(command[1] == 'R')
   {
-    if(command[2] == '+')
+    if(command[2] == '-')
     {
-      rotationMove -= numValue;      
+      steps *= -1;
     }
-    else if(command[2] == '-')
+    else if(command[2] == '+')
     {
-      rotationMove += numValue;      
+      ;
     }
-
-    long steps = rotationMove / rotationScale;
-    // Set the motor value.
-    Rotation.moveTo(steps);
+    
+    Rotation.move(steps);
   }
   else if(command == "?SENSORS\n")
   {
     // read the analog in value:
     int leftSensor = digitalRead(SENSOR_LEFT);
     int rightSensor = digitalRead(SENSOR_RIGHT);
-    sprintf(printl, "#SENSORS;L:%d;R:%d", leftSensor, rightSensor);
-    Serial.println(printl);
+    sprintf(PrintArr, "#SENSORS;L:%d;R:%d", leftSensor, rightSensor);
+    Serial.println(PrintArr);
   }
   else if(command == "?POSITION\n")
   {
-    sprintf(printl, "#POSITION;M:%d;R:%d;", linearMove * linearScale, rotationMove * rotationScale);
-    Serial.println(printl);
+    r = Rotation.currentPosition();
+    t = Translation.currentPosition();
+    sprintf(PrintArr, "#POSITION;D:%ld;A:%ld;", t, r);
+    Serial.println(PrintArr);   
   }
   else if(command == "?STOP\n")
   {
@@ -362,9 +344,10 @@ void ParseCommand(String command)
     {
         SensorServo.write(indexPos);
         delay(100);
-        float cmMsec;
-        long microsec = UltraSonic.timing();     
+        microsec = UltraSonic.timing();     
         cmMsec = UltraSonic.convert(microsec, Ultrasonic::CM);
+        //sprintf(PrintArr, "#US;%d:%d", indexPos, cmMsec);
+        //Serial.println(PrintArr);   
 
         Serial.print("#US;");
         Serial.print(indexPos);
@@ -372,25 +355,23 @@ void ParseCommand(String command)
         Serial.println(cmMsec);
     }
   }
-    // ?US180\n
+  // ?US180\n
   else if(command[0] == '?' && command[6] == '\n')
   {
     if(command[1] == 'U' && command[2] == 'S')
     {
       // Convert commands from string to numbers.
-      numValue = atoi(command.substring(3, 6).c_str());
+      steps = atoi(command.substring(3, 6).c_str());
        
-      if(numValue >= 0 && numValue <= 180)
+      if(steps >= 0 && steps <= 180)
       {
-        SensorServo.write(numValue);
+        SensorServo.write(steps);
         //delay(2000);
-
-        float cmMsec;
-        long microsec = UltraSonic.timing();     
+        microsec = UltraSonic.timing();     
         cmMsec = UltraSonic.convert(microsec, Ultrasonic::CM);
 
         Serial.print("#US;");
-        Serial.print(numValue);
+        Serial.print(steps);
         Serial.print(":");
         Serial.println(cmMsec);
       }
@@ -404,14 +385,14 @@ void ParseCommand(String command)
 ////////////////////////////////////////////////////////////////////////// 
 void RotateLeftCB()
 {
-  MotorLeft->onestep(FORWARD, MICROSTEP);
-  MotorRight->onestep(BACKWARD, MICROSTEP);
+  MotorLeft->onestep(BACKWARD, MICROSTEP);
+  MotorRight->onestep(FORWARD, MICROSTEP);
 }
 
 void RotateRihtCB()
 {
-  MotorLeft->onestep(BACKWARD, MICROSTEP);
-  MotorRight->onestep(FORWARD, MICROSTEP);
+  MotorLeft->onestep(FORWARD, MICROSTEP);
+  MotorRight->onestep(BACKWARD, MICROSTEP);
 }
 
 //////////////////////////////////////////////////////////////////////////

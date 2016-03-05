@@ -32,9 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>rsz_robotics-icon-vector.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Main.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.8.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,6 +51,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseConnection\DatabaseConnector.cs" />
+    <Compile Include="DatabaseConnection\Device\Actuators\Actuator.cs" />
+    <Compile Include="DatabaseConnection\Device\Actuators\StepperMotor.cs" />
+    <Compile Include="DatabaseConnection\Device\Device.cs" />
+    <Compile Include="DatabaseConnection\Data\Location.cs" />
+    <Compile Include="DatabaseConnection\Data\Orientation.cs" />
+    <Compile Include="DatabaseConnection\Data\Point.cs" />
+    <Compile Include="DatabaseConnection\Data\Position.cs" />
+    <Compile Include="DatabaseConnection\Device\Sensors\Distance.cs" />
+    <Compile Include="DatabaseConnection\Device\Sensors\Humidity.cs" />
+    <Compile Include="DatabaseConnection\Device\Sensors\Pressure.cs" />
+    <Compile Include="DatabaseConnection\Device\Sensors\Sensor.cs" />
+    <Compile Include="DatabaseConnection\Device\Sensors\Temperature.cs" />
+    <Compile Include="DatabaseConnection\Units\Pressures.cs" />
+    <Compile Include="DatabaseConnection\Units\Radial.cs" />
+    <Compile Include="DatabaseConnection\Units\Scales.cs" />
+    <Compile Include="DatabaseConnection\Units\TemperatureScale.cs" />
     <Compile Include="Diagrams\CircularDiagram.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -62,11 +83,14 @@
     </Compile>
     <Compile Include="ImageSource\ICaptureDevice.cs" />
     <Compile Include="ImageSource\IpCamera.cs" />
-    <Compile Include="KarelRobot\Events\MotionStateEventArgs.cs" />
+    <Compile Include="InputMethods\KeystrokEventGenerator\KeyCombinations.cs" />
+    <Compile Include="InputMethods\KeystrokEventGenerator\KeystrokMessageFilter.cs" />
+    <Compile Include="KarelRobot\Events\RobotPositionEventArgs.cs" />
     <Compile Include="KarelRobot\KarelV1.cs" />
     <Compile Include="KarelRobot\Events\SensorsEventArgs.cs" />
     <Compile Include="KarelRobot\Events\StringEventArgs.cs" />
     <Compile Include="KarelRobot\Events\UltraSonicSensorEventArgs.cs" />
+    <Compile Include="KarelRobot\RobotUtils.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +119,8 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -121,8 +147,12 @@
     <None Include="Resources\Stop.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Sensor3.png" />
+    <None Include="Resources\Sensor2.png" />
+    <None Include="Resources\Sensor1.png" />
     <None Include="Resources\Capture.png" />
-    <Content Include="rsz_robotics-icon-vector.ico" />
+    <None Include="Resources\DistanceRanging.png" />
+    <Content Include="Resources\Main.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
