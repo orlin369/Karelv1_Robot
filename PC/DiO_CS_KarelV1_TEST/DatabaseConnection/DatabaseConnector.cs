@@ -55,11 +55,6 @@ namespace DatabaseConnection
                 string serialisedData = JsonConvert.SerializeObject(device);
                 //Console.WriteLine(serialisedData);
                 this.MakeRequest(serialisedData);
-                // TODO: Uncoment below when test the DB with Lybo.
-                //HttpWebResponse responseHttp = this.MakeRequest(serialisedData);
-                //Stream responseStream        = responseHttp.GetResponseStream();;
-                //string responseString        = new StreamReader(responseStream).ReadToEnd();
-                //Console.WriteLine("{0} -> {1}", DateTime.Now, responseString);
             }
         }
 
@@ -72,7 +67,8 @@ namespace DatabaseConnection
             // Set the Method property of the request to POST.
             request.Method = "POST";
             // Create POST data and convert it to a byte array.
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+            string arg = String.Format("robotData={0}", postData);
+            byte[] byteArray = Encoding.UTF8.GetBytes(arg);
             // Set the ContentType property of the WebRequest.
             request.ContentType = "application/x-www-form-urlencoded";
             // Set the ContentLength property of the WebRequest.
