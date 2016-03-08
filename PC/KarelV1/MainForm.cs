@@ -19,11 +19,8 @@ using Utils;
 // TODO: Add Tweeter publisher.
 // TODO: Create WEB application that listen for the twiits and show it on the screen.
 // TODO: Create gliph recognition module.
-// TODO: Connect to NoSQL.
 // TODO: Add message when robot is moving and when it is not.
-// TODO: Create roadmap of the robot.
 // TODO: Add sensors.
-// TODO: Add indication LEDs.
 //
 
 namespace GUI
@@ -753,7 +750,6 @@ namespace GUI
                 catch (Exception exception)
                 {
                     this.AddStatus(exception.ToString() + Environment.NewLine, Color.White);
-                    return;
                 }
             }
         }
@@ -1006,7 +1002,7 @@ namespace GUI
             }
             catch (Exception exception)
             {
-
+                this.AddStatus(exception.ToString(), Color.White);
             }
         }
 

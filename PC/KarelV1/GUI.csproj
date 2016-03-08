@@ -51,7 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseConnection\DatabaseConnector.cs" />
     <Compile Include="DatabaseConnection\Device\Actuators\Actuator.cs" />
     <Compile Include="DatabaseConnection\Device\Actuators\StepperMotor.cs" />
     <Compile Include="DatabaseConnection\Device\Device.cs" />
