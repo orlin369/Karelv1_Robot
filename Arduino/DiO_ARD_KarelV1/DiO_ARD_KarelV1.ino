@@ -1,8 +1,6 @@
 /*---------------------------------------------------------------------------------------\
-|  FILE       : Karel v1 Example    |  This example is created for demonstrading,        |
-|  DEVELOPER  : Orlin Dimitrov, DiO | debonce for the buttons, display driver,           |
-|  STAND      : See History         | timer 0 setup and usage.                           |
-|  VERSION    : 1.00                |                                                    |
+|  FILE       : Karel v1 Example    |  This project is created for demonstrading,        |
+|  DEVELOPER  : Orlin Dimitrov, DiO |  Karel v1 abilities.                               |
 |----------------------------------------------------------------------------------------|
 |                               R E Q U I R E S                                          |
 |   1. Adafruit_Motorshield v2 library.                                                  |
@@ -62,6 +60,17 @@
 #define SERVO_PIN 9
 
 //////////////////////////////////////////////////////////////////////////
+// Prototypes
+//////////////////////////////////////////////////////////////////////////
+void ReadCommand();
+boolean ValidateCommand(String command);
+void ParseCommand(String command);
+void RotateLeftCB();
+void RotateRihtCB();
+void TranslateForwardCB();
+void TranslateBackwardCB();
+
+//////////////////////////////////////////////////////////////////////////
 // Motor shield address
 //////////////////////////////////////////////////////////////////////////
 char ShieldAddress = 0x60;
@@ -89,6 +98,7 @@ Adafruit_MotorShield MotorShield(ShieldAddress);
 // Create two motors on chanel 1 and 2.
 Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MotorSteps, 1);
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MotorSteps, 2);
+
 // This is the acceleration controllers.
 AccelStepper Rotation(RotateLeftCB, RotateRihtCB);
 AccelStepper Translation(TranslateForwardCB, TranslateBackwardCB);

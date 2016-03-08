@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace DiO_CS_KarelV1_TEST
+namespace GUI
 {
     static class Program
     {

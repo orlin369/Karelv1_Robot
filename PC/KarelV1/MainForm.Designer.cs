@@ -1,4 +1,4 @@
-﻿namespace DiO_CS_KarelV1_TEST
+﻿namespace GUI
 {
     partial class MainForm
     {
@@ -38,7 +38,6 @@
             this.tblControls = new System.Windows.Forms.TableLayoutPanel();
             this.txtState = new System.Windows.Forms.TextBox();
             this.gpbControls = new System.Windows.Forms.GroupBox();
-            this.btnTastDatabase = new System.Windows.Forms.Button();
             this.btnReset = new System.Windows.Forms.Button();
             this.btnRight = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -65,11 +64,11 @@
             this.pbGlyph = new System.Windows.Forms.PictureBox();
             this.tbpSensors = new System.Windows.Forms.TabPage();
             this.pnlSensors = new System.Windows.Forms.Panel();
+            this.lblRobotPosition = new System.Windows.Forms.Label();
             this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
-            this.lblRobotPosition = new System.Windows.Forms.Label();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -172,7 +171,6 @@
             // 
             // gpbControls
             // 
-            this.gpbControls.Controls.Add(this.btnTastDatabase);
             this.gpbControls.Controls.Add(this.btnReset);
             this.gpbControls.Controls.Add(this.btnRight);
             this.gpbControls.Controls.Add(this.btnStop);
@@ -188,16 +186,6 @@
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
             // 
-            // btnTastDatabase
-            // 
-            this.btnTastDatabase.Location = new System.Drawing.Point(164, 19);
-            this.btnTastDatabase.Name = "btnTastDatabase";
-            this.btnTastDatabase.Size = new System.Drawing.Size(73, 73);
-            this.btnTastDatabase.TabIndex = 22;
-            this.btnTastDatabase.Text = "Test DB";
-            this.btnTastDatabase.UseVisualStyleBackColor = true;
-            this.btnTastDatabase.Click += new System.EventHandler(this.btnTastDatabase_Click);
-            // 
             // btnReset
             // 
             this.btnReset.Location = new System.Drawing.Point(6, 19);
@@ -210,7 +198,7 @@
             // 
             // btnRight
             // 
-            this.btnRight.Image = global::DiO_CS_KarelV1_TEST.Images.ArrowRight;
+            this.btnRight.Image = global::GUI.Images.ArrowRight;
             this.btnRight.Location = new System.Drawing.Point(164, 98);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(73, 73);
@@ -220,7 +208,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Image = global::DiO_CS_KarelV1_TEST.Images.Stop;
+            this.btnStop.Image = global::GUI.Images.Stop;
             this.btnStop.Location = new System.Drawing.Point(85, 98);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(73, 73);
@@ -230,7 +218,7 @@
             // 
             // btnBackward
             // 
-            this.btnBackward.Image = global::DiO_CS_KarelV1_TEST.Images.ArrowDown;
+            this.btnBackward.Image = global::GUI.Images.ArrowDown;
             this.btnBackward.Location = new System.Drawing.Point(85, 177);
             this.btnBackward.Name = "btnBackward";
             this.btnBackward.Size = new System.Drawing.Size(73, 73);
@@ -240,7 +228,7 @@
             // 
             // btnLeft
             // 
-            this.btnLeft.Image = global::DiO_CS_KarelV1_TEST.Images.ArrowLeft;
+            this.btnLeft.Image = global::GUI.Images.ArrowLeft;
             this.btnLeft.Location = new System.Drawing.Point(6, 98);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(73, 73);
@@ -250,7 +238,7 @@
             // 
             // btnForward
             // 
-            this.btnForward.Image = global::DiO_CS_KarelV1_TEST.Images.ArrowUp;
+            this.btnForward.Image = global::GUI.Images.ArrowUp;
             this.btnForward.Location = new System.Drawing.Point(85, 19);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(73, 73);
@@ -338,7 +326,7 @@
             // 
             // btnGetUltrasonic
             // 
-            this.btnGetUltrasonic.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor2;
+            this.btnGetUltrasonic.Image = global::GUI.Images.Sensor2;
             this.btnGetUltrasonic.Location = new System.Drawing.Point(3, 3);
             this.btnGetUltrasonic.Name = "btnGetUltrasonic";
             this.btnGetUltrasonic.Size = new System.Drawing.Size(73, 73);
@@ -436,7 +424,7 @@
             // 
             // btnCapture
             // 
-            this.btnCapture.Image = global::DiO_CS_KarelV1_TEST.Images.Capture;
+            this.btnCapture.Image = global::GUI.Images.Capture;
             this.btnCapture.Location = new System.Drawing.Point(9, 83);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(96, 96);
@@ -477,9 +465,18 @@
             this.pnlSensors.Size = new System.Drawing.Size(1016, 457);
             this.pnlSensors.TabIndex = 0;
             // 
+            // lblRobotPosition
+            // 
+            this.lblRobotPosition.AutoSize = true;
+            this.lblRobotPosition.Location = new System.Drawing.Point(128, 246);
+            this.lblRobotPosition.Name = "lblRobotPosition";
+            this.lblRobotPosition.Size = new System.Drawing.Size(68, 16);
+            this.lblRobotPosition.TabIndex = 24;
+            this.lblRobotPosition.Text = "Position:";
+            // 
             // btnGetRobotPos
             // 
-            this.btnGetRobotPos.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor3;
+            this.btnGetRobotPos.Image = global::GUI.Images.Sensor3;
             this.btnGetRobotPos.Location = new System.Drawing.Point(131, 164);
             this.btnGetRobotPos.Name = "btnGetRobotPos";
             this.btnGetRobotPos.Size = new System.Drawing.Size(73, 73);
@@ -507,22 +504,13 @@
             // 
             // btnGetSensors
             // 
-            this.btnGetSensors.Image = global::DiO_CS_KarelV1_TEST.Images.Sensor1;
+            this.btnGetSensors.Image = global::GUI.Images.Sensor1;
             this.btnGetSensors.Location = new System.Drawing.Point(131, 26);
             this.btnGetSensors.Name = "btnGetSensors";
             this.btnGetSensors.Size = new System.Drawing.Size(73, 73);
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
-            // 
-            // lblRobotPosition
-            // 
-            this.lblRobotPosition.AutoSize = true;
-            this.lblRobotPosition.Location = new System.Drawing.Point(22, 164);
-            this.lblRobotPosition.Name = "lblRobotPosition";
-            this.lblRobotPosition.Size = new System.Drawing.Size(68, 16);
-            this.lblRobotPosition.TabIndex = 24;
-            this.lblRobotPosition.Text = "Position:";
             // 
             // MainForm
             // 
@@ -606,7 +594,6 @@
         private System.Windows.Forms.ProgressBar prbRightSensor;
         private System.Windows.Forms.ProgressBar prbLeftSensor;
         private System.Windows.Forms.Button btnGetRobotPos;
-        private System.Windows.Forms.Button btnTastDatabase;
         private System.Windows.Forms.Label lblRobotPosition;
     }
 }

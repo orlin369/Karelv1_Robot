@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DiO_CS_KarelV1_TEST {
+namespace GUI {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace DiO_CS_KarelV1_TEST {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DiO_CS_KarelV1_TEST.Images", typeof(Images).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("GUI.Images", typeof(Images).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

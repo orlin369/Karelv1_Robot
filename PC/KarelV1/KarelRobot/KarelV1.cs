@@ -73,17 +73,17 @@ namespace KarelRobot
         /// <summary>
         /// Rise when error occurred beteween PLC and PC.
         /// </summary>
-        public event EventHandler<StringEventArgs> Message;
+        public event EventHandler<StringEventArgs> OnMessage;
 
-        public event EventHandler<SensorsEventArgs> Sensors;
+        public event EventHandler<SensorsEventArgs> OnSensors;
 
-        public event EventHandler<UltraSonicSensorEventArgs> UltraSonicSensor;
+        public event EventHandler<UltraSonicSensorEventArgs> OnUltraSonicSensor;
 
-        public event EventHandler<EventArgs> Stoped;
+        public event EventHandler<EventArgs> OnStoped;
 
-        public event EventHandler<StringEventArgs> GreatingsMessage;
+        public event EventHandler<StringEventArgs> OnGreatingsMessage;
 
-        public event EventHandler<RobotPositionEventArgs> MotionState;
+        public event EventHandler<RobotPositionEventArgs> OnPosition;
 
         #endregion
 
@@ -270,6 +270,27 @@ namespace KarelRobot
 
         #region Private
 
+        private void SpeedRegulation()
+        {
+            const float maxSpeed = 100.0f;
+
+            float turn = 0.0f;
+            float speed = 0.0f;
+
+            float left = speed;
+            float right = speed;
+
+            if (turn < 0)
+            {
+                left *= Math.Max(maxSpeed + turn, 1);
+            }
+
+            if (turn > 0)
+            {
+                left *= Math.Max(maxSpeed - turn, 1);
+            }
+        }
+
         /// <summary>
         /// Send request to device.
         /// </summary>
@@ -313,9 +334,9 @@ namespace KarelRobot
                 //string indata = sp.ReadLine();
                 string inData = sp.ReadExisting();
 
-                if (this.Message != null)
+                if (this.OnMessage != null)
                 {
-                    this.Message(this, new StringEventArgs(inData));
+                    this.OnMessage(this, new StringEventArgs(inData));
                 }
 
                 this.ResponseParser(inData);
@@ -351,9 +372,9 @@ namespace KarelRobot
 
                             if ((float.TryParse(tokens[2], out left)) && (float.TryParse(tokens[4], out right)))
                             {
-                                if (this.Sensors != null)
+                                if (this.OnSensors != null)
                                 {
-                                    this.Sensors(this, new SensorsEventArgs(left, right));
+                                    this.OnSensors(this, new SensorsEventArgs(left, right));
                                 }
                             }
                         }
@@ -365,9 +386,9 @@ namespace KarelRobot
 
                     if (tokens[0] == "STOP")
                     {
-                        if (this.Stoped != null)
+                        if (this.OnStoped != null)
                         {
-                            this.Stoped(this, new EventArgs());
+                            this.OnStoped(this, new EventArgs());
                         }
                     }
 
@@ -377,7 +398,7 @@ namespace KarelRobot
 
                     if (tokens[0] == "US")
                     {
-                        float position = 0.0f;
+                        float phase = 0.0f;
                         float distance = 0.0f;
 
                         if (tokens[2].Contains("."))
@@ -385,14 +406,14 @@ namespace KarelRobot
                             tokens[2] = tokens[2].Replace('.', ',');
                         }
 
-                        if((float.TryParse(tokens[1], out position)) && (float.TryParse(tokens[2], out distance)))
+                        if((float.TryParse(tokens[1], out phase)) && (float.TryParse(tokens[2], out distance)))
                         {
                             distance /= 1000;
                         }
 
-                        if (this.UltraSonicSensor != null)
+                        if (this.OnUltraSonicSensor != null)
                         {
-                            this.UltraSonicSensor(this, new UltraSonicSensorEventArgs(position, distance));
+                            this.OnUltraSonicSensor(this, new UltraSonicSensorEventArgs(phase, distance));
                         }
                     }
 
@@ -402,27 +423,27 @@ namespace KarelRobot
 
                     if (tokens[0] == "POSITION")
                     {
-                        double alpha = 0;
-                        double distance = 0.0d;
+                        int position = 0;
+                        int distance = 0;
 
                         if (tokens[1] == "D" && tokens[3] == "A")
                         {
                             tokens[2] = RobotUtils.CorrectDecDelimiter(tokens[2]);
-                            if (!double.TryParse(tokens[2], out distance))
+                            if (!int.TryParse(tokens[2], out distance))
                             {
                                 return;
                             }
 
                             tokens[4] = RobotUtils.CorrectDecDelimiter(tokens[4]);
-                            if (!double.TryParse(tokens[4], out alpha))
+                            if (!int.TryParse(tokens[4], out position))
                             {
                                 return;
                             }
                         }
 
-                        if (this.MotionState != null)
+                        if (this.OnPosition != null)
                         {
-                            this.MotionState(this, new RobotPositionEventArgs(alpha, distance));
+                            this.OnPosition(this, new RobotPositionEventArgs(position, distance));
                         }
                     }
 
@@ -432,9 +453,9 @@ namespace KarelRobot
 
                     if (tokens[0].Contains("GREATINGS"))
                     {
-                        if (this.GreatingsMessage != null)
+                        if (this.OnGreatingsMessage != null)
                         {
-                            this.GreatingsMessage(this, new StringEventArgs(tokens[1]));
+                            this.OnGreatingsMessage(this, new StringEventArgs(tokens[1]));
                         }
                     }
 

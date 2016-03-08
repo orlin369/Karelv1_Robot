@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DiO_CS_KarelV1_TEST.Properties {
+namespace GUI.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -38,25 +38,37 @@ namespace DiO_CS_KarelV1_TEST.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.8324975")]
-        public float StepToDegreeBy8 {
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double SteppsCount {
             get {
-                return ((float)(this["StepToDegreeBy8"]));
+                return ((double)(this["SteppsCount"]));
             }
             set {
-                this["StepToDegreeBy8"] = value;
+                this["SteppsCount"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0.416248739")]
-        public float StepToDegreeBy16 {
+        [global::System.Configuration.DefaultSettingValueAttribute("16")]
+        public double StepperPostScaler {
             get {
-                return ((float)(this["StepToDegreeBy16"]));
+                return ((double)(this["StepperPostScaler"]));
             }
             set {
-                this["StepToDegreeBy16"] = value;
+                this["StepperPostScaler"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("53.5")]
+        public double DiametterOfWheel {
+            get {
+                return ((double)(this["DiametterOfWheel"]));
+            }
+            set {
+                this["DiametterOfWheel"] = value;
             }
         }
     }
