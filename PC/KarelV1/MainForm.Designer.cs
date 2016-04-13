@@ -69,6 +69,7 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
+            this.btnLoginTest = new System.Windows.Forms.Button();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -454,6 +455,7 @@
             // 
             // pnlSensors
             // 
+            this.pnlSensors.Controls.Add(this.btnLoginTest);
             this.pnlSensors.Controls.Add(this.lblRobotPosition);
             this.pnlSensors.Controls.Add(this.btnGetRobotPos);
             this.pnlSensors.Controls.Add(this.prbRightSensor);
@@ -511,6 +513,16 @@
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
+            // 
+            // btnLoginTest
+            // 
+            this.btnLoginTest.Location = new System.Drawing.Point(922, 16);
+            this.btnLoginTest.Name = "btnLoginTest";
+            this.btnLoginTest.Size = new System.Drawing.Size(73, 73);
+            this.btnLoginTest.TabIndex = 25;
+            this.btnLoginTest.Text = "Login Test";
+            this.btnLoginTest.UseVisualStyleBackColor = true;
+            this.btnLoginTest.Click += new System.EventHandler(this.btnLoginTest_Click);
             // 
             // MainForm
             // 
@@ -595,6 +607,7 @@
         private System.Windows.Forms.ProgressBar prbLeftSensor;
         private System.Windows.Forms.Button btnGetRobotPos;
         private System.Windows.Forms.Label lblRobotPosition;
+        private System.Windows.Forms.Button btnLoginTest;
     }
 }
 

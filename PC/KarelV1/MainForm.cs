@@ -462,7 +462,7 @@ namespace GUI
             if (this.myRobot != null)
             {
                 int steps = RobotUtils.MmToStep(
-                    100.0d,
+                    10.0d,
                     Settings.Default.SteppsCount,
                     Settings.Default.StepperPostScaler,
                     Settings.Default.DiametterOfWheel);
@@ -475,7 +475,7 @@ namespace GUI
             if (this.myRobot != null)
             {
                 int steps = RobotUtils.MmToStep(
-                    -100.0d,
+                    -10.0d,
                     Settings.Default.SteppsCount,
                     Settings.Default.StepperPostScaler,
                     Settings.Default.DiametterOfWheel);
@@ -485,21 +485,17 @@ namespace GUI
 
         private void MoveLeft()
         {
-            if (this.myRobot != null)
-            {
-                // -10 deg
-                this.myRobot.Rotate(-100);
-            }
+            if (this.myRobot == null) return;
+            // -10 deg
+            this.myRobot.Rotate(-10);
         }
 
         private void MoveRight()
         {
-            if (this.myRobot != null)
-            {
-                // 10 deg
-                int steps = RobotUtils.DegToStep(45, 200, 16, Settings.Default.DiametterOfWheel);
-                this.myRobot.Rotate(steps);
-            }
+            if (this.myRobot == null) return;
+            // 10 deg
+            int steps = RobotUtils.DegToStep(45, 200, 16, Settings.Default.DiametterOfWheel);
+            this.myRobot.Rotate(steps);
         }
 
         private void myRobot_OnMessage(object sender, StringEventArgs e)
@@ -542,7 +538,7 @@ namespace GUI
 
             this.SetRobotPos((float)mm, (float)e.Alpha);
 
-            //this.SendRobotPos((float)e.Distance, (float)e.Alpha);
+            this.SendRobotPos((float)e.Radius, (float)e.Alpha);
 
             this.AddStatus(String.Format("Position: A:{0:F3} D:{1:F3}", e.Alpha, mm), Color.White);
 
@@ -1007,6 +1003,13 @@ namespace GUI
         }
 
         #endregion
+
+        private void btnLoginTest_Click(object sender, EventArgs e)
+        {
+            //user: testclient
+            //pass: testpass
+            this.database.Login("testclient", "testpass");
+        }
 
     }
 }
