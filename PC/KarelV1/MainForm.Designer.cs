@@ -64,12 +64,12 @@
             this.pbGlyph = new System.Windows.Forms.PictureBox();
             this.tbpSensors = new System.Windows.Forms.TabPage();
             this.pnlSensors = new System.Windows.Forms.Panel();
+            this.btnLoginTest = new System.Windows.Forms.Button();
             this.lblRobotPosition = new System.Windows.Forms.Label();
             this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
-            this.btnLoginTest = new System.Windows.Forms.Button();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -90,11 +90,12 @@
             // 
             // mainMenu
             // 
+            this.mainMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.connectionToolStripMenuItem});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
-            this.mainMenu.Size = new System.Drawing.Size(1455, 24);
+            this.mainMenu.Size = new System.Drawing.Size(1455, 28);
             this.mainMenu.TabIndex = 11;
             this.mainMenu.Text = "menuStrip1";
             // 
@@ -103,30 +104,31 @@
             this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.portsToolStripMenuItem});
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
-            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(96, 24);
             this.connectionToolStripMenuItem.Text = "Connection";
             this.connectionToolStripMenuItem.Click += new System.EventHandler(this.connectionToolStripMenuItem_Click);
             // 
             // portsToolStripMenuItem
             // 
             this.portsToolStripMenuItem.Name = "portsToolStripMenuItem";
-            this.portsToolStripMenuItem.Size = new System.Drawing.Size(101, 22);
+            this.portsToolStripMenuItem.Size = new System.Drawing.Size(116, 26);
             this.portsToolStripMenuItem.Text = "Ports";
             // 
             // statBar
             // 
+            this.statBar.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblIsConnected});
-            this.statBar.Location = new System.Drawing.Point(0, 516);
+            this.statBar.Location = new System.Drawing.Point(0, 513);
             this.statBar.Name = "statBar";
-            this.statBar.Size = new System.Drawing.Size(1455, 22);
+            this.statBar.Size = new System.Drawing.Size(1455, 25);
             this.statBar.TabIndex = 12;
             this.statBar.Text = "statusStrip1";
             // 
             // lblIsConnected
             // 
             this.lblIsConnected.Name = "lblIsConnected";
-            this.lblIsConnected.Size = new System.Drawing.Size(97, 17);
+            this.lblIsConnected.Size = new System.Drawing.Size(119, 20);
             this.lblIsConnected.Text = "Connected: False";
             // 
             // tblMain
@@ -137,11 +139,11 @@
             this.tblMain.Controls.Add(this.tblControls, 0, 0);
             this.tblMain.Controls.Add(this.tcSensorsFunctions, 1, 0);
             this.tblMain.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tblMain.Location = new System.Drawing.Point(0, 24);
+            this.tblMain.Location = new System.Drawing.Point(0, 28);
             this.tblMain.Name = "tblMain";
             this.tblMain.RowCount = 1;
             this.tblMain.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblMain.Size = new System.Drawing.Size(1455, 492);
+            this.tblMain.Size = new System.Drawing.Size(1455, 485);
             this.tblMain.TabIndex = 14;
             // 
             // tblControls
@@ -157,17 +159,17 @@
             this.tblControls.RowCount = 2;
             this.tblControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 54.73251F));
             this.tblControls.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.26749F));
-            this.tblControls.Size = new System.Drawing.Size(419, 486);
+            this.tblControls.Size = new System.Drawing.Size(419, 479);
             this.tblControls.TabIndex = 0;
             // 
             // txtState
             // 
             this.txtState.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtState.Location = new System.Drawing.Point(3, 268);
+            this.txtState.Location = new System.Drawing.Point(3, 265);
             this.txtState.Multiline = true;
             this.txtState.Name = "txtState";
             this.txtState.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtState.Size = new System.Drawing.Size(413, 215);
+            this.txtState.Size = new System.Drawing.Size(413, 211);
             this.txtState.TabIndex = 7;
             // 
             // gpbControls
@@ -182,7 +184,7 @@
             this.gpbControls.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.gpbControls.Location = new System.Drawing.Point(3, 3);
             this.gpbControls.Name = "gpbControls";
-            this.gpbControls.Size = new System.Drawing.Size(413, 259);
+            this.gpbControls.Size = new System.Drawing.Size(413, 256);
             this.gpbControls.TabIndex = 0;
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
@@ -257,16 +259,16 @@
             this.tcSensorsFunctions.Location = new System.Drawing.Point(428, 3);
             this.tcSensorsFunctions.Name = "tcSensorsFunctions";
             this.tcSensorsFunctions.SelectedIndex = 0;
-            this.tcSensorsFunctions.Size = new System.Drawing.Size(1024, 486);
+            this.tcSensorsFunctions.Size = new System.Drawing.Size(1024, 479);
             this.tcSensorsFunctions.TabIndex = 1;
             // 
             // tbpSonar
             // 
             this.tbpSonar.Controls.Add(this.tableLayoutPanel1);
-            this.tbpSonar.Location = new System.Drawing.Point(4, 25);
+            this.tbpSonar.Location = new System.Drawing.Point(4, 29);
             this.tbpSonar.Name = "tbpSonar";
             this.tbpSonar.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpSonar.Size = new System.Drawing.Size(1016, 457);
+            this.tbpSonar.Size = new System.Drawing.Size(1016, 446);
             this.tbpSonar.TabIndex = 0;
             this.tbpSonar.Text = "Sonar";
             this.tbpSonar.UseVisualStyleBackColor = true;
@@ -284,7 +286,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1010, 451);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1010, 440);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // pbSensorView
@@ -293,7 +295,7 @@
             this.pbSensorView.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbSensorView.Location = new System.Drawing.Point(3, 3);
             this.pbSensorView.Name = "pbSensorView";
-            this.pbSensorView.Size = new System.Drawing.Size(903, 445);
+            this.pbSensorView.Size = new System.Drawing.Size(903, 434);
             this.pbSensorView.TabIndex = 12;
             this.pbSensorView.TabStop = false;
             this.pbSensorView.Paint += new System.Windows.Forms.PaintEventHandler(this.pbSensorView_Paint);
@@ -306,7 +308,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(912, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(95, 445);
+            this.panel1.Size = new System.Drawing.Size(95, 434);
             this.panel1.TabIndex = 13;
             // 
             // lblDegreeSensor
@@ -314,7 +316,7 @@
             this.lblDegreeSensor.AutoSize = true;
             this.lblDegreeSensor.Location = new System.Drawing.Point(45, 85);
             this.lblDegreeSensor.Name = "lblDegreeSensor";
-            this.lblDegreeSensor.Size = new System.Drawing.Size(45, 16);
+            this.lblDegreeSensor.Size = new System.Drawing.Size(51, 20);
             this.lblDegreeSensor.TabIndex = 26;
             this.lblDegreeSensor.Text = "[deg]";
             // 
@@ -322,7 +324,7 @@
             // 
             this.tbSensorPosition.Location = new System.Drawing.Point(3, 82);
             this.tbSensorPosition.Name = "tbSensorPosition";
-            this.tbSensorPosition.Size = new System.Drawing.Size(36, 22);
+            this.tbSensorPosition.Size = new System.Drawing.Size(36, 26);
             this.tbSensorPosition.TabIndex = 25;
             // 
             // btnGetUltrasonic
@@ -338,10 +340,10 @@
             // tbpGlyph
             // 
             this.tbpGlyph.Controls.Add(this.tblGlyph);
-            this.tbpGlyph.Location = new System.Drawing.Point(4, 25);
+            this.tbpGlyph.Location = new System.Drawing.Point(4, 29);
             this.tbpGlyph.Name = "tbpGlyph";
             this.tbpGlyph.Padding = new System.Windows.Forms.Padding(3);
-            this.tbpGlyph.Size = new System.Drawing.Size(1016, 457);
+            this.tbpGlyph.Size = new System.Drawing.Size(1016, 453);
             this.tbpGlyph.TabIndex = 1;
             this.tbpGlyph.Text = "Glyph";
             this.tbpGlyph.UseVisualStyleBackColor = true;
@@ -359,7 +361,7 @@
             this.tblGlyph.RowCount = 1;
             this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblGlyph.Size = new System.Drawing.Size(1010, 451);
+            this.tblGlyph.Size = new System.Drawing.Size(1010, 447);
             this.tblGlyph.TabIndex = 0;
             // 
             // pnlGlyphControl
@@ -373,7 +375,7 @@
             this.pnlGlyphControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlGlyphControl.Location = new System.Drawing.Point(817, 3);
             this.pnlGlyphControl.Name = "pnlGlyphControl";
-            this.pnlGlyphControl.Size = new System.Drawing.Size(190, 445);
+            this.pnlGlyphControl.Size = new System.Drawing.Size(190, 441);
             this.pnlGlyphControl.TabIndex = 0;
             // 
             // lblURL
@@ -381,7 +383,7 @@
             this.lblURL.AutoSize = true;
             this.lblURL.Location = new System.Drawing.Point(6, 13);
             this.lblURL.Name = "lblURL";
-            this.lblURL.Size = new System.Drawing.Size(38, 16);
+            this.lblURL.Size = new System.Drawing.Size(46, 20);
             this.lblURL.TabIndex = 24;
             this.lblURL.Text = "URL";
             // 
@@ -390,7 +392,7 @@
             this.lblUTInterval.AutoSize = true;
             this.lblUTInterval.Location = new System.Drawing.Point(12, 188);
             this.lblUTInterval.Name = "lblUTInterval";
-            this.lblUTInterval.Size = new System.Drawing.Size(81, 16);
+            this.lblUTInterval.Size = new System.Drawing.Size(99, 20);
             this.lblUTInterval.TabIndex = 23;
             this.lblUTInterval.Text = "Time [ms]:";
             // 
@@ -398,7 +400,7 @@
             // 
             this.tbCameraUpdateTime.Location = new System.Drawing.Point(99, 185);
             this.tbCameraUpdateTime.Name = "tbCameraUpdateTime";
-            this.tbCameraUpdateTime.Size = new System.Drawing.Size(40, 22);
+            this.tbCameraUpdateTime.Size = new System.Drawing.Size(40, 26);
             this.tbCameraUpdateTime.TabIndex = 22;
             this.tbCameraUpdateTime.Text = "500";
             // 
@@ -407,7 +409,7 @@
             this.chkContinuesCapture.AutoSize = true;
             this.chkContinuesCapture.Location = new System.Drawing.Point(12, 213);
             this.chkContinuesCapture.Name = "chkContinuesCapture";
-            this.chkContinuesCapture.Size = new System.Drawing.Size(153, 20);
+            this.chkContinuesCapture.Size = new System.Drawing.Size(187, 24);
             this.chkContinuesCapture.TabIndex = 21;
             this.chkContinuesCapture.Text = "Continues Capture";
             this.chkContinuesCapture.UseVisualStyleBackColor = true;
@@ -439,16 +441,16 @@
             this.pbGlyph.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbGlyph.Location = new System.Drawing.Point(3, 3);
             this.pbGlyph.Name = "pbGlyph";
-            this.pbGlyph.Size = new System.Drawing.Size(808, 445);
+            this.pbGlyph.Size = new System.Drawing.Size(808, 441);
             this.pbGlyph.TabIndex = 1;
             this.pbGlyph.TabStop = false;
             // 
             // tbpSensors
             // 
             this.tbpSensors.Controls.Add(this.pnlSensors);
-            this.tbpSensors.Location = new System.Drawing.Point(4, 25);
+            this.tbpSensors.Location = new System.Drawing.Point(4, 29);
             this.tbpSensors.Name = "tbpSensors";
-            this.tbpSensors.Size = new System.Drawing.Size(1016, 457);
+            this.tbpSensors.Size = new System.Drawing.Size(1016, 453);
             this.tbpSensors.TabIndex = 2;
             this.tbpSensors.Text = "Sensors";
             this.tbpSensors.UseVisualStyleBackColor = true;
@@ -464,15 +466,25 @@
             this.pnlSensors.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlSensors.Location = new System.Drawing.Point(0, 0);
             this.pnlSensors.Name = "pnlSensors";
-            this.pnlSensors.Size = new System.Drawing.Size(1016, 457);
+            this.pnlSensors.Size = new System.Drawing.Size(1016, 453);
             this.pnlSensors.TabIndex = 0;
+            // 
+            // btnLoginTest
+            // 
+            this.btnLoginTest.Location = new System.Drawing.Point(922, 16);
+            this.btnLoginTest.Name = "btnLoginTest";
+            this.btnLoginTest.Size = new System.Drawing.Size(73, 73);
+            this.btnLoginTest.TabIndex = 25;
+            this.btnLoginTest.Text = "Login Test";
+            this.btnLoginTest.UseVisualStyleBackColor = true;
+            this.btnLoginTest.Click += new System.EventHandler(this.btnLoginTest_Click);
             // 
             // lblRobotPosition
             // 
             this.lblRobotPosition.AutoSize = true;
             this.lblRobotPosition.Location = new System.Drawing.Point(128, 246);
             this.lblRobotPosition.Name = "lblRobotPosition";
-            this.lblRobotPosition.Size = new System.Drawing.Size(68, 16);
+            this.lblRobotPosition.Size = new System.Drawing.Size(83, 20);
             this.lblRobotPosition.TabIndex = 24;
             this.lblRobotPosition.Text = "Position:";
             // 
@@ -513,16 +525,6 @@
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
-            // 
-            // btnLoginTest
-            // 
-            this.btnLoginTest.Location = new System.Drawing.Point(922, 16);
-            this.btnLoginTest.Name = "btnLoginTest";
-            this.btnLoginTest.Size = new System.Drawing.Size(73, 73);
-            this.btnLoginTest.TabIndex = 25;
-            this.btnLoginTest.Text = "Login Test";
-            this.btnLoginTest.UseVisualStyleBackColor = true;
-            this.btnLoginTest.Click += new System.EventHandler(this.btnLoginTest_Click);
             // 
             // MainForm
             // 

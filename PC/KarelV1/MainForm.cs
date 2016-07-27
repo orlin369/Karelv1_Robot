@@ -487,13 +487,15 @@ namespace GUI
         {
             if (this.myRobot == null) return;
             // -10 deg
-            this.myRobot.Rotate(-10);
+            this.myRobot.Rotate(-60);
         }
 
         private void MoveRight()
         {
             if (this.myRobot == null) return;
             // 10 deg
+            this.myRobot.Rotate(60);
+            return;
             int steps = RobotUtils.DegToStep(45, 200, 16, Settings.Default.DiametterOfWheel);
             this.myRobot.Rotate(steps);
         }
