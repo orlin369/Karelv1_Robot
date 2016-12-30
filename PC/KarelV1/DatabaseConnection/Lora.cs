@@ -57,7 +57,7 @@ namespace DatabaseConnection
             serialisedData = String.Format("robotData={0}", serialisedData);
 
             //Console.WriteLine(serialisedData);
-            this.MakeRequest(serialisedData);
+            //this.MakeRequest(serialisedData);
         }
 
         public string Login(string username, string password)
