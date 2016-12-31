@@ -399,21 +399,21 @@ namespace KarelRobot
                     if (tokens[0] == "US")
                     {
                         float phase = 0.0f;
-                        float distance = 0.0f;
+                        float time = 0.0f;
 
                         if (tokens[2].Contains("."))
                         {
                             tokens[2] = tokens[2].Replace('.', ',');
                         }
 
-                        if((float.TryParse(tokens[1], out phase)) && (float.TryParse(tokens[2], out distance)))
+                        if((float.TryParse(tokens[1], out phase)) && (float.TryParse(tokens[2], out time)))
                         {
-                            distance /= 1000;
+                            time /= 58.0F;
                         }
 
                         if (this.OnUltraSonicSensor != null)
                         {
-                            this.OnUltraSonicSensor(this, new UltraSonicSensorEventArgs(phase, distance));
+                            this.OnUltraSonicSensor(this, new UltraSonicSensorEventArgs(phase, time));
                         }
                     }
 

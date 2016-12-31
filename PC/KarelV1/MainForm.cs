@@ -517,9 +517,9 @@ namespace GUI
 
         private void myRobot_OnUltraSonicSensor(object sender, UltraSonicSensorEventArgs e)
         {
-            this.AddStatus(String.Format("US Sensor: {0:F3}[deg] {1:F3}[mm]", e.Position, e.Distance), Color.White);
-
-            this.UpdateDiagram((int)e.Position, e.Distance * 2.0f);
+            this.AddStatus(String.Format("US Sensor: {0:F3}[deg] {1:F3}[cm]", e.Position, e.Distance), Color.White);
+            // TODO: Class HSR04
+            this.UpdateDiagram((int)e.Position, e.Distance / 330.0f);
         }
 
         private void myRobot_OnSensors(object sender, SensorsEventArgs e)
