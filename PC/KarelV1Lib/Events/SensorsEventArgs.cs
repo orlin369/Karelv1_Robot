@@ -23,21 +23,24 @@ SOFTWARE.
 */
 
 using System;
-using System.Windows.Forms;
 
-namespace KarelV1
+namespace KarelV1Lib.Events
 {
-    static class Program
+    public class SensorsEventArgs : EventArgs
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public float Left { get; private set; }
+        public float Right { get; private set; }
+
+        public SensorsEventArgs()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            this.Left = 0.0f;
+            this.Right = 0.0f;
+        }
+
+        public SensorsEventArgs(float left, float right)
+        {
+            this.Left = left;
+            this.Right = right;
         }
     }
 }

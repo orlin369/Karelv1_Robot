@@ -1,45 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.IO;
-using System.IO.Ports;
-using System.Threading;
-using System.Diagnostics;
-using KarelRobot.Events;
-using KarelRobot.Utils;
+﻿/*
 
-namespace KarelRobot
+Copyright (c) [2016] [Orlin Dimitrov]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+using System;
+using System.Threading;
+using KarelV1Lib.Events;
+using KarelV1.Utils;
+
+namespace KarelV1Lib
 {
-    public class KarelV1 : IDisposable
+    public class KarelV1 : Communicator, IDisposable
     {
 
         #region Variables
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private int timeOut;
 
-        /// <summary>
-        /// Comunication port.
-        /// </summary>
-        private SerialPort port;
-
-        /// <summary>
-        /// Comunication lock object.
-        /// </summary>
-        private Object requestLock = new Object();
-
-        /// <summary>
-        /// When is connected to the robot.
-        /// </summary>
-        private bool isConnected = false;
-
-        /// <summary>
-        /// Name of the port.
-        /// </summary>
-        private string portName = String.Empty;
 
         /// <summary>
         /// Delimiting characters.
@@ -48,32 +43,7 @@ namespace KarelRobot
 
         #endregion
 
-        #region Properties
-
-        /// <summary>
-        /// Maximum timeout.
-        /// </summary>
-        public int MaxTimeout { get; set; }
-
-        /// <summary>
-        /// If the board is correctly connected.
-        /// </summary>
-        public bool IsConnected
-        {
-            get
-            {
-                return this.isConnected;
-            }
-        }
-
-        #endregion
-
         #region Events
-
-        /// <summary>
-        /// Rise when error occurred beteween PLC and PC.
-        /// </summary>
-        public event EventHandler<StringEventArgs> OnMessage;
 
         public event EventHandler<SensorsEventArgs> OnSensors;
 
@@ -92,14 +62,14 @@ namespace KarelRobot
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="port">Comunication port.</param>
-        public KarelV1(string portName)
+        /// <param name="port">Communication port.</param>
+        public KarelV1(string portName) : base(portName)
         {
-            // max tiem 5 minutes
+            // max time 5 minutes
             this.MaxTimeout = 30000;
 
-            // Save the port name.
-            this.portName = portName;
+            // Attach the event handler.
+            this.OnMessage += KarelV1_OnMesage;
         }
 
         /// <summary>
@@ -107,15 +77,7 @@ namespace KarelRobot
         /// </summary>
         ~KarelV1()
         {
-            this.Dispose();
-        }
-
-        /// <summary>
-        /// Dispose
-        /// </summary>
-        public void Dispose()
-        {
-            this.Disconnect();
+            base.Dispose();
         }
 
         #endregion
@@ -123,76 +85,22 @@ namespace KarelRobot
         #region Public
 
         /// <summary>
-        /// Connetc to the serial port.
-        /// </summary>
-        public void Connect()
-        {
-            while (!this.isConnected)
-            {
-                try
-                {
-                    if (!this.isConnected)
-                    {
-                        this.port = new SerialPort(this.portName);
-                        this.port.BaudRate = 9600;
-                        this.port.DataBits = 8;
-                        this.port.StopBits = StopBits.One;
-                        this.port.Parity = Parity.None;
-                        this.port.DataReceived += new SerialDataReceivedEventHandler(DataReceivedHandler);
-                        this.port.Open();
-
-                        this.timeOut = 0;
-                        this.isConnected = true;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    this.timeOut += 1000;
-                    Thread.Sleep(timeOut);
-                    this.isConnected = false;
-                }
-                finally
-                {
-                    if (timeOut > this.MaxTimeout)
-                    {
-                        throw new InvalidOperationException("Could not connect to the robot.");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Disconnect
-        /// </summary>
-        public void Disconnect()
-        {
-            if (this.isConnected)
-            {
-                this.port.Close();
-            }
-            this.isConnected = false;
-        }
-
-        /// <summary>
         /// Reset the MCU
         /// </summary>
         public void Reset()
         {
-            lock (this.requestLock)
+            if (this.IsConnected && this.SerialPort.IsOpen)
             {
-                if (this.isConnected && this.port.IsOpen)
-                {
-                    this.port.DtrEnable = true;
-                    Thread.Sleep(200);
-                    this.port.DtrEnable = false;
-                }
+                this.SerialPort.DtrEnable = true;
+                Thread.Sleep(200);
+                this.SerialPort.DtrEnable = false;
             }
         }
 
         /// <summary>
         /// Move the robots.
         /// </summary>
-        /// <param name="value">Value of the movment tenth of the [mm].</param>
+        /// <param name="value">Value of the movement tenth of the [mm].</param>
         public void Move(int value)
         {
             string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
@@ -269,81 +177,15 @@ namespace KarelRobot
         #endregion
 
         #region Private
-
-        private void SpeedRegulation()
-        {
-            const float maxSpeed = 100.0f;
-
-            float turn = 0.0f;
-            float speed = 0.0f;
-
-            float left = speed;
-            float right = speed;
-
-            if (turn < 0)
-            {
-                left *= Math.Max(maxSpeed + turn, 1);
-            }
-
-            if (turn > 0)
-            {
-                left *= Math.Max(maxSpeed - turn, 1);
-            }
-        }
-
+        
         /// <summary>
-        /// Send request to device.
-        /// </summary>
-        /// <param name="request">Request string.</param>
-        private void SendRequest(string request)
-        {
-            lock (this.requestLock)
-            {
-                try
-                {
-                    if (this.isConnected && port.IsOpen)
-                    {
-                        this.port.WriteLine(request);
-                    }
-                }
-                catch (Exception exception)
-                {
-                    this.isConnected = false;
-                    this.timeOut = 0;
-                    // Reconnect.
-                    this.Connect();
-                }
-            }
-        }
-
-        /// <summary>
-        /// Data recievce event.
+        /// Handler that cal response parser.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DataReceivedHandler(object sender, SerialDataReceivedEventArgs e)
+        private void KarelV1_OnMesage(object sender, StringEventArgs e)
         {
-            // Wait ...
-            Thread.Sleep(50);
-
-            if (sender != null)
-            {
-                // Make serial port to get data from.
-                SerialPort sp = (SerialPort)sender;
-
-                //string indata = sp.ReadLine();
-                string inData = sp.ReadExisting();
-
-                if (this.OnMessage != null)
-                {
-                    this.OnMessage(this, new StringEventArgs(inData));
-                }
-
-                this.ResponseParser(inData);
-
-                // Discart the duffer.
-                sp.DiscardInBuffer();
-            }
+            this.ResponseParser(e.Message);
         }
 
         /// <summary>

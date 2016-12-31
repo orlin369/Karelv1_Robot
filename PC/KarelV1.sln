@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KarelV1", "KarelV1\KarelV1.csproj", "{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KarelV1Lib", "KarelV1Lib\KarelV1Lib.csproj", "{FEC9886D-B0A6-40CC-A8F4-C59609960F8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPWebcam", "IPWebcam\IPWebcam.csproj", "{68821441-E263-4411-9113-6DAFB6B3065F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF6E45D-40F7-47A2-983A-43531DA3D6F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC9886D-B0A6-40CC-A8F4-C59609960F8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC9886D-B0A6-40CC-A8F4-C59609960F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC9886D-B0A6-40CC-A8F4-C59609960F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC9886D-B0A6-40CC-A8F4-C59609960F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68821441-E263-4411-9113-6DAFB6B3065F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68821441-E263-4411-9113-6DAFB6B3065F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68821441-E263-4411-9113-6DAFB6B3065F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68821441-E263-4411-9113-6DAFB6B3065F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

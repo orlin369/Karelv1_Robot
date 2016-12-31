@@ -1,4 +1,4 @@
-﻿namespace GUI
+﻿namespace KarelV1
 {
     partial class MainForm
     {
@@ -201,7 +201,7 @@
             // 
             // btnRight
             // 
-            this.btnRight.Image = global::GUI.Images.ArrowRight;
+            this.btnRight.Image = global::KarelV1.Images.ArrowRight;
             this.btnRight.Location = new System.Drawing.Point(164, 98);
             this.btnRight.Name = "btnRight";
             this.btnRight.Size = new System.Drawing.Size(73, 73);
@@ -211,7 +211,7 @@
             // 
             // btnStop
             // 
-            this.btnStop.Image = global::GUI.Images.Stop;
+            this.btnStop.Image = global::KarelV1.Images.Stop;
             this.btnStop.Location = new System.Drawing.Point(85, 98);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(73, 73);
@@ -221,7 +221,7 @@
             // 
             // btnBackward
             // 
-            this.btnBackward.Image = global::GUI.Images.ArrowDown;
+            this.btnBackward.Image = global::KarelV1.Images.ArrowDown;
             this.btnBackward.Location = new System.Drawing.Point(85, 177);
             this.btnBackward.Name = "btnBackward";
             this.btnBackward.Size = new System.Drawing.Size(73, 73);
@@ -231,7 +231,7 @@
             // 
             // btnLeft
             // 
-            this.btnLeft.Image = global::GUI.Images.ArrowLeft;
+            this.btnLeft.Image = global::KarelV1.Images.ArrowLeft;
             this.btnLeft.Location = new System.Drawing.Point(6, 98);
             this.btnLeft.Name = "btnLeft";
             this.btnLeft.Size = new System.Drawing.Size(73, 73);
@@ -241,7 +241,7 @@
             // 
             // btnForward
             // 
-            this.btnForward.Image = global::GUI.Images.ArrowUp;
+            this.btnForward.Image = global::KarelV1.Images.ArrowUp;
             this.btnForward.Location = new System.Drawing.Point(85, 19);
             this.btnForward.Name = "btnForward";
             this.btnForward.Size = new System.Drawing.Size(73, 73);
@@ -329,7 +329,7 @@
             // 
             // btnGetUltrasonic
             // 
-            this.btnGetUltrasonic.Image = global::GUI.Images.Sensor2;
+            this.btnGetUltrasonic.Image = global::KarelV1.Images.Sensor2;
             this.btnGetUltrasonic.Location = new System.Drawing.Point(3, 3);
             this.btnGetUltrasonic.Name = "btnGetUltrasonic";
             this.btnGetUltrasonic.Size = new System.Drawing.Size(73, 73);
@@ -427,7 +427,7 @@
             // 
             // btnCapture
             // 
-            this.btnCapture.Image = global::GUI.Images.Capture;
+            this.btnCapture.Image = global::KarelV1.Images.Capture;
             this.btnCapture.Location = new System.Drawing.Point(9, 83);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(96, 96);
@@ -490,7 +490,7 @@
             // 
             // btnGetRobotPos
             // 
-            this.btnGetRobotPos.Image = global::GUI.Images.Sensor3;
+            this.btnGetRobotPos.Image = global::KarelV1.Images.Sensor3;
             this.btnGetRobotPos.Location = new System.Drawing.Point(131, 164);
             this.btnGetRobotPos.Name = "btnGetRobotPos";
             this.btnGetRobotPos.Size = new System.Drawing.Size(73, 73);
@@ -518,7 +518,7 @@
             // 
             // btnGetSensors
             // 
-            this.btnGetSensors.Image = global::GUI.Images.Sensor1;
+            this.btnGetSensors.Image = global::KarelV1.Images.Sensor1;
             this.btnGetSensors.Location = new System.Drawing.Point(131, 26);
             this.btnGetSensors.Name = "btnGetSensors";
             this.btnGetSensors.Size = new System.Drawing.Size(73, 73);

@@ -6,12 +6,12 @@ using System.Text;
 using System.Drawing;
 using System.IO;
 
-namespace ImageSource
+namespace IPWebcam
 {
     public class IpCamera : ICaptureDevice
     {
         /// <summary>
-        /// Unifi
+        /// URI of the camera.
         /// </summary>
         private Uri uri;
 
@@ -54,12 +54,14 @@ namespace ImageSource
             WebRequest request = WebRequest.Create(this.uri.AbsoluteUri);
             WebResponse response = request.GetResponse();
             Stream stream = response.GetResponseStream();
-            return new Bitmap(stream);
 
             if (Torch)
             {
                 this.SetTorch(false);
             }
+
+            return new Bitmap(stream);
+
         }
 
         public Stream SetTorch(bool state)

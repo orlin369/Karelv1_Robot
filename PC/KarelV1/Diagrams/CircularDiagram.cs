@@ -1,23 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿/*
+
+Copyright (c) [2016] [Orlin Dimitrov]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+using System;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
 namespace Diagrams
 {
     /// <summary>
-    /// 
+    /// Circular diagram draw.
     /// </summary>
     public partial class CircularDiagram : UserControl
     {
-        #region Variables
 
-        public EventHandler<EventArgs> OnReadyDraw;
+        #region Variables
 
         /// <summary>
         /// 
@@ -58,16 +76,11 @@ namespace Diagrams
         /// 
         /// </summary>
         private Brush diagramBrush;
-
+        
         /// <summary>
         /// 
         /// </summary>
-        public string DiagramName;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        private System.Drawing.Font diagramNameFont;
+        private Font diagramNameFont;
 
         /// <summary>
         /// 
@@ -84,13 +97,36 @@ namespace Diagrams
         /// </summary>
         private int alphaBlendGraphics = 120;
 
+
         private int alphaBlendGrid = 255;
 
 
         #endregion
 
+        #region Properties
+
+        /// <summary>
+        /// Diagram name.
+        /// </summary>
+        public string DiagramName { get; set; }
+
+        #endregion
+
+        #region Events
+
+        /// <summary>
+        /// On drawing finished.
+        /// </summary>
+        public EventHandler<EventArgs> OnReadyDraw;
+
+        #endregion
+
         #region Constructor
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="size">Size of the diagram.</param>
         public CircularDiagram(Size size)
         {
             //
@@ -111,7 +147,7 @@ namespace Diagrams
             //
             if ((this.Size.Width / 2) != this.Size.Height)
             {
-                throw new FormatException("Invalide size value.");
+                throw new FormatException("Invalid size value.");
             }
 
             this.backgroungColor = Color.Black;
@@ -179,14 +215,14 @@ namespace Diagrams
             graphics.TranslateTransform(0.0f, -(float)this.Size.Height);
 
 
-            // Draw the grid on the creen.
+            // Draw the grid on the screen.
             for (double index = 0.25d; index <= 1.0d; index += 0.25d)
             {
-                graphics.DrawArc(this.gridPen, this.generateRectangle(diagramCenterPoint, (int)(this.Size.Height * index)), startAngle, sweepAngle);
+                graphics.DrawArc(this.gridPen, this.GenerateRectangle(diagramCenterPoint, (int)(this.Size.Height * index)), startAngle, sweepAngle);
             }
             for (int index = 0; index <= 180; index += 10)
             {
-                graphics.DrawLine(this.gridPen, this.polarToDecart((int)(this.Size.Height * 0.25f), index, this.diagramCenterPoint), this.polarToDecart(this.Size.Height, index, this.diagramCenterPoint));
+                graphics.DrawLine(this.gridPen, this.PolarToDecart((int)(this.Size.Height * 0.25f), index, this.diagramCenterPoint), this.PolarToDecart(this.Size.Height, index, this.diagramCenterPoint));
             }
 
             // Draw the diagram
@@ -200,9 +236,14 @@ namespace Diagrams
             }
         }
 
-        public void DrawLine(Graphics graphics, int index)
+        /// <summary>
+        /// Draw line on specified angle.
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="angle"></param>
+        public void DrawLine(Graphics graphics, int angle)
         {
-            graphics.DrawLine(new Pen(Brushes.BlueViolet, 5), this.polarToDecart((int)(this.Size.Height * 0.25f), index, this.diagramCenterPoint), this.polarToDecart(this.Size.Height, index, this.diagramCenterPoint));
+            graphics.DrawLine(new Pen(Brushes.BlueViolet, 5), this.PolarToDecart((int)(this.Size.Height * 0.25f), angle, this.diagramCenterPoint), this.PolarToDecart(this.Size.Height, angle, this.diagramCenterPoint));
         }
 
         /// <summary>
@@ -234,10 +275,16 @@ namespace Diagrams
             // 
             for (int i = 0; i < data.Length; i++)
             {
-                this.diagramCurvePoints[i] = this.polarToDecart(data[i] * this.Size.Height, i, this.diagramCenterPoint);
+                this.diagramCurvePoints[i] = this.PolarToDecart(data[i] * this.Size.Height, i, this.diagramCenterPoint);
             }
         }
 
+
+        /// <summary>
+        /// Set data on specified position.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="distance"></param>
         public void SetData(int position, double distance)
         {
             //
@@ -256,7 +303,7 @@ namespace Diagrams
                 distance = 0.0d;
             }
 
-            this.diagramCurvePoints[position] = this.polarToDecart(distance * this.Size.Height, position, this.diagramCenterPoint);
+            this.diagramCurvePoints[position] = this.PolarToDecart(distance * this.Size.Height, position, this.diagramCenterPoint);
 
             //this.diagramCurvePoints[position] = this.polarToDecart(distance * this.Size.Height, position, this.diagramCenterPoint);
         }
@@ -266,13 +313,13 @@ namespace Diagrams
         #region Private
 
         /// <summary>
-        /// Transform from polar coordinates to decart.
+        /// Transform from polar coordinates to Decca.
         /// </summary>
-        /// <param name="radius"></param>
-        /// <param name="angle"></param>
-        /// <param name="center"></param>
+        /// <param name="radius">Radius</param>
+        /// <param name="angle">Angle</param>
+        /// <param name="center">Center point of the vector.</param>
         /// <returns></returns>
-        private Point polarToDecart(double radius, double angle, Point center)
+        private Point PolarToDecart(double radius, double angle, Point center)
         {
             //
             double angleRadian = angle * 2 * Math.PI / 360;
@@ -291,7 +338,7 @@ namespace Diagrams
         /// <param name="center"></param>
         /// <param name="radius"></param>
         /// <returns></returns>
-        private Rectangle generateRectangle(Point center, int radius)
+        private Rectangle GenerateRectangle(Point center, int radius)
         {
             //
             Rectangle rectangle = new Rectangle(center.X - radius, center.Y - radius, radius * 2, radius * 2);
@@ -307,7 +354,6 @@ namespace Diagrams
         }
 
         #endregion
-
 
     }
 }

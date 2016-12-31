@@ -18,7 +18,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace ImageSource
+namespace IPWebcam
 {
     /// <summary>
     /// Capture image from imiging device. 

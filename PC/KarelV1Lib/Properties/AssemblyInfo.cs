@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DiO_CS_KarelV1_TEST")]
+[assembly: AssemblyTitle("KarelV1Lib")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("DiO_CS_KarelV1_TEST")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2015")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("KarelV1Lib")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following KarelV1D is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0b71dd0a-59d7-4618-8847-2ff2e59d2c99")]
+[assembly: Guid("fec9886d-b0a6-40cc-a8f4-c59609960f8a")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -1,29 +1,54 @@
-﻿using DatabaseConnection;
+﻿/*
+
+Copyright (c) [2016] [Orlin Dimitrov]
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
+using DatabaseConnection;
 using DatabaseConnection.Device.Actuators;
 using DatabaseConnection.Device.Sensors;
 using DatabaseConnection.Units;
-using Diagrams;
-using GUI.Properties;
-using InputMethods.KeystrokEventGenerator;
-using KarelRobot;
-using KarelRobot.Events;
-using KarelRobot.Utils;
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using Utils;
+
+using KarelV1.Utils;
+using KarelV1.Properties;
+using KarelV1Lib.Events;
+
+using Diagrams;
+using InputMethods.KeystrokEventGenerator;
+using IPWebcam;
 
 // 
 // Robot tasks ...
 // TODO: Add Tweeter publisher.
-// TODO: Create WEB application that listen for the twiits and show it on the screen.
-// TODO: Create gliph recognition module.
+// TODO: Create WEB application that listen for the tweets and show it on the screen.
+// TODO: Create glyph recognition module.
 // TODO: Add message when robot is moving and when it is not.
 // TODO: Add sensors.
 //
 
-namespace GUI
+namespace KarelV1
 {
     /// <summary>
     /// Main form of robot controller.
@@ -34,14 +59,14 @@ namespace GUI
         #region Variables
 
         /// <summary>
-        /// Robot seral port name.
+        /// Robot serial port name.
         /// </summary>
         private string robotSerialPortName = "";
 
         /// <summary>
         /// Robot communication.
         /// </summary>
-        private KarelV1 myRobot;
+        private KarelV1Lib.KarelV1 myRobot;
 
         /// <summary>
         /// Data generator.
@@ -74,9 +99,9 @@ namespace GUI
         private System.Windows.Forms.Timer cameraUpdateTimer;
 
         /// <summary>
-        /// IP Camera for the glyph recogniser.
+        /// IP Camera for the glyph recognizer.
         /// </summary>
-        private ImageSource.IpCamera ipCamera;
+        private IpCamera ipCamera;
 
         private Bitmap capturedImage;
 
@@ -423,10 +448,7 @@ namespace GUI
         {
             try
             {
-                // COM55 - Bluetooth
-                // COM67 - Cabel
-                // COM73 - cabel
-                this.myRobot = new KarelV1(this.robotSerialPortName);
+                this.myRobot = new KarelV1Lib.KarelV1(this.robotSerialPortName);
                 this.myRobot.OnMessage += myRobot_OnMessage;
                 this.myRobot.OnSensors += myRobot_OnSensors;
                 this.myRobot.OnUltraSonicSensor += myRobot_OnUltraSonicSensor;
@@ -728,13 +750,13 @@ namespace GUI
 
                 if (this.ipCamera == null)
                 {
-                    this.ipCamera = new ImageSource.IpCamera(uri);
+                    this.ipCamera = new IpCamera(uri);
                     //this.ipCamera.Torch = true;
                 }
 
                 if (uri != this.ipCamera.URI)
                 {
-                    this.ipCamera = new ImageSource.IpCamera(uri);
+                    this.ipCamera = new IpCamera(uri);
                     //this.ipCamera.Torch = true;
                 }
 

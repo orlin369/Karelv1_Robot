@@ -23,21 +23,21 @@ SOFTWARE.
 */
 
 using System;
-using System.Windows.Forms;
 
-namespace KarelV1
+namespace KarelV1Lib.Events
 {
-    static class Program
+    public class StringEventArgs : EventArgs
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public string Message { get; private set; }
+
+        public StringEventArgs()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            this.Message = String.Empty;
+        }
+
+        public StringEventArgs(string message)
+        {
+            this.Message = message;
         }
     }
 }

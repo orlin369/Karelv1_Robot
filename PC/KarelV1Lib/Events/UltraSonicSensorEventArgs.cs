@@ -23,21 +23,24 @@ SOFTWARE.
 */
 
 using System;
-using System.Windows.Forms;
 
-namespace KarelV1
+namespace KarelV1Lib.Events
 {
-    static class Program
+    public class UltraSonicSensorEventArgs : EventArgs
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public float Position { get; private set; }
+        public float Distance { get; private set; }
+
+        public UltraSonicSensorEventArgs()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            this.Position = 0;
+            this.Distance = 0.0f;
+        }
+
+        public UltraSonicSensorEventArgs(float position, float distance)
+        {
+            this.Position = position;
+            this.Distance = distance;
         }
     }
 }

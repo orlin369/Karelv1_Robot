@@ -23,21 +23,24 @@ SOFTWARE.
 */
 
 using System;
-using System.Windows.Forms;
 
-namespace KarelV1
+namespace KarelV1Lib.Events
 {
-    static class Program
+    public class RobotPositionEventArgs : EventArgs
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        public int Alpha { get; private set; }
+        public int Radius { get; private set; }
+
+        public RobotPositionEventArgs()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            this.Alpha = 0;
+            this.Radius = 0;
+        }
+
+        public RobotPositionEventArgs(int radius, int distance)
+        {
+            this.Alpha = radius;
+            this.Radius = distance;
         }
     }
 }
