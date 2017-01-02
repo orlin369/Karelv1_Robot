@@ -25,7 +25,7 @@ SOFTWARE.
 using System;
 using System.Drawing;
 
-namespace KarelV1.Utils
+namespace KarelV1Lib
 {
     public class RobotUtils
     {

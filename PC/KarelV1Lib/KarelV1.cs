@@ -25,21 +25,24 @@ SOFTWARE.
 using System;
 using System.Threading;
 using KarelV1Lib.Events;
-using KarelV1.Utils;
 
 namespace KarelV1Lib
 {
     public class KarelV1 : Communicator, IDisposable
     {
 
+        #region Constants
+
+        private const char TERMIN = '\n';
+
+        private const string RESPONSE_SIGN = "#";
+
+        private const string RESPONSE_DELIMITER = "\r\n";
+
+        #endregion
+
         #region Variables
 
-
-
-        /// <summary>
-        /// Delimiting characters.
-        /// </summary>
-        private char[] delimiterChars = {',', ':', '\t', ';' };
 
         #endregion
 
@@ -104,7 +107,7 @@ namespace KarelV1Lib
         public void Move(int value)
         {
             string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -114,7 +117,7 @@ namespace KarelV1Lib
         public void Rotate(int value)
         {
             string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -123,7 +126,7 @@ namespace KarelV1Lib
         public void Stop()
         {
            string command = "?STOP";
-           this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -132,7 +135,7 @@ namespace KarelV1Lib
         public void GetSensors()
         {
             string command = "?SENSORS";
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -153,7 +156,7 @@ namespace KarelV1Lib
             }
                 
             string command = String.Format("?US{0:D3}", position);
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -162,7 +165,7 @@ namespace KarelV1Lib
         public void GetUltraSonic()
         {
             string command = "?USA";
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -171,15 +174,15 @@ namespace KarelV1Lib
         public void GetPosition()
         {
             string command = "?POSITION";
-            this.SendRequest(command);
+            this.SendRequest(command + TERMIN);
         }
 
         #endregion
 
         #region Private
-        
+
         /// <summary>
-        /// Handler that cal response parser.
+        /// Handler that call response parser.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -194,115 +197,113 @@ namespace KarelV1Lib
         /// <param name="response">Response string.</param>
         private void ResponseParser(string response)
         {
-            if (response.Contains("#") && response.Contains("\r\n"))
+            // First check if message is delimitable.
+            if (response.Contains(RESPONSE_DELIMITER))
             {
-                string tmpResponse = response.Replace("#", "").Replace("\r\n", "");
+                // Divide message in to tokens.
+                string[] tokens = response.Trim('\0', '\n', '\r').Split(new string[] { RESPONSE_DELIMITER }, StringSplitOptions.RemoveEmptyEntries);
 
-                string[] tokens = tmpResponse.Split(this.delimiterChars);
-
+                // If message is divided correct then iterate trough it.
                 if (tokens.Length > 0)
                 {
-
-                    #region SENSORS
-
-                    if (tokens[0] == "SENSORS")
+                    foreach (string token in tokens)
                     {
-                        if (tokens[1] == "L" && tokens[3] == "R")
+                        // Exit token parsing if token does not start with '#'.
+                        if(!token.StartsWith(RESPONSE_SIGN))
                         {
-                            float left = 0.0f; 
-                            float right = 0.0f;
+                            continue;
+                        }
 
-                            if ((float.TryParse(tokens[2], out left)) && (float.TryParse(tokens[4], out right)))
+                        #region SENSORS
+
+                        if (token.Contains("SENSORS"))
+                        {
+                            string[] subTokens = token.Split(new char[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (subTokens[1] == "L" && subTokens[3] == "R")
                             {
-                                if (this.OnSensors != null)
+                                float left = 0.0f;
+                                float right = 0.0f;
+
+                                if ((float.TryParse(subTokens[2], out left)) && (float.TryParse(subTokens[4], out right)))
                                 {
-                                    this.OnSensors(this, new SensorsEventArgs(left, right));
+                                    if (this.OnSensors != null)
+                                    {
+                                        this.OnSensors(this, new SensorsEventArgs(left, right));
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    #endregion
+                        #endregion
 
-                    #region STOP
+                        #region STOP
 
-                    if (tokens[0] == "STOP")
-                    {
-                        if (this.OnStoped != null)
+                        if (token.Contains("STOP"))
                         {
-                            this.OnStoped(this, new EventArgs());
-                        }
-                    }
-
-                    #endregion
-
-                    #region ULTRA SONIC
-
-                    if (tokens[0] == "US")
-                    {
-                        float phase = 0.0f;
-                        float time = 0.0f;
-
-                        if (tokens[2].Contains("."))
-                        {
-                            tokens[2] = tokens[2].Replace('.', ',');
-                        }
-
-                        if((float.TryParse(tokens[1], out phase)) && (float.TryParse(tokens[2], out time)))
-                        {
-                            time /= 58.0F;
-                        }
-
-                        if (this.OnUltraSonicSensor != null)
-                        {
-                            this.OnUltraSonicSensor(this, new UltraSonicSensorEventArgs(phase, time));
-                        }
-                    }
-
-                    #endregion
-
-                    #region POSITION
-
-                    if (tokens[0] == "POSITION")
-                    {
-                        int position = 0;
-                        int distance = 0;
-
-                        if (tokens[1] == "D" && tokens[3] == "A")
-                        {
-                            tokens[2] = RobotUtils.CorrectDecDelimiter(tokens[2]);
-                            if (!int.TryParse(tokens[2], out distance))
+                            if (this.OnStoped != null)
                             {
-                                return;
-                            }
-
-                            tokens[4] = RobotUtils.CorrectDecDelimiter(tokens[4]);
-                            if (!int.TryParse(tokens[4], out position))
-                            {
-                                return;
+                                this.OnStoped(this, new EventArgs());
                             }
                         }
 
-                        if (this.OnPosition != null)
+                        #endregion
+
+                        #region ULTRA SONIC
+
+                        if (token.Contains("US"))
                         {
-                            this.OnPosition(this, new RobotPositionEventArgs(position, distance));
+                            int phase = 0;
+                            int time = 0;
+
+                            string tmpToken = token.Replace("#US;", "");
+
+                            string[] subTokens = tmpToken.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out time)))
+                            {
+                                this.OnUltraSonicSensor?.Invoke(this, new UltraSonicSensorEventArgs(phase, time));
+                            }
+
                         }
-                    }
 
-                    #endregion
+                        #endregion
 
-                    #region GREATINGS
+                        #region POSITION
 
-                    if (tokens[0].Contains("GREATINGS"))
-                    {
-                        if (this.OnGreatingsMessage != null)
+                        if (token.Contains("POSITION"))
                         {
-                            this.OnGreatingsMessage(this, new StringEventArgs(tokens[1]));
+                            int position = 0;
+                            int distance = 0;
+
+                            string tmpToken = token.Replace("#POSITION;", "");
+
+                            string[] subTokens = tmpToken.Split(new char[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
+
+
+                            if (subTokens[0] == "D" && subTokens[2] == "A")
+                            {
+                                if ((int.TryParse(RobotUtils.CorrectDecDelimiter(subTokens[1]), out distance))
+                                    && (int.TryParse(RobotUtils.CorrectDecDelimiter(subTokens[3]), out position)))
+                                {
+                                    this.OnPosition?.Invoke(this, new RobotPositionEventArgs(position, distance));
+                                }
+                            }
+
                         }
+
+                        #endregion
+
+                        #region GREATINGS
+
+                        if (token.Contains("GREATINGS"))
+                        {
+                            string tmpToken = token.Replace("#GREATINGS;", "");
+                            this.OnGreatingsMessage?.Invoke(this, new StringEventArgs(tmpToken));
+                        }
+
+                        #endregion
+
                     }
-
-                    #endregion
-
                 }
             }
         }

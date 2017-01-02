@@ -228,7 +228,7 @@ namespace KarelV1Lib
             }
             finally
             {
-                if (timeOut > this.MaxTimeout)
+                if (this.timeOut > this.MaxTimeout)
                 {
                     throw new InvalidOperationException("Could not connect to the robot.");
                 }

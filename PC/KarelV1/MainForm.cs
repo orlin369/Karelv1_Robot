@@ -31,13 +31,15 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
-using KarelV1.Utils;
+using KarelV1.Util;
 using KarelV1.Properties;
+
+using KarelV1Lib;
 using KarelV1Lib.Events;
 
-using Diagrams;
-using InputMethods.KeystrokEventGenerator;
 using IPWebcam;
+using System.Windows.Forms.DataVisualization.Charting;
+using System.Speech.Synthesis;
 
 // 
 // Robot tasks ...
@@ -66,32 +68,7 @@ namespace KarelV1
         /// <summary>
         /// Robot communication.
         /// </summary>
-        private KarelV1Lib.KarelV1 myRobot;
-
-        /// <summary>
-        /// Data generator.
-        /// </summary>
-        private DigramDataGenerator dataGenerator = new DigramDataGenerator();
-
-        /// <summary>
-        /// Circular diagram.
-        /// </summary>
-        private CircularDiagram myDiagram;
-
-        /// <summary>
-        /// Sensor data.
-        /// </summary>
-        private double[] sensorData = new double[181];
-
-        /// <summary>
-        /// Maximum distance index.
-        /// </summary>
-        private int maxDistanceIndex = 0;
-
-        /// <summary>
-        /// Maximum distance value.
-        /// </summary>
-        private double maxDistanceValue = -100;
+        private KarelV1Lib.KarelV1 robot;
 
         /// <summary>
         /// Update camera timer.
@@ -105,9 +82,12 @@ namespace KarelV1
 
         private Bitmap capturedImage;
 
-        private object syncLockCapture;
+        private object syncLockCapture = new object();
 
         private Lora database;
+
+        private double[] xValues = new double[360];
+        private double[] yValues = new double[360];
 
         #endregion
 
@@ -123,30 +103,14 @@ namespace KarelV1
             this.cameraUpdateTimer = new System.Windows.Forms.Timer();
             this.cameraUpdateTimer.Stop();
             this.cameraUpdateTimer.Tick += this.cameraUpdateTimer_Tick;
-
-            this.syncLockCapture = new object();
-
-            #region Keyboard
-
-            // Attach keyboard strokes events.
-            KeystrokMessageFilter ksMessageFilter = new KeystrokMessageFilter();
-            ksMessageFilter.OnOpenConfigurationManager += ksMessageFilter_OnOpenConfigurationManager;
-            ksMessageFilter.OnExitApplication += ksMessageFilter_OnExitApplication;
-            ksMessageFilter.OnForward += ksMessageFilter_OnForward;
-            ksMessageFilter.OnBackward += ksMessageFilter_OnBackward;
-            ksMessageFilter.OnLeft += ksMessageFilter_OnLeft;
-            ksMessageFilter.OnRight += ksMessageFilter_OnRight;
-            Application.AddMessageFilter(ksMessageFilter);
-
-            #endregion
-
+            
             // Create DB.
             this.database = new Lora(new Uri(Settings.Default.DatabaseUri));
         }
 
         #endregion
 
-        #region MainForm
+        #region Main Form
 
         private void MainForm_Load(object sender, EventArgs e)
         {
@@ -162,11 +126,11 @@ namespace KarelV1
                 }
             }
 
-            //
-            this.myDiagram = new CircularDiagram(this.pbSensorView.Size);
-            this.myDiagram.DiagramName = "Ultra Sonic Sensor";
-
             this.SearchForPorts();
+
+            this.SetupUltrasonicChart();
+
+            this.SetupScaleComboBox();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -200,23 +164,23 @@ namespace KarelV1
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null && this.myRobot.IsConnected)
+            if (this.robot != null && this.robot.IsConnected)
             {
-                this.myRobot.Stop();
+                this.robot.Stop();
             }
         }
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null && this.myRobot.IsConnected)
+            if (this.robot != null && this.robot.IsConnected)
             {
-                this.myRobot.GetSensors();
+                this.robot.GetSensors();
             }
         }
 
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null && this.myRobot.IsConnected)
+            if (this.robot != null && this.robot.IsConnected)
             {
                 int position = 0;
 
@@ -227,37 +191,21 @@ namespace KarelV1
                         return;
                     }
 
-                    this.myRobot.GetUltraSonic(position);
+                    this.robot.GetUltraSonic(position);
                 }
                 else
                 {
-                    for (int index = 0; index < this.sensorData.Length; index++)
-                    {
-                        maxDistanceValue = this.sensorData[index] = 0.0d;
-                    }
-
-                    this.maxDistanceValue = double.MinValue;
-                    this.maxDistanceIndex = 0;
-
-                    this.myRobot.GetUltraSonic();
+                    this.robot.GetUltraSonic();
                 }
-            }
-        }
-
-        private void btnReset_Click(object sender, EventArgs e)
-        {
-            if (this.myRobot != null && this.myRobot.IsConnected)
-            {
-                this.myRobot.Reset();
             }
         }
 
         private void btnGetRobotPos_Click(object sender, EventArgs e)
         {
-            if (this.myRobot != null && this.myRobot.IsConnected)
+            if (this.robot != null && this.robot.IsConnected)
             {
                 // -10 mm
-                this.myRobot.GetPosition();
+                this.robot.GetPosition();
             }
         }
 
@@ -290,65 +238,78 @@ namespace KarelV1
 
         #region Sensor View
 
-        private void UpdateDiagram(int position, float distance)
+        private void SetupUltrasonicChart()
         {
-            if (this.pbSensorView.InvokeRequired)
+            for (int index = 0; index < yValues.Length; index++)
             {
-                this.pbSensorView.BeginInvoke((MethodInvoker)delegate()
+                yValues[index] = 0.0F;
+                xValues[index] = index;
+            }
+            
+            crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
+            crtUltrasinicSensor.Series[0].Points.DataBindXY(xValues, yValues);
+            crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
+            crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
+            crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
+
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Minimum = 0.0f;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum = 360.0f;
+
+            //crtUltrasinicSensor.ChartAreas[0].AxisX.LabelStyle.Format = "F3";
+            crtUltrasinicSensor.Series[0]["PolarDrawingStyle"] = "Line";
+            // setup the X grid
+            crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = 0;
+            // setupthe Y grid
+            crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
+            crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;
+
+        }
+
+        private void UpdateDiagram(int position, float time)
+        {
+            float distance = time / 58.0F;
+            if (distance > 330.0F) distance = 330.0F;
+            yValues[position] = distance;
+            if (this.crtUltrasinicSensor.InvokeRequired)
+            {
+                this.crtUltrasinicSensor.BeginInvoke((MethodInvoker)delegate()
                 {
-                    this.sensorData[position] = distance;
-                    //this.myDiagram.SetData(this.sensorData);
-                    this.myDiagram.SetData(position, distance);
-
-                    for (int index = 0; index < this.sensorData.Length; index++)
-                    {
-                        if (this.maxDistanceValue < this.sensorData[index])
-                        {
-                            this.maxDistanceValue = this.sensorData[index];
-                            this.maxDistanceIndex = index;
-                        }
-                    }
-
-                    this.pbSensorView.Refresh();
-
+                    this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.yValues);
                 });
             }
             else
             {
-                this.sensorData[position] = distance;
-                //this.myDiagram.SetData(this.sensorData);
-                this.myDiagram.SetData(position, distance);
-
-                for (int index = 0; index < this.sensorData.Length; index++)
-                {
-                    if (this.maxDistanceValue < this.sensorData[index])
-                    {
-                        this.maxDistanceValue = this.sensorData[index];
-                        this.maxDistanceIndex = index;
-                    }
-                }
-                this.pbSensorView.Refresh();
+                this.crtUltrasinicSensor.Series[0].Points.DataBindY(yValues);
             }
         }
 
-        private void pbSensorView_Paint(object sender, PaintEventArgs e)
+        private void SetupScaleComboBox()
         {
-            this.myDiagram.Draw(e.Graphics);
-            this.myDiagram.DrawLine(e.Graphics, this.maxDistanceIndex);
+            Array items = Enum.GetValues(typeof(MetricScale));
+            foreach (MetricScale item in items)
+            {
+                this.cbMetric.Items.Add(item);
+            }
+            if (items != null && items.Length > 0)
+            {
+                this.cbMetric.Text = items.GetValue(0).ToString();
+            }
         }
 
         #endregion
 
         #region Menu Item
 
-        private void mItPorts_Click(object sender, EventArgs e)
+        private void tmsiPorts_Click(object sender, EventArgs e)
         {
             this.DisconnectFromRobot();
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             this.robotSerialPortName = item.Text;
             this.ConnectToRobot();
 
-            if (this.myRobot.IsConnected)
+            if (this.robot.IsConnected)
             {
                 this.lblIsConnected.Text = String.Format("Connected: {0}", robotSerialPortName);
                 item.Checked = true;
@@ -360,14 +321,17 @@ namespace KarelV1
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void connectionToolStripMenuItem_Click(object sender, EventArgs e)
+        private void tsmiConnection_Click(object sender, EventArgs e)
         {
             this.SearchForPorts();
+        }
+
+        private void tsmiReset_Click(object sender, EventArgs e)
+        {
+            if (this.robot != null && this.robot.IsConnected)
+            {
+                this.robot.Reset();
+            }
         }
 
         #endregion
@@ -408,55 +372,21 @@ namespace KarelV1
 
         #endregion.Events
 
-        #region Keyboard
-
-        private void ksMessageFilter_OnExitApplication(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        private void ksMessageFilter_OnOpenConfigurationManager(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ksMessageFilter_OnRight(object sender, EventArgs e)
-        {
-            this.MoveRight();
-        }
-
-        private void ksMessageFilter_OnLeft(object sender, EventArgs e)
-        {
-            this.MoveLeft();
-        }
-
-        private void ksMessageFilter_OnBackward(object sender, EventArgs e)
-        {
-            this.MoveBackward();
-        }
-
-        private void ksMessageFilter_OnForward(object sender, EventArgs e)
-        {
-            this.MoveForward();
-        }
-
-        #endregion
-
         #region Robot
 
         private void ConnectToRobot()
         {
             try
             {
-                this.myRobot = new KarelV1Lib.KarelV1(this.robotSerialPortName);
-                this.myRobot.OnMessage += myRobot_OnMessage;
-                this.myRobot.OnSensors += myRobot_OnSensors;
-                this.myRobot.OnUltraSonicSensor += myRobot_OnUltraSonicSensor;
-                this.myRobot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
-                this.myRobot.OnStoped += myRobot_OnStoped;
-                this.myRobot.OnPosition += myRobot_OnPosition;
-                this.myRobot.Connect();
-                this.myRobot.Reset();
+                this.robot = new KarelV1Lib.KarelV1(this.robotSerialPortName);
+                this.robot.OnMessage += myRobot_OnMessage;
+                this.robot.OnSensors += myRobot_OnSensors;
+                this.robot.OnUltraSonicSensor += myRobot_OnUltraSonicSensor;
+                this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
+                this.robot.OnStoped += myRobot_OnStoped;
+                this.robot.OnPosition += myRobot_OnPosition;
+                this.robot.Connect();
+                this.robot.Reset();
             }
             catch (Exception exception)
             {
@@ -468,9 +398,9 @@ namespace KarelV1
         {
             try
             {
-                if (this.myRobot != null && this.myRobot.IsConnected)
+                if (this.robot != null && this.robot.IsConnected)
                 {
-                    this.myRobot.Disconnect();
+                    this.robot.Disconnect();
                 }
             }
             catch (Exception exception)
@@ -481,45 +411,45 @@ namespace KarelV1
 
         private void MoveForward()
         {
-            if (this.myRobot != null)
+            if (this.robot != null)
             {
                 int steps = RobotUtils.MmToStep(
                     10.0d,
                     Settings.Default.SteppsCount,
                     Settings.Default.StepperPostScaler,
                     Settings.Default.DiametterOfWheel);
-                this.myRobot.Move(steps);
+                this.robot.Move(steps);
             }
         }
 
         private void MoveBackward()
         {
-            if (this.myRobot != null)
+            if (this.robot != null)
             {
                 int steps = RobotUtils.MmToStep(
                     -10.0d,
                     Settings.Default.SteppsCount,
                     Settings.Default.StepperPostScaler,
                     Settings.Default.DiametterOfWheel);
-                this.myRobot.Move(steps);
+                this.robot.Move(steps);
             }
         }
 
         private void MoveLeft()
         {
-            if (this.myRobot == null) return;
+            if (this.robot == null) return;
             // -10 deg
-            this.myRobot.Rotate(-60);
+            this.robot.Rotate(-60);
         }
 
         private void MoveRight()
         {
-            if (this.myRobot == null) return;
+            if (this.robot == null) return;
             // 10 deg
-            this.myRobot.Rotate(60);
+            this.robot.Rotate(60);
             return;
             int steps = RobotUtils.DegToStep(45, 200, 16, Settings.Default.DiametterOfWheel);
-            this.myRobot.Rotate(steps);
+            this.robot.Rotate(steps);
         }
 
         private void myRobot_OnMessage(object sender, StringEventArgs e)
@@ -534,14 +464,14 @@ namespace KarelV1
 
         private void myRobot_OnStoped(object sender, EventArgs e)
         {
-            this.AddStatus("Stoped", Color.White);
+            this.AddStatus("Stopped", Color.White);
         }
 
         private void myRobot_OnUltraSonicSensor(object sender, UltraSonicSensorEventArgs e)
         {
-            this.AddStatus(String.Format("US Sensor: {0:F3}[deg] {1:F3}[cm]", e.Position, e.Distance), Color.White);
+            this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us]", e.Position, e.Time), Color.White);
             // TODO: Class HSR04
-            this.UpdateDiagram((int)e.Position, e.Distance / 330.0f);
+            this.UpdateDiagram((int)e.Position, e.Time);
         }
 
         private void myRobot_OnSensors(object sender, SensorsEventArgs e)
@@ -614,7 +544,7 @@ namespace KarelV1
         /// </summary>
         private void SearchForPorts()
         {
-            this.portsToolStripMenuItem.DropDown.Items.Clear();
+            this.tsmiPorts.DropDown.Items.Clear();
 
             string[] portNames = System.IO.Ports.SerialPort.GetPortNames();
 
@@ -626,12 +556,12 @@ namespace KarelV1
             foreach (string item in portNames)
             {
                 //store the each retrieved available prot names into the MenuItems...
-                this.portsToolStripMenuItem.DropDown.Items.Add(item);
+                this.tsmiPorts.DropDown.Items.Add(item);
             }
 
-            foreach (ToolStripMenuItem item in this.portsToolStripMenuItem.DropDown.Items)
+            foreach (ToolStripMenuItem item in this.tsmiPorts.DropDown.Items)
             {
-                item.Click += mItPorts_Click;
+                item.Click += tmsiPorts_Click;
                 item.Enabled = true;
                 item.Checked = false;
             }
@@ -1035,5 +965,30 @@ namespace KarelV1
             this.database.Login("testclient", "testpass");
         }
 
+        private void talkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            // Initialize a new instance of the SpeechSynthesizer.
+            using (SpeechSynthesizer synth = new SpeechSynthesizer())
+            {
+
+                // Output information about all of the installed voices. 
+                Console.WriteLine("Installed voices -");
+                var voices = synth.GetInstalledVoices();
+                foreach (InstalledVoice voice in voices)
+                {
+                    VoiceInfo info = voice.VoiceInfo;
+                    Console.WriteLine(" Voice Name: " + info.Name);
+                }
+
+                // Configure the audio output. 
+                synth.SetOutputToDefaultAudioDevice();
+                synth.SelectVoice("Microsoft Zira Desktop");
+                
+                // Speak a string.
+                synth.Speak("The robot are seeing a wall.");
+            }
+
+        }
     }
 }

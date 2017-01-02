@@ -25,7 +25,7 @@ SOFTWARE.
 /** @file KarelV1.ino
  *  @brief Firmware of the mobile robot Karel v1.
  *
- * This project is created for demonstrading, Karel v1 abilities. 
+ *  This project is created for demonstrading, Karel v1 abilities. 
  *
  *  @author Orlin Dimnitrov (orlin369)
  */
@@ -140,7 +140,7 @@ const uint8_t  RightMotorIndex = 2;
 /** \brief Maximum executable steps. */
 const int16_t MaxSteps = 9999;
 /** \brief Echo bit. */
-boolean Echo = true;
+boolean Echo = false;
 
 /* -- Peripheral objects. -- */
 /** \brief Ultra soic sensor: HC-SR04 */
@@ -396,13 +396,12 @@ void ParseCommand(String command)
         delay(100);
         microsecond = UltraSonic.timing();     
         //cmMsec = UltraSonic.convert(microsecond, Ultrasonic::CM);
-        //sprintf(PrintArr, "#US;%d:%d", indexPos, cmMsec);
-        //Serial.println(PrintArr);   
+        //sprintf(PrintArr, "#US;%i:%i", indexPos, cmMsec);
+        //Serial.println(PrintArr);
 
         Serial.print("#US;");
         Serial.print(indexPos);
         Serial.print(":");
-        //Serial.println(cmMsec);
         Serial.println(microsecond);
     }
   }
@@ -416,14 +415,11 @@ void ParseCommand(String command)
       if(steps >= 0 && steps <= 180)
       {
         SensorServo.write(steps);
-        //delay(2000);
         microsecond = UltraSonic.timing();     
-        //cmMsec = UltraSonic.convert(microsecond, Ultrasonic::CM);
 
         Serial.print("#US;");
         Serial.print(steps);
         Serial.print(":");
-        //Serial.println(cmMsec);
         Serial.println(microsecond);
       }
     }

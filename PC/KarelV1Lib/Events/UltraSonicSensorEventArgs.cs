@@ -26,21 +26,48 @@ using System;
 
 namespace KarelV1Lib.Events
 {
+    /// <summary>
+    /// Ultrasonic sensor event argument.
+    /// </summary>
+    [Serializable]
     public class UltraSonicSensorEventArgs : EventArgs
     {
-        public float Position { get; private set; }
-        public float Distance { get; private set; }
 
+        #region Properties
+
+        /// <summary>
+        /// Position [DEG]
+        /// </summary>
+        public int Position { get; private set; }
+
+        /// <summary>
+        /// Time [us]
+        /// </summary>
+        public int Time { get; private set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public UltraSonicSensorEventArgs()
         {
-            this.Position = 0;
-            this.Distance = 0.0f;
         }
 
-        public UltraSonicSensorEventArgs(float position, float distance)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="position">Position [DEG]</param>
+        /// <param name="time">Time [us]</param>
+        public UltraSonicSensorEventArgs(int position, int time)
         {
             this.Position = position;
-            this.Distance = distance;
+            this.Time = time;
         }
+
+        #endregion
+
     }
 }

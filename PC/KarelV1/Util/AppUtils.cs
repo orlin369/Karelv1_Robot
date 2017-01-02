@@ -33,7 +33,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace KarelV1.Utils
+namespace KarelV1.Util
 {
     public static class AppUtils
     {
