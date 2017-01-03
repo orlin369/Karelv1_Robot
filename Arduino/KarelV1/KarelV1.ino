@@ -139,6 +139,8 @@ const uint8_t  LeftMotorIndex = 1;
 const uint8_t  RightMotorIndex = 2;
 /** \brief Maximum executable steps. */
 const int16_t MaxSteps = 9999;
+/** \brief Average filter samples count. */
+const long AvgFilterSamples = 5;
 /** \brief Echo bit. */
 boolean Echo = false;
 
@@ -423,19 +425,22 @@ void ParseCommand(String command)
   }
 }
 
+/** @brief This fuctions is callbacck for left motion.
+ *  @return Void.
+ */
 long ReadDistance()
 {
 
   static long sum;
   sum = 0;
   
-  for(int i = 0; i < 3; i++)
+  for(int i = 0; i < AvgFilterSamples; i++)
   {
-    sum = sum + UltraSonic.timing();
+    sum += UltraSonic.timing();
     delay(1);
   }
   
-  return sum / 5; 
+  return sum / AvgFilterSamples; 
 }
 
 /** @brief This fuctions is callbacck for left motion.
