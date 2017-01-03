@@ -327,7 +327,7 @@ namespace KarelV1.Util
         #region Numbers
 
         /// <summary>
-        /// Replace no metter , or . with correct regional decimal delimiter.
+        /// Replace no meter , or . with correct regional decimal delimiter.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -383,16 +383,16 @@ namespace KarelV1.Util
         public static string GetAsciiAsUnicode(string str)
         {
             //Create encodings
-            System.Text.Encoding ascii = System.Text.Encoding.ASCII;
-            System.Text.Encoding unicode = System.Text.Encoding.Unicode;
+            Encoding ascii = Encoding.ASCII;
+            Encoding unicode = Encoding.Unicode;
 
-            //Get ascii bytes
+            //Get ASCII bytes
             byte[] asciiBytes = ascii.GetBytes(str);
 
-            //Convert ascii to unicode
-            byte[] unicodeBytes = System.Text.Encoding.Convert(ascii, unicode, asciiBytes);
+            //Convert ASCII to Unicode
+            byte[] unicodeBytes = Encoding.Convert(ascii, unicode, asciiBytes);
 
-            //Return unicode string
+            //Return Unicode string
             return unicode.GetString(unicodeBytes);
         }
 
@@ -404,16 +404,16 @@ namespace KarelV1.Util
         public static Stream GetUTF8Stream(string filePath)
         {
             //Create encodings
-            System.Text.Encoding def = Encoding.Default;
-            System.Text.Encoding utf = System.Text.Encoding.UTF8;
+            Encoding def = Encoding.Default;
+            Encoding utf = Encoding.UTF8;
 
             //Read file bytes
             byte[] defBytes = File.ReadAllBytes(filePath);
 
-            //Convert default to utf
-            byte[] utfBytes = System.Text.Encoding.Convert(def, utf, defBytes);
+            //Convert default to UTF-8
+            byte[] utfBytes = Encoding.Convert(def, utf, defBytes);
 
-            //Create stream from utf bytes
+            //Create stream from UTF-8 bytes
             Stream stream = new MemoryStream(utfBytes);
 
             //Return stream
@@ -422,7 +422,7 @@ namespace KarelV1.Util
 
         #endregion
 
-        #region Utils
+        #region Utile
 
         /// <summary>
         /// Kill the current process, if another instance of this application is allready running.

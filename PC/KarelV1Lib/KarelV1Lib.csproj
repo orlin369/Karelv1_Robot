@@ -49,9 +49,10 @@
     <Compile Include="Events\StringEventArgs.cs" />
     <Compile Include="Events\UltraSonicSensorEventArgs.cs" />
     <Compile Include="KarelV1.cs" />
-    <Compile Include="MetricScale.cs" />
+    <Compile Include="Data\MetricScale.cs" />
+    <Compile Include="DifferentialModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RobotUtils.cs" />
+    <Compile Include="PolarConversion.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

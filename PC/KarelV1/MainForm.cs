@@ -71,6 +71,11 @@ namespace KarelV1
         private KarelV1Lib.KarelV1 robot;
 
         /// <summary>
+        /// The differential control model.
+        /// </summary>
+        private DifferentialModel differentialModel;
+
+        /// <summary>
         /// Update camera timer.
         /// </summary>
         private System.Windows.Forms.Timer cameraUpdateTimer;
@@ -89,6 +94,8 @@ namespace KarelV1
         private double[] xValues = new double[360];
         private double[] yValues = new double[360];
 
+
+
         #endregion
 
         #region Constructor
@@ -106,6 +113,13 @@ namespace KarelV1
             
             // Create DB.
             this.database = new Lora(new Uri(Settings.Default.DatabaseUri));
+
+            // The differential controlling model.
+            this.differentialModel = new DifferentialModel(
+                Settings.Default.SteppsCount,
+                Settings.Default.StepperPostScaler,
+                Settings.Default.DiametterOfWheel,
+                Settings.Default.DistanceBetweenWheels);
         }
 
         #endregion
@@ -164,39 +178,33 @@ namespace KarelV1
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (this.robot != null && this.robot.IsConnected)
-            {
-                this.robot.Stop();
-            }
+            if (this.robot == null && !this.robot.IsConnected) return;
+            this.robot.Stop();
         }
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
-            if (this.robot != null && this.robot.IsConnected)
-            {
-                this.robot.GetSensors();
-            }
+            if (this.robot == null && !this.robot.IsConnected) return;
+            this.robot.GetSensors();
         }
 
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
         {
-            if (this.robot != null && this.robot.IsConnected)
+            if (this.robot == null && !this.robot.IsConnected) return;
+
+            int position = 0;
+            if (int.TryParse(this.tbSensorPosition.Text, out position))
             {
-                int position = 0;
-
-                if (int.TryParse(this.tbSensorPosition.Text, out position))
+                if (position > 180 || position < 0)
                 {
-                    if (position > 180 || position < 0)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    this.robot.GetUltraSonic(position);
-                }
-                else
-                {
-                    this.robot.GetUltraSonic();
-                }
+                this.robot.GetUltraSonic(position);
+            }
+            else
+            {
+                this.robot.GetUltraSonic();
             }
         }
 
@@ -411,44 +419,33 @@ namespace KarelV1
 
         private void MoveForward()
         {
-            if (this.robot != null)
-            {
-                int steps = RobotUtils.MmToStep(
-                    10.0d,
-                    Settings.Default.SteppsCount,
-                    Settings.Default.StepperPostScaler,
-                    Settings.Default.DiametterOfWheel);
-                this.robot.Move(steps);
-            }
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int steps = differentialModel.MmToStep(10.0d);
+            this.robot.Move(steps);
         }
 
         private void MoveBackward()
         {
-            if (this.robot != null)
-            {
-                int steps = RobotUtils.MmToStep(
-                    -10.0d,
-                    Settings.Default.SteppsCount,
-                    Settings.Default.StepperPostScaler,
-                    Settings.Default.DiametterOfWheel);
-                this.robot.Move(steps);
-            }
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int steps = differentialModel.MmToStep(-10.0d);
+            this.robot.Move(steps);
         }
 
         private void MoveLeft()
         {
-            if (this.robot == null) return;
-            // -10 deg
-            this.robot.Rotate(-60);
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int steps = this.differentialModel.DegToStep(90.0D);
+            this.robot.Rotate(steps);
         }
 
         private void MoveRight()
         {
-            if (this.robot == null) return;
-            // 10 deg
-            this.robot.Rotate(60);
-            return;
-            int steps = RobotUtils.DegToStep(45, 200, 16, Settings.Default.DiametterOfWheel);
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int steps = this.differentialModel.DegToStep(-90.0D);
             this.robot.Rotate(steps);
         }
 
@@ -484,11 +481,7 @@ namespace KarelV1
 
         private void myRobot_OnPosition(object sender, RobotPositionEventArgs e)
         {
-            double mm = RobotUtils.StepToMm(
-                e.Radius,
-                Settings.Default.SteppsCount,
-                Settings.Default.StepperPostScaler,
-                Settings.Default.DiametterOfWheel);
+            double mm = this.differentialModel.StepToMm(e.Radius);
 
             this.SetRobotPos((float)mm, (float)e.Alpha);
 
@@ -510,7 +503,7 @@ namespace KarelV1
         private void SendRobotPos(float radius, float alpha)
         {
             // Calculate position.
-            PointF point = RobotUtils.PolarToCartesian(radius, alpha);
+            PointF point = PolarConversion.PolarToCartesian(radius, alpha);
 
             // Create position.
             Position decartRobotPose = new Position();

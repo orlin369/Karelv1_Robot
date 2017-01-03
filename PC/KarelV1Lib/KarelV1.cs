@@ -280,10 +280,10 @@ namespace KarelV1Lib
                             string[] subTokens = tmpToken.Split(new char[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
 
 
-                            if (subTokens[0] == "D" && subTokens[2] == "A")
+                            if (subTokens[0] == "T" && subTokens[2] == "R")
                             {
-                                if ((int.TryParse(RobotUtils.CorrectDecDelimiter(subTokens[1]), out distance))
-                                    && (int.TryParse(RobotUtils.CorrectDecDelimiter(subTokens[3]), out position)))
+                                if ((int.TryParse(subTokens[1], out distance))
+                                    && (int.TryParse(subTokens[3], out position)))
                                 {
                                     this.OnPosition?.Invoke(this, new RobotPositionEventArgs(position, distance));
                                 }

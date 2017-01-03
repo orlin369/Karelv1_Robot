@@ -22,7 +22,7 @@ SOFTWARE.
 
 */
 
-namespace KarelV1.Util
+namespace KarelV1.Data
 {
     /// <summary>
     /// Metric scale class.

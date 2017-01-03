@@ -71,5 +71,17 @@ namespace KarelV1.Properties {
                 this["DiametterOfWheel"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("149.5")]
+        public double DistanceBetweenWheels {
+            get {
+                return ((double)(this["DistanceBetweenWheels"]));
+            }
+            set {
+                this["DistanceBetweenWheels"] = value;
+            }
+        }
     }
 }

@@ -373,7 +373,7 @@ void ParseCommand(String command)
   {
     rotationSteps = Rotation.currentPosition();
     translationSteps = Translation.currentPosition();
-    sprintf(PrintArr, "#POSITION;D:%ld;A:%ld;", translationSteps, rotationSteps);
+    sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", translationSteps, rotationSteps);
     Serial.println(PrintArr);   
   }
   else if(command == "?STOP\n")
@@ -394,10 +394,7 @@ void ParseCommand(String command)
     {
         SensorServo.write(indexPos);
         delay(100);
-        microsecond = UltraSonic.timing();     
-        //cmMsec = UltraSonic.convert(microsecond, Ultrasonic::CM);
-        //sprintf(PrintArr, "#US;%i:%i", indexPos, cmMsec);
-        //Serial.println(PrintArr);
+        microsecond = ReadDistance();     
 
         Serial.print("#US;");
         Serial.print(indexPos);
@@ -415,7 +412,7 @@ void ParseCommand(String command)
       if(steps >= 0 && steps <= 180)
       {
         SensorServo.write(steps);
-        microsecond = UltraSonic.timing();     
+        microsecond = ReadDistance();     
 
         Serial.print("#US;");
         Serial.print(steps);
@@ -424,6 +421,21 @@ void ParseCommand(String command)
       }
     }
   }
+}
+
+long ReadDistance()
+{
+
+  static long sum;
+  sum = 0;
+  
+  for(int i = 0; i < 3; i++)
+  {
+    sum = sum + UltraSonic.timing();
+    delay(1);
+  }
+  
+  return sum / 5; 
 }
 
 /** @brief This fuctions is callbacck for left motion.
