@@ -268,7 +268,7 @@ namespace KarelV1
             // setup the X grid
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = 0;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = -90;
             // setupthe Y grid
             crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;

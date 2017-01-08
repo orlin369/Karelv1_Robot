@@ -34,7 +34,7 @@ SOFTWARE.
 Resources.
 Adafruit_Motorshield v2:   https://github.com/adafruit/Adafruit_Motor_Shield_V2_Library
 AccelStepper with AFMotor: https://github.com/adafruit/AccelStepper
-Ultrasonic sensor:  http://blog.iteadstudio.com/arduino-library-for-ultrasonic-ranging-module-hc-sr04/
+Ultrasonic sensor:         http://blog.iteadstudio.com/arduino-library-for-ultrasonic-ranging-module-hc-sr04/
 */
 
 /*
@@ -140,7 +140,7 @@ const uint8_t  RightMotorIndex = 2;
 /** \brief Maximum executable steps. */
 const int16_t MaxSteps = 9999;
 /** \brief Average filter samples count. */
-const long AvgFilterSamples = 5;
+const long AvgFilterSamples = 3;
 /** \brief Echo bit. */
 boolean Echo = false;
 
@@ -425,8 +425,8 @@ void ParseCommand(String command)
   }
 }
 
-/** @brief This fuctions is callbacck for left motion.
- *  @return Void.
+/** @brief This fuctions read distance between sensor and the object.
+ *  @return Time that signals travel in [us].
  */
 long ReadDistance()
 {

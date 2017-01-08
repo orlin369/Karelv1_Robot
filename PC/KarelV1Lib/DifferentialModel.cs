@@ -143,5 +143,6 @@ namespace KarelV1Lib
         
 
         #endregion 
+
     }
 }
