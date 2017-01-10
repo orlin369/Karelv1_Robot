@@ -89,6 +89,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AppUtils.cs" />
+    <Compile Include="Util\GP2Y0A21YK.cs" />
     <Compile Include="Util\MetricScale.cs" />
     <EmbeddedResource Include="Images.resx">
       <Generator>ResXFileCodeGenerator</Generator>
