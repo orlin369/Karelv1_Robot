@@ -103,6 +103,8 @@ Version:
 void ReadCommand();
 boolean ValidateCommand(String command);
 void ParseCommand(String command);
+long ReadDistanceUS();
+long ReadDistanceIR();
 void RotateLeftCB();
 void RotateRihtCB();
 void TranslateForwardCB();
@@ -119,6 +121,8 @@ const uint8_t SensorLeftEdge = 6;
 const uint8_t SensorRightEdge = 7;
 /** \brief Servo pin that cotrols the sensor position.*/
 const uint8_t ServoPinUltrasonicSensor = 9;
+
+const uint8_t IrSensor = 0;
 
 /* -- Parametters -- */
 /** \brief Motor shield address. */
@@ -327,12 +331,14 @@ void ParseCommand(String command)
   static long translationSteps;
   static float cmMsec;
   static long microsecond;
+  static long irSensorValue;
   
   steps = 0;
   rotationSteps = 0;
   translationSteps = 0;
   cmMsec = 0;
   microsecond = 0;
+  irSensorValue = 0;
   
   // Convert commands from string to numbers.
   steps = atoi(command.substring(3, 7).c_str());
@@ -396,12 +402,15 @@ void ParseCommand(String command)
     {
         SensorServo.write(indexPos);
         delay(100);
-        microsecond = ReadDistance();     
+        microsecond = ReadDistanceUS();   
+        irSensorValue = ReadDistanceIR();
 
         Serial.print("#US;");
         Serial.print(indexPos);
         Serial.print(":");
-        Serial.println(microsecond);
+        Serial.print(microsecond);
+        Serial.print(":");
+        Serial.println(irSensorValue);
     }
   }
   else if(command[0] == '?' && command[6] == '\n')
@@ -414,12 +423,15 @@ void ParseCommand(String command)
       if(steps >= 0 && steps <= 180)
       {
         SensorServo.write(steps);
-        microsecond = ReadDistance();     
+        microsecond = ReadDistanceUS();     
+        irSensorValue = ReadDistanceIR();
 
         Serial.print("#US;");
         Serial.print(steps);
         Serial.print(":");
-        Serial.println(microsecond);
+        Serial.print(microsecond);
+        Serial.print(":");
+        Serial.println(irSensorValue);
       }
     }
   }
@@ -428,7 +440,7 @@ void ParseCommand(String command)
 /** @brief This fuctions read distance between sensor and the object.
  *  @return Time that signals travel in [us].
  */
-long ReadDistance()
+long ReadDistanceUS()
 {
 
   static long sum;
@@ -437,6 +449,24 @@ long ReadDistance()
   for(int i = 0; i < AvgFilterSamples; i++)
   {
     sum += UltraSonic.timing();
+    delay(1);
+  }
+  
+  return sum / AvgFilterSamples; 
+}
+
+/** @brief This fuctions read distance between sensor and the object.
+ *  @return Time that signals travel in [us].
+ */
+long ReadDistanceIR()
+{
+
+  static long sum;
+  sum = 0;
+  
+  for(int i = 0; i < AvgFilterSamples; i++)
+  {
+    sum += analogRead(IrSensor);
     delay(1);
   }
   
