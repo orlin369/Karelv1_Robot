@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
+            this.talkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPorts = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,6 +55,7 @@
             this.tbpSonar = new System.Windows.Forms.TabPage();
             this.tlpSonar = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSonar = new System.Windows.Forms.Panel();
+            this.cbMetric = new System.Windows.Forms.ComboBox();
             this.lblDegreeSensor = new System.Windows.Forms.Label();
             this.tbSensorPosition = new System.Windows.Forms.TextBox();
             this.btnGetUltrasonic = new System.Windows.Forms.Button();
@@ -75,9 +78,6 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
-            this.cbMetric = new System.Windows.Forms.ComboBox();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.talkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -119,11 +119,23 @@
             this.tsmiFile.Size = new System.Drawing.Size(44, 24);
             this.tsmiFile.Text = "File";
             // 
+            // talkToolStripMenuItem
+            // 
+            this.talkToolStripMenuItem.Name = "talkToolStripMenuItem";
+            this.talkToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
+            this.talkToolStripMenuItem.Text = "Talk";
+            this.talkToolStripMenuItem.Click += new System.EventHandler(this.talkToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
+            // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
             this.tsmiExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.tsmiExit.Size = new System.Drawing.Size(181, 26);
+            this.tsmiExit.Size = new System.Drawing.Size(161, 26);
             this.tsmiExit.Text = "Exit";
             // 
             // tsmiConnection
@@ -345,6 +357,14 @@
             this.pnlSonar.Size = new System.Drawing.Size(112, 552);
             this.pnlSonar.TabIndex = 13;
             // 
+            // cbMetric
+            // 
+            this.cbMetric.FormattingEnabled = true;
+            this.cbMetric.Location = new System.Drawing.Point(3, 134);
+            this.cbMetric.Name = "cbMetric";
+            this.cbMetric.Size = new System.Drawing.Size(98, 28);
+            this.cbMetric.TabIndex = 27;
+            // 
             // lblDegreeSensor
             // 
             this.lblDegreeSensor.AutoSize = true;
@@ -362,6 +382,7 @@
             this.tbSensorPosition.Name = "tbSensorPosition";
             this.tbSensorPosition.Size = new System.Drawing.Size(38, 26);
             this.tbSensorPosition.TabIndex = 25;
+            this.tbSensorPosition.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbSensorPosition_KeyPress);
             // 
             // btnGetUltrasonic
             // 
@@ -379,24 +400,24 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea3.Area3DStyle.Rotation = 10;
-            chartArea3.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea3);
+            chartArea1.Area3DStyle.Rotation = 10;
+            chartArea1.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend3);
+            legend1.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend1);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series3.BackSecondaryColor = System.Drawing.Color.Black;
-            series3.BorderColor = System.Drawing.Color.Black;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series3.Color = System.Drawing.Color.Green;
-            series3.Legend = "Legend1";
-            series3.MarkerColor = System.Drawing.Color.Black;
-            series3.Name = "Ultrasonic Sensor";
-            this.crtUltrasinicSensor.Series.Add(series3);
+            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series1.BackSecondaryColor = System.Drawing.Color.Black;
+            series1.BorderColor = System.Drawing.Color.Black;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series1.Color = System.Drawing.Color.Green;
+            series1.Legend = "Legend1";
+            series1.MarkerColor = System.Drawing.Color.Black;
+            series1.Name = "Ultrasonic Sensor";
+            this.crtUltrasinicSensor.Series.Add(series1);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(796, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -608,26 +629,6 @@
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
-            // 
-            // cbMetric
-            // 
-            this.cbMetric.FormattingEnabled = true;
-            this.cbMetric.Location = new System.Drawing.Point(3, 134);
-            this.cbMetric.Name = "cbMetric";
-            this.cbMetric.Size = new System.Drawing.Size(98, 28);
-            this.cbMetric.TabIndex = 27;
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
-            // 
-            // talkToolStripMenuItem
-            // 
-            this.talkToolStripMenuItem.Name = "talkToolStripMenuItem";
-            this.talkToolStripMenuItem.Size = new System.Drawing.Size(181, 26);
-            this.talkToolStripMenuItem.Text = "Talk";
-            this.talkToolStripMenuItem.Click += new System.EventHandler(this.talkToolStripMenuItem_Click);
             // 
             // MainForm
             // 

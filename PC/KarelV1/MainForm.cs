@@ -178,19 +178,19 @@ namespace KarelV1
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (this.robot == null && !this.robot.IsConnected) return;
+            if (this.robot == null || !this.robot.IsConnected) return;
             this.robot.Stop();
         }
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
-            if (this.robot == null && !this.robot.IsConnected) return;
+            if (this.robot == null || !this.robot.IsConnected) return;
             this.robot.GetSensors();
         }
 
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
         {
-            if (this.robot == null && !this.robot.IsConnected) return;
+            if (this.robot == null || !this.robot.IsConnected) return;
 
             int position = 0;
             if (int.TryParse(this.tbSensorPosition.Text, out position))
@@ -247,15 +247,9 @@ namespace KarelV1
         #region Sensor View
 
         private void SetupUltrasonicChart()
-        {
-            for (int index = 0; index < yValues.Length; index++)
-            {
-                yValues[index] = 0.0F;
-                xValues[index] = index;
-            }
-            
+        {            
             crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
-            crtUltrasinicSensor.Series[0].Points.DataBindXY(xValues, yValues);
+            //crtUltrasinicSensor.Series[0].Points.DataBindXY(xValues, yValues);
             crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
             crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
             crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
@@ -269,10 +263,19 @@ namespace KarelV1
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
             crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = -90;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
             // setupthe Y grid
             crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;
+            crtUltrasinicSensor.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
 
+            for (int index = 0; index < yValues.Length; index++)
+            {
+                yValues[index] = 0.0F;
+                xValues[index] = index;
+            }
+
+            this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.yValues);
         }
 
         private void UpdateDiagram(int position, float time)
@@ -948,7 +951,7 @@ namespace KarelV1
                 this.AddStatus(exception.ToString(), Color.White);
             }
         }
-
+        
         #endregion
 
         private void btnLoginTest_Click(object sender, EventArgs e)
@@ -983,5 +986,6 @@ namespace KarelV1
             }
 
         }
+
     }
 }
