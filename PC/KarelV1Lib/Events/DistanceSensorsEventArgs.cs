@@ -30,7 +30,7 @@ namespace KarelV1Lib.Events
     /// Ultrasonic sensor event argument.
     /// </summary>
     [Serializable]
-    public class UltraSonicSensorEventArgs : EventArgs
+    public class DistanceSensorsEventArgs : EventArgs
     {
 
         #region Properties
@@ -41,10 +41,15 @@ namespace KarelV1Lib.Events
         public int Position { get; private set; }
 
         /// <summary>
-        /// Time [us]
+        /// Ultrasonic distance sensor time. [us]
         /// </summary>
-        public int Time { get; private set; }
+        public int UltrasonicTime { get; private set; }
 
+        /// <summary>
+        /// Infrared distance sensor value of ADC. [ADC 0-1023]
+        /// </summary>
+        public int InfraRedADCValue { get; private set; }
+        
         #endregion
 
         #region Constructor
@@ -52,7 +57,7 @@ namespace KarelV1Lib.Events
         /// <summary>
         /// Constructor
         /// </summary>
-        public UltraSonicSensorEventArgs()
+        public DistanceSensorsEventArgs()
         {
         }
 
@@ -60,11 +65,12 @@ namespace KarelV1Lib.Events
         /// Constructor
         /// </summary>
         /// <param name="position">Position [DEG]</param>
-        /// <param name="time">Time [us]</param>
-        public UltraSonicSensorEventArgs(int position, int time)
+        /// <param name="ultrasonicTime">Time [us]</param>
+        public DistanceSensorsEventArgs(int position, int ultrasonicTime, int infraRedADCValue)
         {
             this.Position = position;
-            this.Time = time;
+            this.UltrasonicTime = ultrasonicTime;
+            this.InfraRedADCValue = infraRedADCValue;
         }
 
         #endregion

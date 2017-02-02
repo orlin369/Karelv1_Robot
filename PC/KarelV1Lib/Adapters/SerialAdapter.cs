@@ -28,12 +28,12 @@ using System.Threading;
 
 using KarelV1Lib.Events;
 
-namespace KarelV1Lib
+namespace KarelV1Lib.Adapters
 {
     /// <summary>
     /// Serial port communicator. 
     /// </summary>
-    public class Communicator : IDisposable
+    public class SerialAdapter : Adapter
     {
 
         #region Variables
@@ -70,19 +70,24 @@ namespace KarelV1Lib
         /// <summary>
         /// If the board is correctly connected.
         /// </summary>
-        public bool IsConnected
+        public override bool IsConnected
         {
             get
             {
                 return this.isConnected;
+            }
+
+            protected set
+            {
+
             }
         }
 
         /// <summary>
         /// Maximum timeout.
         /// </summary>
-        public int MaxTimeout { get; set; }
-
+        public override int MaxTimeout { get; set; }
+        
         #endregion
 
         #region Events
@@ -90,7 +95,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Received command message.
         /// </summary>
-        public event EventHandler<StringEventArgs> OnMessage;
+        public override event EventHandler<StringEventArgs> OnMessage;
 
         #endregion
 
@@ -100,7 +105,7 @@ namespace KarelV1Lib
         /// Constructor
         /// </summary>
         /// <param name="port">Communication port.</param>
-        public Communicator(string portName)
+        public SerialAdapter(string portName)
         {
             // Save the port name.
             this.portName = portName;
@@ -109,7 +114,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Destructor
         /// </summary>
-        ~Communicator()
+        ~SerialAdapter()
         {
             this.Dispose(false);
         }
@@ -117,7 +122,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Dispose
         /// </summary>
-        public void Dispose()
+        public override void Dispose()
         {
             this.Dispose(false);
         }
@@ -138,7 +143,7 @@ namespace KarelV1Lib
 
         #endregion
 
-        #region Protected Methods
+        #region Private Methods
 
         /// <summary>
         /// Data receiver handler.
@@ -171,31 +176,7 @@ namespace KarelV1Lib
                 { }
             }
         }
-
-        /// <summary>
-        /// Send request to the device.
-        /// </summary>
-        /// <param name="command"></param>
-        protected void SendRequest(string command)
-        {
-            lock (this.requestLock)
-            {
-                try
-                {
-                    if (this.isConnected)
-                    {
-                        this.SerialPort.Write(command);
-                    }
-                }
-                catch
-                {
-                    this.isConnected = false;
-                    // Reconnect.
-                    this.Connect();
-                }
-            }
-        }
-
+        
         #endregion
 
         #region Public Methods
@@ -203,7 +184,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Connect to the serial port.
         /// </summary>
-        public void Connect()
+        public override void Connect()
         {
             try
             {
@@ -238,7 +219,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Disconnect
         /// </summary>
-        public void Disconnect()
+        public override void Disconnect()
         {
             if (this.isConnected)
             {
@@ -247,7 +228,24 @@ namespace KarelV1Lib
             }
         }
 
-        void SendRawRequest(string command)
+        /// <summary>
+        /// Reset the Robot.
+        /// </summary>
+        public override void Reset()
+        {
+            if (this.IsConnected && this.SerialPort.IsOpen)
+            {
+                this.SerialPort.DtrEnable = true;
+                Thread.Sleep(200);
+                this.SerialPort.DtrEnable = false;
+            }
+        }
+
+        /// <summary>
+        /// Send request to the device.
+        /// </summary>
+        /// <param name="command"></param>
+        public override void SendRequest(string command)
         {
             lock (this.requestLock)
             {
@@ -256,12 +254,6 @@ namespace KarelV1Lib
                     if (this.isConnected)
                     {
                         this.SerialPort.Write(command);
-
-                        if (this.OnMessage != null)
-                        {
-                            this.OnMessage(this, new StringEventArgs(command));
-                        }
-
                     }
                 }
                 catch
@@ -272,7 +264,7 @@ namespace KarelV1Lib
                 }
             }
         }
-
+        
         #endregion
 
     }

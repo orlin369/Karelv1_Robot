@@ -23,12 +23,12 @@ SOFTWARE.
 */
 
 using System;
-using System.Threading;
 using KarelV1Lib.Events;
+using KarelV1Lib.Adapters;
 
 namespace KarelV1Lib
 {
-    public class KarelV1 : Communicator, IDisposable
+    public class KarelV1
     {
 
         #region Constants
@@ -43,6 +43,37 @@ namespace KarelV1Lib
 
         #region Variables
 
+        private Adapter adapter;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// If the board is correctly connected.
+        /// </summary>
+        public bool IsConnected
+        {
+            get
+            {
+                return this.adapter.IsConnected;
+            }
+        }
+
+        /// <summary>
+        /// Maximum timeout.
+        /// </summary>
+        public int MaxTimeout
+        {
+            get
+            {
+                return this.adapter.MaxTimeout;
+            }
+            set
+            {
+                this.adapter.MaxTimeout = value;
+            }
+        }
 
         #endregion
 
@@ -50,13 +81,18 @@ namespace KarelV1Lib
 
         public event EventHandler<SensorsEventArgs> OnSensors;
 
-        public event EventHandler<UltraSonicSensorEventArgs> OnUltraSonicSensor;
+        public event EventHandler<DistanceSensorsEventArgs> OnDistanceSensors;
 
         public event EventHandler<EventArgs> OnStoped;
 
         public event EventHandler<StringEventArgs> OnGreatingsMessage;
 
         public event EventHandler<RobotPositionEventArgs> OnPosition;
+
+        /// <summary>
+        /// Received command message.
+        /// </summary>
+        public event EventHandler<StringEventArgs> OnMessage;
 
         #endregion
 
@@ -66,13 +102,15 @@ namespace KarelV1Lib
         /// Constructor
         /// </summary>
         /// <param name="port">Communication port.</param>
-        public KarelV1(string portName) : base(portName)
+        public KarelV1(Adapter adapter)
         {
+            this.adapter = adapter;
+
             // max time 5 minutes
-            this.MaxTimeout = 30000;
+            this.adapter.MaxTimeout = 30000;
 
             // Attach the event handler.
-            this.OnMessage += KarelV1_OnMesage;
+            this.adapter.OnMessage += Adapter_OnMessage;
         }
 
         /// <summary>
@@ -80,7 +118,7 @@ namespace KarelV1Lib
         /// </summary>
         ~KarelV1()
         {
-            base.Dispose();
+            this.adapter.Dispose();
         }
 
         #endregion
@@ -88,16 +126,28 @@ namespace KarelV1Lib
         #region Public
 
         /// <summary>
-        /// Reset the MCU
+        /// Connect to the Robot.
+        /// </summary>
+        public void Connect()
+        {
+            this.adapter.Connect();
+            this.adapter.OnMessage += Adapter_OnMessage;
+        }
+
+        /// <summary>
+        /// Disconnect
+        /// </summary>
+        public void Disconnect()
+        {
+            this.adapter.Disconnect();
+        }
+
+        /// <summary>
+        /// Reset the Robot.
         /// </summary>
         public void Reset()
         {
-            if (this.IsConnected && this.SerialPort.IsOpen)
-            {
-                this.SerialPort.DtrEnable = true;
-                Thread.Sleep(200);
-                this.SerialPort.DtrEnable = false;
-            }
+            this.adapter.Reset();
         }
 
         /// <summary>
@@ -107,7 +157,7 @@ namespace KarelV1Lib
         public void Move(int value)
         {
             string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -117,7 +167,7 @@ namespace KarelV1Lib
         public void Rotate(int value)
         {
             string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -126,7 +176,7 @@ namespace KarelV1Lib
         public void Stop()
         {
            string command = "?STOP";
-            this.SendRequest(command + TERMIN);
+           this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -135,7 +185,7 @@ namespace KarelV1Lib
         public void GetSensors()
         {
             string command = "?SENSORS";
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -156,7 +206,7 @@ namespace KarelV1Lib
             }
                 
             string command = String.Format("?US{0:D3}", position);
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -165,7 +215,7 @@ namespace KarelV1Lib
         public void GetUltraSonic()
         {
             string command = "?USA";
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -174,20 +224,17 @@ namespace KarelV1Lib
         public void GetPosition()
         {
             string command = "?POSITION";
-            this.SendRequest(command + TERMIN);
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         #endregion
 
         #region Private
 
-        /// <summary>
-        /// Handler that call response parser.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void KarelV1_OnMesage(object sender, StringEventArgs e)
+        private void Adapter_OnMessage(object sender, StringEventArgs e)
         {
+            this.OnMessage?.Invoke(this, e);
+
             this.ResponseParser(e.Message);
         }
 
@@ -253,15 +300,16 @@ namespace KarelV1Lib
                         if (token.Contains("US"))
                         {
                             int phase = 0;
-                            int time = 0;
+                            int usTime = 0;
+                            int irAdc = 0;
 
                             string tmpToken = token.Replace("#US;", "");
 
                             string[] subTokens = tmpToken.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
 
-                            if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out time)))
+                            if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out usTime)) && (int.TryParse(subTokens[2], out irAdc)))
                             {
-                                this.OnUltraSonicSensor?.Invoke(this, new UltraSonicSensorEventArgs(phase, time));
+                                this.OnDistanceSensors?.Invoke(this, new DistanceSensorsEventArgs(phase, usTime, irAdc));
                             }
 
                         }

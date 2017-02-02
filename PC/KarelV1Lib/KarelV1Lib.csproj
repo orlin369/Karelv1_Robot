@@ -43,11 +43,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Communicator.cs" />
+    <Compile Include="Adapters\Adapter.cs" />
+    <Compile Include="Adapters\SerialAdapter.cs" />
     <Compile Include="Events\RobotPositionEventArgs.cs" />
     <Compile Include="Events\SensorsEventArgs.cs" />
     <Compile Include="Events\StringEventArgs.cs" />
-    <Compile Include="Events\UltraSonicSensorEventArgs.cs" />
+    <Compile Include="Events\DistanceSensorsEventArgs.cs" />
     <Compile Include="KarelV1.cs" />
     <Compile Include="Data\MetricScale.cs" />
     <Compile Include="DifferentialModel.cs" />

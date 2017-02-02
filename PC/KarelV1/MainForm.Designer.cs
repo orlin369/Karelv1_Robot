@@ -31,6 +31,7 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.talkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,6 +79,7 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
+            this.tsmiMQTT = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -142,6 +144,7 @@
             // 
             this.tsmiConnection.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiPorts,
+            this.tsmiMQTT,
             this.tsSeparator1,
             this.tsmiReset});
             this.tsmiConnection.Name = "tsmiConnection";
@@ -152,18 +155,18 @@
             // tsmiPorts
             // 
             this.tsmiPorts.Name = "tsmiPorts";
-            this.tsmiPorts.Size = new System.Drawing.Size(120, 26);
+            this.tsmiPorts.Size = new System.Drawing.Size(181, 26);
             this.tsmiPorts.Text = "Ports";
             // 
             // tsSeparator1
             // 
             this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(117, 6);
+            this.tsSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // tsmiReset
             // 
             this.tsmiReset.Name = "tsmiReset";
-            this.tsmiReset.Size = new System.Drawing.Size(120, 26);
+            this.tsmiReset.Size = new System.Drawing.Size(181, 26);
             this.tsmiReset.Text = "Reset";
             this.tsmiReset.Click += new System.EventHandler(this.tsmiReset_Click);
             // 
@@ -417,7 +420,12 @@
             series1.Legend = "Legend1";
             series1.MarkerColor = System.Drawing.Color.Black;
             series1.Name = "Ultrasonic Sensor";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Legend = "Legend1";
+            series2.Name = "Infrared";
             this.crtUltrasinicSensor.Series.Add(series1);
+            this.crtUltrasinicSensor.Series.Add(series2);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(796, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -630,6 +638,13 @@
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
             // 
+            // tsmiMQTT
+            // 
+            this.tsmiMQTT.Name = "tsmiMQTT";
+            this.tsmiMQTT.Size = new System.Drawing.Size(181, 26);
+            this.tsmiMQTT.Text = "MQTT";
+            this.tsmiMQTT.Click += new System.EventHandler(this.tsmiMQTT_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -720,6 +735,7 @@
         private System.Windows.Forms.ComboBox cbMetric;
         private System.Windows.Forms.ToolStripMenuItem talkToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiMQTT;
     }
 }
 

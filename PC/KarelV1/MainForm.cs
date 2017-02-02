@@ -40,6 +40,7 @@ using KarelV1Lib.Events;
 using IPWebcam;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Speech.Synthesis;
+using KarelV1Lib.Adapters;
 
 // 
 // Robot tasks ...
@@ -85,16 +86,37 @@ namespace KarelV1
         /// </summary>
         private IpCamera ipCamera;
 
+        /// <summary>
+        /// Captured image from the IP camera/stream.
+        /// </summary>
         private Bitmap capturedImage;
 
+        /// <summary>
+        /// Sync object.
+        /// </summary>
         private object syncLockCapture = new object();
 
+        /// <summary>
+        /// LORA database.
+        /// </summary>
         private Lora database;
 
-        private double[] xValues = new double[360];
-        private double[] yValues = new double[360];
+        /// <summary>
+        /// X axis of the chart.
+        /// </summary>
+        private double[] xValues = new double[361];
 
+        /// <summary>
+        /// Ultrasonic distance sensor measurements values.
+        /// </summary>
+        private double[] ultrasonicTime = new double[361];
 
+        /// <summary>
+        /// Infrared distance sensor measurements values.
+        /// </summary>
+        private double[] infraredADC = new double[361];
+
+        private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
         #endregion
 
@@ -149,7 +171,7 @@ namespace KarelV1
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.DisconnectFromRobot();
+            this.DisconnectFromRobotViaSerial();
         }
 
         #endregion
@@ -212,7 +234,6 @@ namespace KarelV1
         {
             if (this.robot != null && this.robot.IsConnected)
             {
-                // -10 mm
                 this.robot.GetPosition();
             }
         }
@@ -247,52 +268,64 @@ namespace KarelV1
         #region Sensor View
 
         private void SetupUltrasonicChart()
-        {            
-            crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
-            //crtUltrasinicSensor.Series[0].Points.DataBindXY(xValues, yValues);
-            crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
-            crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
-            crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
+        {
 
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Minimum = 0.0f;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum = 360.0f;
-
-            //crtUltrasinicSensor.ChartAreas[0].AxisX.LabelStyle.Format = "F3";
-            crtUltrasinicSensor.Series[0]["PolarDrawingStyle"] = "Line";
+            //
             // setup the X grid
+            //crtUltrasinicSensor.ChartAreas[0].AxisX.LabelStyle.Format = "F3";
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
             crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = -90;
             crtUltrasinicSensor.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Minimum = 0.0f;
+            crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum = 360.0f;
             // setupthe Y grid
             crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
             crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;
             crtUltrasinicSensor.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
 
-            for (int index = 0; index < yValues.Length; index++)
+            // ==== Ultrasonic distance ====
+            crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
+            crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
+            crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
+            crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
+            crtUltrasinicSensor.Series[0]["PolarDrawingStyle"] = "Line";
+            crtUltrasinicSensor.Series[0].Color = Color.Blue;
+
+            // ==== Infrared sensor distance ====
+            crtUltrasinicSensor.Series[1].ChartType = SeriesChartType.Polar;
+            crtUltrasinicSensor.Series[1].XValueType = ChartValueType.Double;
+            crtUltrasinicSensor.Series[1].IsXValueIndexed = true;
+            crtUltrasinicSensor.Series[1].Name = "Infrared Sensor";
+            crtUltrasinicSensor.Series[1]["PolarDrawingStyle"] = "Line";
+            crtUltrasinicSensor.Series[1].Color = Color.Red;
+
+
+            for (int index = 0; index < ultrasonicTime.Length; index++)
             {
-                yValues[index] = 0.0F;
+                ultrasonicTime[index] = 0.0F;
+                infraredADC[index] = 0.0F;
                 xValues[index] = index;
             }
 
-            this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.yValues);
+            this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
+            this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
         }
 
-        private void UpdateDiagram(int position, float time)
+        private void UpdateDiagram()
         {
-            float distance = time / 58.0F;
-            if (distance > 330.0F) distance = 330.0F;
-            yValues[position] = distance;
             if (this.crtUltrasinicSensor.InvokeRequired)
             {
                 this.crtUltrasinicSensor.BeginInvoke((MethodInvoker)delegate()
                 {
-                    this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.yValues);
+                    this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
+                    this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
                 });
             }
             else
             {
-                this.crtUltrasinicSensor.Series[0].Points.DataBindY(yValues);
+                this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
+                this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
             }
         }
 
@@ -315,10 +348,10 @@ namespace KarelV1
 
         private void tmsiPorts_Click(object sender, EventArgs e)
         {
-            this.DisconnectFromRobot();
+            this.DisconnectFromRobotViaSerial();
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             this.robotSerialPortName = item.Text;
-            this.ConnectToRobot();
+            this.ConnectToRobotViaSerial();
 
             if (this.robot.IsConnected)
             {
@@ -343,6 +376,11 @@ namespace KarelV1
             {
                 this.robot.Reset();
             }
+        }
+
+        private void tsmiMQTT_Click(object sender, EventArgs e)
+        {
+
         }
 
         #endregion
@@ -385,14 +423,14 @@ namespace KarelV1
 
         #region Robot
 
-        private void ConnectToRobot()
+        private void ConnectToRobotViaSerial()
         {
             try
             {
-                this.robot = new KarelV1Lib.KarelV1(this.robotSerialPortName);
+                this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName));
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnSensors += myRobot_OnSensors;
-                this.robot.OnUltraSonicSensor += myRobot_OnUltraSonicSensor;
+                this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnStoped += myRobot_OnStoped;
                 this.robot.OnPosition += myRobot_OnPosition;
@@ -405,7 +443,7 @@ namespace KarelV1
             }
         }
 
-        private void DisconnectFromRobot()
+        private void DisconnectFromRobotViaSerial()
         {
             try
             {
@@ -440,7 +478,7 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.DegToStep(90.0D);
+            int steps = this.differentialModel.DegToStep(-90.0D);
             this.robot.Rotate(steps);
         }
 
@@ -448,7 +486,7 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.DegToStep(-90.0D);
+            int steps = this.differentialModel.DegToStep(90.0D);
             this.robot.Rotate(steps);
         }
 
@@ -467,11 +505,19 @@ namespace KarelV1
             this.AddStatus("Stopped", Color.White);
         }
 
-        private void myRobot_OnUltraSonicSensor(object sender, UltraSonicSensorEventArgs e)
+        private void myRobot_OnDistanceSensors(object sender, DistanceSensorsEventArgs e)
         {
-            this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us]", e.Position, e.Time), Color.White);
+            this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.Position, e.UltrasonicTime, e.InfraRedADCValue), Color.White);
+
             // TODO: Class HSR04
-            this.UpdateDiagram((int)e.Position, e.Time);
+            float distance = e.UltrasonicTime / 58.0F;
+            if (distance > 330.0F) distance = 330.0F;
+            this.ultrasonicTime[e.Position] = distance;
+
+            //this.infraredADC[e.Position] = irSensor.Convert(e.InfraRedADCValue); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
+            this.infraredADC[e.Position] = AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
+
+            this.UpdateDiagram();
         }
 
         private void myRobot_OnSensors(object sender, SensorsEventArgs e)
