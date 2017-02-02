@@ -483,8 +483,7 @@ namespace KarelV1
                 this.AddStatus(exception.ToString(), Color.White);
             }
         }
-
-
+        
         private void ConnectToRobotViaMqtt()
         {
             try
@@ -524,7 +523,6 @@ namespace KarelV1
                 this.AddStatus(exception.ToString(), Color.White);
             }
         }
-
 
         private void MoveForward()
         {
@@ -1064,11 +1062,6 @@ namespace KarelV1
         }
         
         #endregion
-
-        private void btnLoginTest_Click(object sender, EventArgs e)
-        {
-
-        }
 
         private void talkToolStripMenuItem1_Click(object sender, EventArgs e)
         {

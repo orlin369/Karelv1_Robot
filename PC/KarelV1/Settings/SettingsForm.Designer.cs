@@ -52,7 +52,7 @@
             this.gbMQTT.Controls.Add(this.lblInputTopic);
             this.gbMQTT.Location = new System.Drawing.Point(12, 12);
             this.gbMQTT.Name = "gbMQTT";
-            this.gbMQTT.Size = new System.Drawing.Size(448, 255);
+            this.gbMQTT.Size = new System.Drawing.Size(448, 155);
             this.gbMQTT.TabIndex = 0;
             this.gbMQTT.TabStop = false;
             this.gbMQTT.Text = "MQTT";
@@ -125,7 +125,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(564, 277);
+            this.ClientSize = new System.Drawing.Size(544, 221);
             this.Controls.Add(this.gbMQTT);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
