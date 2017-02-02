@@ -83,5 +83,53 @@ namespace KarelV1.Properties {
                 this["DistanceBetweenWheels"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("176.33.1.5")]
+        public string BrokerHost {
+            get {
+                return ((string)(this["BrokerHost"]));
+            }
+            set {
+                this["BrokerHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1883")]
+        public int BrokerPort {
+            get {
+                return ((int)(this["BrokerPort"]));
+            }
+            set {
+                this["BrokerPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("pt/str/i/robot/1")]
+        public string MqttInputTopic {
+            get {
+                return ((string)(this["MqttInputTopic"]));
+            }
+            set {
+                this["MqttInputTopic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("pt/str/o/robot/1")]
+        public string MqttOutputTopic {
+            get {
+                return ((string)(this["MqttOutputTopic"]));
+            }
+            set {
+                this["MqttOutputTopic"] = value;
+            }
+        }
     }
 }

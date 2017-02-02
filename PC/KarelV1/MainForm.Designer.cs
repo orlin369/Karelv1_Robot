@@ -28,19 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.talkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiExit = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiPorts = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiMQTT = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiConnectToMqtt = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiDisconnectFromMqtt = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiReset = new System.Windows.Forms.ToolStripMenuItem();
+            this.speachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.talkToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statBar = new System.Windows.Forms.StatusStrip();
             this.lblIsConnected = new System.Windows.Forms.ToolStripStatusLabel();
             this.tblMain = new System.Windows.Forms.TableLayoutPanel();
@@ -79,7 +84,6 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
-            this.tsmiMQTT = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -103,7 +107,8 @@
             this.mainMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFile,
-            this.tsmiConnection});
+            this.tsmiConnection,
+            this.speachToolStripMenuItem});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
@@ -114,19 +119,19 @@
             // tsmiFile
             // 
             this.tsmiFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.talkToolStripMenuItem,
+            this.tsmiSettings,
             this.toolStripSeparator1,
             this.tsmiExit});
             this.tsmiFile.Name = "tsmiFile";
             this.tsmiFile.Size = new System.Drawing.Size(44, 24);
             this.tsmiFile.Text = "File";
             // 
-            // talkToolStripMenuItem
+            // tsmiSettings
             // 
-            this.talkToolStripMenuItem.Name = "talkToolStripMenuItem";
-            this.talkToolStripMenuItem.Size = new System.Drawing.Size(161, 26);
-            this.talkToolStripMenuItem.Text = "Talk";
-            this.talkToolStripMenuItem.Click += new System.EventHandler(this.talkToolStripMenuItem_Click);
+            this.tsmiSettings.Name = "tsmiSettings";
+            this.tsmiSettings.Size = new System.Drawing.Size(161, 26);
+            this.tsmiSettings.Text = "Settings";
+            this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 
             // toolStripSeparator1
             // 
@@ -158,6 +163,29 @@
             this.tsmiPorts.Size = new System.Drawing.Size(181, 26);
             this.tsmiPorts.Text = "Ports";
             // 
+            // tsmiMQTT
+            // 
+            this.tsmiMQTT.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiConnectToMqtt,
+            this.tsmiDisconnectFromMqtt});
+            this.tsmiMQTT.Name = "tsmiMQTT";
+            this.tsmiMQTT.Size = new System.Drawing.Size(181, 26);
+            this.tsmiMQTT.Text = "MQTT";
+            // 
+            // tsmiConnectToMqtt
+            // 
+            this.tsmiConnectToMqtt.Name = "tsmiConnectToMqtt";
+            this.tsmiConnectToMqtt.Size = new System.Drawing.Size(181, 26);
+            this.tsmiConnectToMqtt.Text = "Connect";
+            this.tsmiConnectToMqtt.Click += new System.EventHandler(this.tsmiConnectToMqtt_Click);
+            // 
+            // tsmiDisconnectFromMqtt
+            // 
+            this.tsmiDisconnectFromMqtt.Name = "tsmiDisconnectFromMqtt";
+            this.tsmiDisconnectFromMqtt.Size = new System.Drawing.Size(181, 26);
+            this.tsmiDisconnectFromMqtt.Text = "Disconnect";
+            this.tsmiDisconnectFromMqtt.Click += new System.EventHandler(this.tsmiDisconnectFromMqtt_Click);
+            // 
             // tsSeparator1
             // 
             this.tsSeparator1.Name = "tsSeparator1";
@@ -169,6 +197,21 @@
             this.tsmiReset.Size = new System.Drawing.Size(181, 26);
             this.tsmiReset.Text = "Reset";
             this.tsmiReset.Click += new System.EventHandler(this.tsmiReset_Click);
+            // 
+            // speachToolStripMenuItem
+            // 
+            this.speachToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.talkToolStripMenuItem1});
+            this.speachToolStripMenuItem.Name = "speachToolStripMenuItem";
+            this.speachToolStripMenuItem.Size = new System.Drawing.Size(69, 24);
+            this.speachToolStripMenuItem.Text = "Speach";
+            // 
+            // talkToolStripMenuItem1
+            // 
+            this.talkToolStripMenuItem1.Name = "talkToolStripMenuItem1";
+            this.talkToolStripMenuItem1.Size = new System.Drawing.Size(181, 26);
+            this.talkToolStripMenuItem1.Text = "Talk";
+            this.talkToolStripMenuItem1.Click += new System.EventHandler(this.talkToolStripMenuItem1_Click);
             // 
             // statBar
             // 
@@ -403,29 +446,29 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea1.Area3DStyle.Rotation = 10;
-            chartArea1.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
+            chartArea2.Area3DStyle.Rotation = 10;
+            chartArea2.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea2);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend2);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series1.BackSecondaryColor = System.Drawing.Color.Black;
-            series1.BorderColor = System.Drawing.Color.Black;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series1.Color = System.Drawing.Color.Green;
-            series1.Legend = "Legend1";
-            series1.MarkerColor = System.Drawing.Color.Black;
-            series1.Name = "Ultrasonic Sensor";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series2.Legend = "Legend1";
-            series2.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series1);
-            this.crtUltrasinicSensor.Series.Add(series2);
+            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series3.BackSecondaryColor = System.Drawing.Color.Black;
+            series3.BorderColor = System.Drawing.Color.Black;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series3.Color = System.Drawing.Color.Green;
+            series3.Legend = "Legend1";
+            series3.MarkerColor = System.Drawing.Color.Black;
+            series3.Name = "Ultrasonic Sensor";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series4.Legend = "Legend1";
+            series4.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series3);
+            this.crtUltrasinicSensor.Series.Add(series4);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(796, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -638,13 +681,6 @@
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
             // 
-            // tsmiMQTT
-            // 
-            this.tsmiMQTT.Name = "tsmiMQTT";
-            this.tsmiMQTT.Size = new System.Drawing.Size(181, 26);
-            this.tsmiMQTT.Text = "MQTT";
-            this.tsmiMQTT.Click += new System.EventHandler(this.tsmiMQTT_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -733,9 +769,13 @@
         private System.Windows.Forms.ToolStripSeparator tsSeparator1;
         private System.Windows.Forms.ToolStripMenuItem tsmiReset;
         private System.Windows.Forms.ComboBox cbMetric;
-        private System.Windows.Forms.ToolStripMenuItem talkToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem tsmiMQTT;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSettings;
+        private System.Windows.Forms.ToolStripMenuItem speachToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem talkToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem tsmiConnectToMqtt;
+        private System.Windows.Forms.ToolStripMenuItem tsmiDisconnectFromMqtt;
     }
 }
 

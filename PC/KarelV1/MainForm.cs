@@ -41,6 +41,7 @@ using IPWebcam;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Speech.Synthesis;
 using KarelV1Lib.Adapters;
+using KarelV1.Settings;
 
 // 
 // Robot tasks ...
@@ -97,11 +98,6 @@ namespace KarelV1
         private object syncLockCapture = new object();
 
         /// <summary>
-        /// LORA database.
-        /// </summary>
-        private Lora database;
-
-        /// <summary>
         /// X axis of the chart.
         /// </summary>
         private double[] xValues = new double[361];
@@ -132,16 +128,13 @@ namespace KarelV1
             this.cameraUpdateTimer = new System.Windows.Forms.Timer();
             this.cameraUpdateTimer.Stop();
             this.cameraUpdateTimer.Tick += this.cameraUpdateTimer_Tick;
-            
-            // Create DB.
-            this.database = new Lora(new Uri(Settings.Default.DatabaseUri));
 
             // The differential controlling model.
             this.differentialModel = new DifferentialModel(
-                Settings.Default.SteppsCount,
-                Settings.Default.StepperPostScaler,
-                Settings.Default.DiametterOfWheel,
-                Settings.Default.DistanceBetweenWheels);
+                Properties.Settings.Default.SteppsCount,
+                Properties.Settings.Default.StepperPostScaler,
+                Properties.Settings.Default.DiametterOfWheel,
+                Properties.Settings.Default.DistanceBetweenWheels);
         }
 
         #endregion
@@ -172,6 +165,7 @@ namespace KarelV1
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.DisconnectFromRobotViaSerial();
+            this.DisconnectFromRobotViaMqtt();
         }
 
         #endregion
@@ -378,8 +372,40 @@ namespace KarelV1
             }
         }
 
-        private void tsmiMQTT_Click(object sender, EventArgs e)
+        private void tsmiSettings_Click(object sender, EventArgs e)
         {
+            using (SettingsForm sf = new SettingsForm())
+            {
+                sf.ShowDialog();
+            }
+        }
+
+        private void tsmiConnectToMqtt_Click(object sender, EventArgs e)
+        {
+            this.ConnectToRobotViaMqtt();
+
+            if (this.robot.IsConnected)
+            {
+                this.lblIsConnected.Text = String.Format("Connected: {0}:{1}", Properties.Settings.Default.BrokerHost, Properties.Settings.Default.BrokerPort);
+            }
+            else
+            {
+                this.lblIsConnected.Text = "Not Connected";
+            }
+        }
+
+        private void tsmiDisconnectFromMqtt_Click(object sender, EventArgs e)
+        {
+            this.DisconnectFromRobotViaMqtt();
+
+            if (this.robot.IsConnected)
+            {
+                this.lblIsConnected.Text = String.Format("Connected: {0}:{1}", Properties.Settings.Default.BrokerHost, Properties.Settings.Default.BrokerPort);
+            }
+            else
+            {
+                this.lblIsConnected.Text = "Not Connected";
+            }
 
         }
 
@@ -458,11 +484,53 @@ namespace KarelV1
             }
         }
 
+
+        private void ConnectToRobotViaMqtt()
+        {
+            try
+            {
+                this.robot = new KarelV1Lib.KarelV1(new MqttAdapter(
+                    Properties.Settings.Default.BrokerHost,
+                    Properties.Settings.Default.BrokerPort,
+                    Properties.Settings.Default.MqttInputTopic,
+                    Properties.Settings.Default.MqttOutputTopic));
+
+                this.robot.OnMessage += myRobot_OnMessage;
+                this.robot.OnSensors += myRobot_OnSensors;
+                this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
+                this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
+                this.robot.OnStoped += myRobot_OnStoped;
+                this.robot.OnPosition += myRobot_OnPosition;
+                this.robot.Connect();
+                this.robot.Reset();
+            }
+            catch (Exception exception)
+            {
+                this.AddStatus(exception.ToString(), Color.White);
+            }
+        }
+
+        private void DisconnectFromRobotViaMqtt()
+        {
+            try
+            {
+                if (this.robot != null && this.robot.IsConnected)
+                {
+                    this.robot.Disconnect();
+                }
+            }
+            catch (Exception exception)
+            {
+                this.AddStatus(exception.ToString(), Color.White);
+            }
+        }
+
+
         private void MoveForward()
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = differentialModel.MmToStep(10.0d);
+            int steps = this.differentialModel.MmToStep(10.0d);
             this.robot.Move(steps);
         }
 
@@ -470,7 +538,7 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = differentialModel.MmToStep(-10.0d);
+            int steps = this.differentialModel.MmToStep(-10.0d);
             this.robot.Move(steps);
         }
 
@@ -567,9 +635,6 @@ namespace KarelV1
             sensor.Position = decartRobotPose;
             sensor.Name = "Robot position";
             sensor.Descripotion = "Actual robot position.";
-
-            // Send data to the DB.
-            this.database.CommitDevice(sensor);
         }
 
         private void SendRobotUltrasonicSensor(float radius, float alpha)
@@ -984,13 +1049,13 @@ namespace KarelV1
                 #endregion
 
                 // Send data to the DB.
-                this.database.CommitDevice(dstSens);
-                this.database.CommitDevice(humSens);
-                this.database.CommitDevice(presSens);
-                this.database.CommitDevice(tempSens);
-                this.database.CommitDevice(robotPos);
-                this.database.CommitDevice(lStepAct);
-                this.database.CommitDevice(rStepAct);
+                //this.database.CommitDevice(dstSens);
+                //this.database.CommitDevice(humSens);
+                //this.database.CommitDevice(presSens);
+                //this.database.CommitDevice(tempSens);
+                //this.database.CommitDevice(robotPos);
+                //this.database.CommitDevice(lStepAct);
+                //this.database.CommitDevice(rStepAct);
             }
             catch (Exception exception)
             {
@@ -1002,14 +1067,11 @@ namespace KarelV1
 
         private void btnLoginTest_Click(object sender, EventArgs e)
         {
-            //user: testclient
-            //pass: testpass
-            this.database.Login("testclient", "testpass");
+
         }
 
-        private void talkToolStripMenuItem_Click(object sender, EventArgs e)
+        private void talkToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-
             // Initialize a new instance of the SpeechSynthesizer.
             using (SpeechSynthesizer synth = new SpeechSynthesizer())
             {
@@ -1026,12 +1088,10 @@ namespace KarelV1
                 // Configure the audio output. 
                 synth.SetOutputToDefaultAudioDevice();
                 synth.SelectVoice("Microsoft Zira Desktop");
-                
+
                 // Speak a string.
                 synth.Speak("The robot are seeing a wall.");
             }
-
         }
-
     }
 }
