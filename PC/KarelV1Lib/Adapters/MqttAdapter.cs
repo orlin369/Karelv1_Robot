@@ -136,7 +136,7 @@ namespace KarelV1Lib.Adapters
 
         public override void SendRequest(string command)
         {
-            if (this.mqttClient == null && !this.mqttClient.IsConnected) return;
+            if (this.mqttClient == null || !this.mqttClient.IsConnected) return;
 
             byte[] byteArray = Encoding.UTF8.GetBytes(command);
             byte[] asciiArray = Encoding.Convert(Encoding.UTF8, Encoding.ASCII, byteArray);

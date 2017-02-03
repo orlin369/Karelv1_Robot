@@ -192,7 +192,7 @@ namespace KarelV1Lib
         /// Get ultra sonic sensor.
         /// </summary>
         /// <param name="position">Position of the sensor.</param>
-        public void GetUltraSonic(int position)
+        public void GetDistanceSensors(int position)
         {
             //?US180\n
             if (position > 180)
@@ -212,7 +212,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Get ultra sonic sensor.
         /// </summary>
-        public void GetUltraSonic()
+        public void GetDistanceSensors()
         {
             string command = "?USA";
             this.adapter.SendRequest(command + TERMIN);

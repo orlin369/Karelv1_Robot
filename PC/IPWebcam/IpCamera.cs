@@ -10,11 +10,21 @@ namespace IPWebcam
 {
     public class IpCamera : ICaptureDevice
     {
+
+        #region Variables
+
         /// <summary>
         /// URI of the camera.
         /// </summary>
         private Uri uri;
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// URI of the service.
+        /// </summary>
         public Uri URI
         {
             get
@@ -23,12 +33,18 @@ namespace IPWebcam
             }
         }
 
-        public bool Torch
+        /// <summary>
+        /// Enable torch.
+        /// </summary>
+        public bool EnableTorch
         {
             get;
             set;
         }
 
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Constructor
@@ -40,13 +56,17 @@ namespace IPWebcam
             this.uri = uri;
         }
 
+        #endregion
+
+        #region Methods
+
         /// <summary>
         /// Get image from IP Camera.
         /// </summary>
         /// <returns>The bitmap image.</returns>
         public Bitmap Capture()
         {
-            if (this.Torch)
+            if (this.EnableTorch)
             {
                 this.SetTorch(true);
             }
@@ -55,7 +75,7 @@ namespace IPWebcam
             WebResponse response = request.GetResponse();
             Stream stream = response.GetResponseStream();
 
-            if (Torch)
+            if (EnableTorch)
             {
                 this.SetTorch(false);
             }
@@ -66,14 +86,14 @@ namespace IPWebcam
 
         public Stream SetTorch(bool state)
         {
-            string uriEnableTorch = String.Format("http://{0}:{1}/enabletorch", this.uri.Host, this.uri.Port);
-            string uriDisableTorch = String.Format("http://{0}:{1}/disabletorch", this.uri.Host, this.uri.Port);
-
-            string uriString = (state) ? uriEnableTorch : uriDisableTorch;
+            string uriString = String.Format("http://{0}:{1}/{2}", this.uri.Host, this.uri.Port, (state) ? "enabletorch" : "disabletorch");
 
             WebRequest request = WebRequest.Create(new Uri(uriString));
             WebResponse response = request.GetResponse();
             return response.GetResponseStream();
         }
+
+        #endregion
+
     }
 }

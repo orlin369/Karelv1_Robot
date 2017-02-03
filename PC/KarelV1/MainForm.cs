@@ -216,11 +216,11 @@ namespace KarelV1
                     return;
                 }
 
-                this.robot.GetUltraSonic(position);
+                this.robot.GetDistanceSensors(position);
             }
             else
             {
-                this.robot.GetUltraSonic();
+                this.robot.GetDistanceSensors();
             }
         }
 

@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea7 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend7 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series13 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series14 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -160,7 +160,7 @@
             // tsmiPorts
             // 
             this.tsmiPorts.Name = "tsmiPorts";
-            this.tsmiPorts.Size = new System.Drawing.Size(181, 26);
+            this.tsmiPorts.Size = new System.Drawing.Size(123, 26);
             this.tsmiPorts.Text = "Ports";
             // 
             // tsmiMQTT
@@ -169,7 +169,7 @@
             this.tsmiConnectToMqtt,
             this.tsmiDisconnectFromMqtt});
             this.tsmiMQTT.Name = "tsmiMQTT";
-            this.tsmiMQTT.Size = new System.Drawing.Size(181, 26);
+            this.tsmiMQTT.Size = new System.Drawing.Size(123, 26);
             this.tsmiMQTT.Text = "MQTT";
             // 
             // tsmiConnectToMqtt
@@ -189,12 +189,12 @@
             // tsSeparator1
             // 
             this.tsSeparator1.Name = "tsSeparator1";
-            this.tsSeparator1.Size = new System.Drawing.Size(178, 6);
+            this.tsSeparator1.Size = new System.Drawing.Size(120, 6);
             // 
             // tsmiReset
             // 
             this.tsmiReset.Name = "tsmiReset";
-            this.tsmiReset.Size = new System.Drawing.Size(181, 26);
+            this.tsmiReset.Size = new System.Drawing.Size(123, 26);
             this.tsmiReset.Text = "Reset";
             this.tsmiReset.Click += new System.EventHandler(this.tsmiReset_Click);
             // 
@@ -267,12 +267,13 @@
             // txtState
             // 
             this.txtState.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.txtState.Location = new System.Drawing.Point(4, 332);
+            this.txtState.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.txtState.Location = new System.Drawing.Point(4, 334);
             this.txtState.Margin = new System.Windows.Forms.Padding(4);
             this.txtState.Multiline = true;
             this.txtState.Name = "txtState";
             this.txtState.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtState.Size = new System.Drawing.Size(373, 265);
+            this.txtState.Size = new System.Drawing.Size(322, 263);
             this.txtState.TabIndex = 7;
             // 
             // gpbControls
@@ -288,7 +289,7 @@
             this.gpbControls.Margin = new System.Windows.Forms.Padding(4);
             this.gpbControls.Name = "gpbControls";
             this.gpbControls.Padding = new System.Windows.Forms.Padding(4);
-            this.gpbControls.Size = new System.Drawing.Size(373, 320);
+            this.gpbControls.Size = new System.Drawing.Size(322, 322);
             this.gpbControls.TabIndex = 0;
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
@@ -369,7 +370,7 @@
             this.tbpSonar.Margin = new System.Windows.Forms.Padding(4);
             this.tbpSonar.Name = "tbpSonar";
             this.tbpSonar.Padding = new System.Windows.Forms.Padding(4);
-            this.tbpSonar.Size = new System.Drawing.Size(930, 568);
+            this.tbpSonar.Size = new System.Drawing.Size(989, 568);
             this.tbpSonar.TabIndex = 0;
             this.tbpSonar.Text = "Sonar";
             this.tbpSonar.UseVisualStyleBackColor = true;
@@ -387,7 +388,7 @@
             this.tlpSonar.Name = "tlpSonar";
             this.tlpSonar.RowCount = 1;
             this.tlpSonar.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpSonar.Size = new System.Drawing.Size(922, 560);
+            this.tlpSonar.Size = new System.Drawing.Size(981, 560);
             this.tlpSonar.TabIndex = 12;
             // 
             // pnlSonar
@@ -397,7 +398,7 @@
             this.pnlSonar.Controls.Add(this.tbSensorPosition);
             this.pnlSonar.Controls.Add(this.btnGetUltrasonic);
             this.pnlSonar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSonar.Location = new System.Drawing.Point(806, 4);
+            this.pnlSonar.Location = new System.Drawing.Point(865, 4);
             this.pnlSonar.Margin = new System.Windows.Forms.Padding(4);
             this.pnlSonar.Name = "pnlSonar";
             this.pnlSonar.Size = new System.Drawing.Size(112, 552);
@@ -446,30 +447,30 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea7.Area3DStyle.Rotation = 10;
-            chartArea7.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea7);
+            chartArea1.Area3DStyle.Rotation = 10;
+            chartArea1.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend7.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend7);
+            legend1.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend1);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series13.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series13.BackSecondaryColor = System.Drawing.Color.Black;
-            series13.BorderColor = System.Drawing.Color.Black;
-            series13.ChartArea = "ChartArea1";
-            series13.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series13.Color = System.Drawing.Color.Green;
-            series13.Legend = "Legend1";
-            series13.MarkerColor = System.Drawing.Color.Black;
-            series13.Name = "Ultrasonic Sensor";
-            series14.ChartArea = "ChartArea1";
-            series14.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series14.Legend = "Legend1";
-            series14.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series13);
-            this.crtUltrasinicSensor.Series.Add(series14);
-            this.crtUltrasinicSensor.Size = new System.Drawing.Size(796, 554);
+            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series1.BackSecondaryColor = System.Drawing.Color.Black;
+            series1.BorderColor = System.Drawing.Color.Black;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series1.Color = System.Drawing.Color.Green;
+            series1.Legend = "Legend1";
+            series1.MarkerColor = System.Drawing.Color.Black;
+            series1.Name = "Ultrasonic Sensor";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Legend = "Legend1";
+            series2.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series1);
+            this.crtUltrasinicSensor.Series.Add(series2);
+            this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
             // 
