@@ -26,22 +26,24 @@ using DatabaseConnection;
 using DatabaseConnection.Device.Actuators;
 using DatabaseConnection.Device.Sensors;
 using DatabaseConnection.Units;
+
 using System;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
+using System.Speech.Synthesis;
 
 using KarelV1.Util;
-using KarelV1.Properties;
+using KarelV1.Settings;
 
 using KarelV1Lib;
 using KarelV1Lib.Events;
+using KarelV1Lib.Adapters;
+using KarelV1Lib.Data;
 
 using IPWebcam;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Speech.Synthesis;
-using KarelV1Lib.Adapters;
-using KarelV1.Settings;
+
 
 // 
 // Robot tasks ...
@@ -97,20 +99,7 @@ namespace KarelV1
         /// </summary>
         private object syncLockCapture = new object();
 
-        /// <summary>
-        /// X axis of the chart.
-        /// </summary>
-        private double[] xValues = new double[361];
-
-        /// <summary>
-        /// Ultrasonic distance sensor measurements values.
-        /// </summary>
-        private double[] ultrasonicTime = new double[361];
-
-        /// <summary>
-        /// Infrared distance sensor measurements values.
-        /// </summary>
-        private double[] infraredADC = new double[361];
+        private DistanceSensorsList sonarsData = new DistanceSensorsList();
 
         private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
@@ -157,7 +146,7 @@ namespace KarelV1
 
             this.SearchForPorts();
 
-            this.SetupUltrasonicChart();
+            this.SetupSonarChart();
 
             this.SetupScaleComboBox();
         }
@@ -174,33 +163,43 @@ namespace KarelV1
 
         private void btnForward_Click(object sender, EventArgs e)
         {
+            if (this.robot == null || !this.robot.IsConnected) return;
+
             this.MoveForward();
         }
 
         private void btnBackward_Click(object sender, EventArgs e)
         {
+            if (this.robot == null || !this.robot.IsConnected) return;
+
             this.MoveBackward();
         }
 
         private void btnLeft_Click(object sender, EventArgs e)
         {
+            if (this.robot == null || !this.robot.IsConnected) return;
+
             this.MoveLeft();
         }
 
         private void btnRight_Click(object sender, EventArgs e)
         {
+            if (this.robot == null || !this.robot.IsConnected) return;
+
             this.MoveRight();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             if (this.robot == null || !this.robot.IsConnected) return;
+
             this.robot.Stop();
         }
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
             if (this.robot == null || !this.robot.IsConnected) return;
+
             this.robot.GetSensors();
         }
 
@@ -226,10 +225,9 @@ namespace KarelV1
 
         private void btnGetRobotPos_Click(object sender, EventArgs e)
         {
-            if (this.robot != null && this.robot.IsConnected)
-            {
-                this.robot.GetPosition();
-            }
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            this.robot.GetPosition();
         }
 
         private void btnCapture_Click(object sender, EventArgs e)
@@ -261,78 +259,70 @@ namespace KarelV1
 
         #region Sensor View
 
-        private void SetupUltrasonicChart()
+        private void SetupSonarChart()
         {
-
-            //
             // setup the X grid
             //crtUltrasinicSensor.ChartAreas[0].AxisX.LabelStyle.Format = "F3";
-            crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = -90;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Minimum = 0.0f;
-            crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum = 360.0f;
-            // setupthe Y grid
-            crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
-            crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;
-            crtUltrasinicSensor.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Enabled = true;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.MajorGrid.Interval = 90;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.Crossing = -90;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.Minimum = 0.0f;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum = 360.0f;
+            // setup the Y grid
+            this.crtUltrasinicSensor.ChartAreas[0].AxisY.MajorGrid.Enabled = true;
+            this.crtUltrasinicSensor.ChartAreas[0].Area3DStyle.Enable3D = false;
+            this.crtUltrasinicSensor.ChartAreas[0].AxisY.ScaleView.Zoomable = true;
 
             // ==== Ultrasonic distance ====
-            crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
-            crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
-            crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
-            crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
-            crtUltrasinicSensor.Series[0]["PolarDrawingStyle"] = "Line";
-            crtUltrasinicSensor.Series[0].Color = Color.Blue;
+            this.crtUltrasinicSensor.Series[0].ChartType = SeriesChartType.Polar;
+            this.crtUltrasinicSensor.Series[0].XValueType = ChartValueType.Double;
+            this.crtUltrasinicSensor.Series[0].IsXValueIndexed = true;
+            this.crtUltrasinicSensor.Series[0].Name = "Ultrasonic Sensor";
+            this.crtUltrasinicSensor.Series[0]["PolarDrawingStyle"] = "Line";
+            this.crtUltrasinicSensor.Series[0].Color = Color.Blue;
 
             // ==== Infrared sensor distance ====
-            crtUltrasinicSensor.Series[1].ChartType = SeriesChartType.Polar;
-            crtUltrasinicSensor.Series[1].XValueType = ChartValueType.Double;
-            crtUltrasinicSensor.Series[1].IsXValueIndexed = true;
-            crtUltrasinicSensor.Series[1].Name = "Infrared Sensor";
-            crtUltrasinicSensor.Series[1]["PolarDrawingStyle"] = "Line";
-            crtUltrasinicSensor.Series[1].Color = Color.Red;
+            this.crtUltrasinicSensor.Series[1].ChartType = SeriesChartType.Polar;
+            this.crtUltrasinicSensor.Series[1].XValueType = ChartValueType.Double;
+            this.crtUltrasinicSensor.Series[1].IsXValueIndexed = true;
+            this.crtUltrasinicSensor.Series[1].Name = "Infrared Sensor";
+            this.crtUltrasinicSensor.Series[1]["PolarDrawingStyle"] = "Line";
+            this.crtUltrasinicSensor.Series[1].Color = Color.Red;
 
-
-            for (int index = 0; index < ultrasonicTime.Length; index++)
+            // Clear all series.
+            foreach (var series in this.crtUltrasinicSensor.Series)
             {
-                ultrasonicTime[index] = 0.0F;
-                infraredADC[index] = 0.0F;
-                xValues[index] = index;
+                series.Points.Clear();
             }
 
-            this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
-            this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
+            // Clear sonar data.
+            this.sonarsData.Clear();
+
+            // Add cleared sonar data.
+            for (int index = 0; index <= this.crtUltrasinicSensor.ChartAreas[0].AxisX.Maximum; index++)
+            {
+                this.sonarsData.Add(new DistanceSensors(index, 0.0, 0.0));
+            }
+
+            // Draw cleared data.
+            this.UpdateSonarChart(this.sonarsData);
         }
 
-        private void UpdateDiagram()
+        private void UpdateSonarChart(DistanceSensorsList data)
         {
             if (this.crtUltrasinicSensor.InvokeRequired)
             {
                 this.crtUltrasinicSensor.BeginInvoke((MethodInvoker)delegate()
                 {
-                    this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
-                    this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
+                    this.crtUltrasinicSensor.Series[0].Points.DataBindXY(data.GetPositions(), data.GetUltrasonic());
+                    this.crtUltrasinicSensor.Series[1].Points.DataBindXY(data.GetPositions(), data.GetInfrared());
                 });
             }
             else
             {
-                this.crtUltrasinicSensor.Series[0].Points.DataBindXY(this.xValues, this.ultrasonicTime);
-                this.crtUltrasinicSensor.Series[1].Points.DataBindXY(this.xValues, this.infraredADC);
-            }
-        }
-
-        private void SetupScaleComboBox()
-        {
-            Array items = Enum.GetValues(typeof(MetricScale));
-            foreach (MetricScale item in items)
-            {
-                this.cbMetric.Items.Add(item);
-            }
-            if (items != null && items.Length > 0)
-            {
-                this.cbMetric.Text = items.GetValue(0).ToString();
+                this.crtUltrasinicSensor.Series[0].Points.DataBindXY(data.GetPositions(), data.GetUltrasonic());
+                this.crtUltrasinicSensor.Series[1].Points.DataBindXY(data.GetPositions(), data.GetInfrared());
             }
         }
 
@@ -407,6 +397,84 @@ namespace KarelV1
                 this.lblIsConnected.Text = "Not Connected";
             }
 
+        }
+
+        private void tsmiAsCSV_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+
+            sfd.Filter = "CSV (*.csv)|*.csv";
+            sfd.FilterIndex = 1;
+            sfd.RestoreDirectory = true;
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                sfd.FileName = GetDateTime() + ".CSV";
+
+                if (!string.IsNullOrEmpty(sfd.FileName))
+                {
+                    int us = 0;
+                    int ir = 1;
+
+                    double usLen = this.crtUltrasinicSensor.Series[us].Points.Count;
+                    double irLen = this.crtUltrasinicSensor.Series[ir].Points.Count;
+
+                    DistanceSensorsList sonarData = new DistanceSensorsList();
+
+                    if (usLen > 0 && irLen > 0 && usLen == irLen)
+                    {
+                        for (int angle = 0; angle < usLen; angle++)
+                        {
+                            sonarData.Add(
+                                new DistanceSensors(
+                                    angle,
+                                    this.crtUltrasinicSensor.Series[us].Points[angle].YValues[0],
+                                    this.crtUltrasinicSensor.Series[ir].Points[angle].YValues[0]));
+                        }
+                    }
+
+                    DistanceSensorsList.SaveCSV(sonarData, sfd.FileName);
+                }
+            }
+        }
+
+        private void tsmiAsXML_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+
+            sfd.Filter = "XML (*.xml)|*.xml";
+            sfd.FilterIndex = 1;
+            sfd.RestoreDirectory = true;
+
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                sfd.FileName = GetDateTime() + ".XML";
+
+                if (!string.IsNullOrEmpty(sfd.FileName))
+                {
+                    int us = 0;
+                    int ir = 1;
+
+                    double usLen = this.crtUltrasinicSensor.Series[us].Points.Count;
+                    double irLen = this.crtUltrasinicSensor.Series[ir].Points.Count;
+
+                    DistanceSensorsList sonarData = new DistanceSensorsList();
+
+                    if (usLen > 0 && irLen > 0 && usLen == irLen)
+                    {
+                        for (int angle = 0; angle < usLen; angle++)
+                        {
+                            sonarData.Add(
+                                new DistanceSensors(
+                                    angle,
+                                    this.crtUltrasinicSensor.Series[us].Points[angle].YValues[0],
+                                    this.crtUltrasinicSensor.Series[ir].Points[angle].YValues[0]));
+                        }
+                    }
+
+                    DistanceSensorsList.SaveXML(sonarData, sfd.FileName);
+                }
+            }
         }
 
         #endregion
@@ -575,15 +643,17 @@ namespace KarelV1
         {
             this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.Position, e.UltrasonicTime, e.InfraRedADCValue), Color.White);
 
-            // TODO: Class HSR04
-            float distance = e.UltrasonicTime / 58.0F;
-            if (distance > 330.0F) distance = 330.0F;
-            this.ultrasonicTime[e.Position] = distance;
+            // TODO: Class HSR04.
+            float us = e.UltrasonicTime / 58.0F;
+            if (us > 330.0F) us = 330.0F;
 
-            //this.infraredADC[e.Position] = irSensor.Convert(e.InfraRedADCValue); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
-            this.infraredADC[e.Position] = AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
+            double ir = irSensor.Convert(e.InfraRedADCValue); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
+            if (ir > 80.0F) us = 80.0F;
+            //double ir = AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
 
-            this.UpdateDiagram();
+            sonarsData[e.Position] = new DistanceSensors(e.Position, us, ir);
+
+            this.UpdateSonarChart(sonarsData);
         }
 
         private void myRobot_OnSensors(object sender, SensorsEventArgs e)
@@ -660,7 +730,7 @@ namespace KarelV1
 
             foreach (string item in portNames)
             {
-                //store the each retrieved available prot names into the MenuItems...
+                //store the each retrieved available port names into the MenuItems...
                 this.tsmiPorts.DropDown.Items.Add(item);
             }
 
@@ -695,7 +765,7 @@ namespace KarelV1
         }
 
         /// <summary>
-        /// Set left sensor progres bar.
+        /// Set left sensor progress bar.
         /// </summary>
         /// <param name="value"></param>
         private void SetLeftSensor(int value)
@@ -714,7 +784,7 @@ namespace KarelV1
         }
 
         /// <summary>
-        /// Set righr sensor progres bar.
+        /// Set right sensor progress bar.
         /// </summary>
         /// <param name="value"></param>
         private void SetRightSensor(int value)
@@ -758,7 +828,7 @@ namespace KarelV1
         }
 
         /// <summary>
-        /// Return curret data and time.
+        /// Return current data and time.
         /// </summary>
         /// <returns></returns>
         private string GetDateTime()
@@ -799,7 +869,8 @@ namespace KarelV1
 
                 try
                 {
-                    this.capturedImage = this.ipCamera.Capture();
+                    this.ipCamera.EnableTorch = this.cbTorch.Checked;
+                    this.capturedImage = this.ipCamera.CaptureFocused();
                     this.pbGlyph.Image = AppUtils.FitImage(this.capturedImage, this.pbGlyph.Size);
                 }
                 catch (Exception exception)
@@ -1060,7 +1131,25 @@ namespace KarelV1
                 this.AddStatus(exception.ToString(), Color.White);
             }
         }
-        
+
+        /// <summary>
+        /// Setup the scale combo box.
+        /// </summary>
+        private void SetupScaleComboBox()
+        {
+            Array items = Enum.GetValues(typeof(MetricScale));
+
+            foreach (MetricScale item in items)
+            {
+                this.cbMetric.Items.Add(item);
+            }
+
+            if (items != null && items.Length > 0)
+            {
+                this.cbMetric.Text = items.GetValue(0).ToString();
+            }
+        }
+
         #endregion
 
         private void talkToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -1085,6 +1174,17 @@ namespace KarelV1
                 // Speak a string.
                 synth.Speak("The robot are seeing a wall.");
             }
+        }
+
+
+        private void tsmiClearAll_Click(object sender, EventArgs e)
+        {
+            this.SetupSonarChart();
+        }
+
+        private void cbMetric_SelectedValueChanged(object sender, EventArgs e)
+        {
+            Console.WriteLine("Scale: {0}", (MetricScale)this.cbMetric.SelectedItem);
         }
     }
 }

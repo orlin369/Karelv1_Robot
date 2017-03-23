@@ -130,6 +130,7 @@ namespace KarelV1Lib
         /// </summary>
         public void Connect()
         {
+            this.Disconnect();
             this.adapter.Connect();
             this.adapter.OnMessage += Adapter_OnMessage;
         }
@@ -139,6 +140,8 @@ namespace KarelV1Lib
         /// </summary>
         public void Disconnect()
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             this.adapter.Disconnect();
         }
 
@@ -147,6 +150,8 @@ namespace KarelV1Lib
         /// </summary>
         public void Reset()
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             this.adapter.Reset();
         }
 
@@ -156,6 +161,8 @@ namespace KarelV1Lib
         /// <param name="value">Value of the movement tenth of the [mm].</param>
         public void Move(int value)
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
         }
@@ -166,6 +173,8 @@ namespace KarelV1Lib
         /// <param name="value">Value of the rotation tenth of the degree.</param>
         public void Rotate(int value)
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
         }
@@ -175,8 +184,10 @@ namespace KarelV1Lib
         /// </summary>
         public void Stop()
         {
-           string command = "?STOP";
-           this.adapter.SendRequest(command + TERMIN);
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
+            string command = "?STOP";
+            this.adapter.SendRequest(command + TERMIN);
         }
 
         /// <summary>
@@ -184,6 +195,8 @@ namespace KarelV1Lib
         /// </summary>
         public void GetSensors()
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             string command = "?SENSORS";
             this.adapter.SendRequest(command + TERMIN);
         }
@@ -194,6 +207,8 @@ namespace KarelV1Lib
         /// <param name="position">Position of the sensor.</param>
         public void GetDistanceSensors(int position)
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             //?US180\n
             if (position > 180)
             {
@@ -214,6 +229,8 @@ namespace KarelV1Lib
         /// </summary>
         public void GetDistanceSensors()
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             string command = "?USA";
             this.adapter.SendRequest(command + TERMIN);
         }
@@ -223,6 +240,8 @@ namespace KarelV1Lib
         /// </summary>
         public void GetPosition()
         {
+            if (this.adapter == null || !this.adapter.IsConnected) return;
+
             string command = "?POSITION";
             this.adapter.SendRequest(command + TERMIN);
         }

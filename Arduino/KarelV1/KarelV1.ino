@@ -185,8 +185,8 @@ void setup()
   // Sets the servo position to the hoe position.
   SensorServo.write(0);
    
-  // Setup Serial port at 9600 bps.
-  Serial.begin(9600);         
+  // Setup Serial port at 115200 bps.
+  Serial.begin(115200);         
   Serial.println("#GREATINGS;I am Karel v1 ");
   
   // ...

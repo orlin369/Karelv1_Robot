@@ -33,6 +33,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="M2Mqtt.Net, Version=4.3.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\M2Mqtt.4.3.0.0\lib\net45\M2Mqtt.Net.dll</HintPath>
       <Private>True</Private>
@@ -50,6 +54,8 @@
     <Compile Include="Adapters\Adapter.cs" />
     <Compile Include="Adapters\MqttAdapter.cs" />
     <Compile Include="Adapters\SerialAdapter.cs" />
+    <Compile Include="Data\DistanceSensors.cs" />
+    <Compile Include="Data\DistanceSensorsList.cs" />
     <Compile Include="Events\RobotPositionEventArgs.cs" />
     <Compile Include="Events\SensorsEventArgs.cs" />
     <Compile Include="Events\StringEventArgs.cs" />

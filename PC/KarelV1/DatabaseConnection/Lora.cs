@@ -43,12 +43,12 @@ namespace DatabaseConnection
         #region Public Methods
 
         /// <summary>
-        /// Commit data to te server.
+        /// Commit data to the server.
         /// </summary>
         /// <param name="device"></param>
         public void CommitDevice(object device)
         {
-            // Creste JSON.
+            // Crete JSON.
             string serialisedData = JsonConvert.SerializeObject(device);
 
             //Console.WriteLine(serialisedData);
@@ -57,7 +57,7 @@ namespace DatabaseConnection
             serialisedData = String.Format("robotData={0}", serialisedData);
 
             //Console.WriteLine(serialisedData);
-            //this.MakeRequest(serialisedData);
+            this.MakeRequest(serialisedData);
         }
 
         public string Login(string username, string password)

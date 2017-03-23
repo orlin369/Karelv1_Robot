@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,6 +46,14 @@
             this.tsmiReset = new System.Windows.Forms.ToolStripMenuItem();
             this.speachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.talkToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSonar = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSaveDiagram = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiAsCSV = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiAsXML = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearAll = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearUltrasonic = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiClearInfrared = new System.Windows.Forms.ToolStripMenuItem();
             this.statBar = new System.Windows.Forms.StatusStrip();
             this.lblIsConnected = new System.Windows.Forms.ToolStripStatusLabel();
             this.tblMain = new System.Windows.Forms.TableLayoutPanel();
@@ -84,6 +92,7 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
+            this.cbTorch = new System.Windows.Forms.CheckBox();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -108,7 +117,8 @@
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFile,
             this.tsmiConnection,
-            this.speachToolStripMenuItem});
+            this.speachToolStripMenuItem,
+            this.tsmiSonar});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
@@ -212,6 +222,67 @@
             this.talkToolStripMenuItem1.Size = new System.Drawing.Size(109, 26);
             this.talkToolStripMenuItem1.Text = "Talk";
             this.talkToolStripMenuItem1.Click += new System.EventHandler(this.talkToolStripMenuItem1_Click);
+            // 
+            // tsmiSonar
+            // 
+            this.tsmiSonar.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiSaveDiagram,
+            this.clearToolStripMenuItem});
+            this.tsmiSonar.Name = "tsmiSonar";
+            this.tsmiSonar.Size = new System.Drawing.Size(59, 24);
+            this.tsmiSonar.Text = "Sonar";
+            // 
+            // tsmiSaveDiagram
+            // 
+            this.tsmiSaveDiagram.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiAsCSV,
+            this.tsmiAsXML});
+            this.tsmiSaveDiagram.Name = "tsmiSaveDiagram";
+            this.tsmiSaveDiagram.Size = new System.Drawing.Size(118, 26);
+            this.tsmiSaveDiagram.Text = "Save";
+            // 
+            // tsmiAsCSV
+            // 
+            this.tsmiAsCSV.Name = "tsmiAsCSV";
+            this.tsmiAsCSV.Size = new System.Drawing.Size(113, 26);
+            this.tsmiAsCSV.Text = "CSV";
+            this.tsmiAsCSV.Click += new System.EventHandler(this.tsmiAsCSV_Click);
+            // 
+            // tsmiAsXML
+            // 
+            this.tsmiAsXML.Name = "tsmiAsXML";
+            this.tsmiAsXML.Size = new System.Drawing.Size(113, 26);
+            this.tsmiAsXML.Text = "XML";
+            this.tsmiAsXML.Click += new System.EventHandler(this.tsmiAsXML_Click);
+            // 
+            // clearToolStripMenuItem
+            // 
+            this.clearToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiClearAll,
+            this.tsmiClearUltrasonic,
+            this.tsmiClearInfrared});
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(118, 26);
+            this.clearToolStripMenuItem.Text = "Clear";
+            // 
+            // tsmiClearAll
+            // 
+            this.tsmiClearAll.Name = "tsmiClearAll";
+            this.tsmiClearAll.Size = new System.Drawing.Size(145, 26);
+            this.tsmiClearAll.Text = "All";
+            this.tsmiClearAll.Click += new System.EventHandler(this.tsmiClearAll_Click);
+            // 
+            // tsmiClearUltrasonic
+            // 
+            this.tsmiClearUltrasonic.Name = "tsmiClearUltrasonic";
+            this.tsmiClearUltrasonic.Size = new System.Drawing.Size(145, 26);
+            this.tsmiClearUltrasonic.Text = "Ultasonic";
+            // 
+            // tsmiClearInfrared
+            // 
+            this.tsmiClearInfrared.Name = "tsmiClearInfrared";
+            this.tsmiClearInfrared.Size = new System.Drawing.Size(145, 26);
+            this.tsmiClearInfrared.Text = "Infrared";
             // 
             // statBar
             // 
@@ -411,6 +482,7 @@
             this.cbMetric.Name = "cbMetric";
             this.cbMetric.Size = new System.Drawing.Size(98, 28);
             this.cbMetric.TabIndex = 27;
+            this.cbMetric.SelectedValueChanged += new System.EventHandler(this.cbMetric_SelectedValueChanged);
             // 
             // lblDegreeSensor
             // 
@@ -447,29 +519,29 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea1.Area3DStyle.Rotation = 10;
-            chartArea1.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
+            chartArea2.Area3DStyle.Rotation = 10;
+            chartArea2.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea2);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend2);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series1.BackSecondaryColor = System.Drawing.Color.Black;
-            series1.BorderColor = System.Drawing.Color.Black;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series1.Color = System.Drawing.Color.Green;
-            series1.Legend = "Legend1";
-            series1.MarkerColor = System.Drawing.Color.Black;
-            series1.Name = "Ultrasonic Sensor";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series2.Legend = "Legend1";
-            series2.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series1);
-            this.crtUltrasinicSensor.Series.Add(series2);
+            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series3.BackSecondaryColor = System.Drawing.Color.Black;
+            series3.BorderColor = System.Drawing.Color.Black;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series3.Color = System.Drawing.Color.Green;
+            series3.Legend = "Legend1";
+            series3.MarkerColor = System.Drawing.Color.Black;
+            series3.Name = "Ultrasonic Sensor";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series4.Legend = "Legend1";
+            series4.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series3);
+            this.crtUltrasinicSensor.Series.Add(series4);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -505,6 +577,7 @@
             // 
             // pnlGlyphControl
             // 
+            this.pnlGlyphControl.Controls.Add(this.cbTorch);
             this.pnlGlyphControl.Controls.Add(this.lblURL);
             this.pnlGlyphControl.Controls.Add(this.lblUTInterval);
             this.pnlGlyphControl.Controls.Add(this.tbCameraUpdateTime);
@@ -531,7 +604,7 @@
             // lblUTInterval
             // 
             this.lblUTInterval.AutoSize = true;
-            this.lblUTInterval.Location = new System.Drawing.Point(8, 291);
+            this.lblUTInterval.Location = new System.Drawing.Point(12, 340);
             this.lblUTInterval.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblUTInterval.Name = "lblUTInterval";
             this.lblUTInterval.Size = new System.Drawing.Size(99, 20);
@@ -540,17 +613,17 @@
             // 
             // tbCameraUpdateTime
             // 
-            this.tbCameraUpdateTime.Location = new System.Drawing.Point(115, 288);
+            this.tbCameraUpdateTime.Location = new System.Drawing.Point(117, 334);
             this.tbCameraUpdateTime.Margin = new System.Windows.Forms.Padding(4);
             this.tbCameraUpdateTime.Name = "tbCameraUpdateTime";
-            this.tbCameraUpdateTime.Size = new System.Drawing.Size(35, 26);
+            this.tbCameraUpdateTime.Size = new System.Drawing.Size(47, 26);
             this.tbCameraUpdateTime.TabIndex = 22;
             this.tbCameraUpdateTime.Text = "500";
             // 
             // chkContinuesCapture
             // 
             this.chkContinuesCapture.AutoSize = true;
-            this.chkContinuesCapture.Location = new System.Drawing.Point(12, 325);
+            this.chkContinuesCapture.Location = new System.Drawing.Point(14, 371);
             this.chkContinuesCapture.Margin = new System.Windows.Forms.Padding(4);
             this.chkContinuesCapture.Name = "chkContinuesCapture";
             this.chkContinuesCapture.Size = new System.Drawing.Size(97, 24);
@@ -566,10 +639,9 @@
             this.tbCameraIP.Multiline = true;
             this.tbCameraIP.Name = "tbCameraIP";
             this.tbCameraIP.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbCameraIP.Size = new System.Drawing.Size(138, 122);
+            this.tbCameraIP.Size = new System.Drawing.Size(150, 122);
             this.tbCameraIP.TabIndex = 20;
-            this.tbCameraIP.Text = "https://scontent-vie1-1.xx.fbcdn.net/hphotos-xlt1/v/t1.0-9/473_10201482439540779_" +
-    "3601827889724477532_n.jpg?oh=310e1862af7b481da70be9ec3bca9563&oe=5753D41A";
+            this.tbCameraIP.Text = "http://192.168.1.187:8080";
             // 
             // btnCapture
             // 
@@ -652,22 +724,22 @@
             // 
             // prbRightSensor
             // 
-            this.prbRightSensor.Location = new System.Drawing.Point(280, 58);
+            this.prbRightSensor.Location = new System.Drawing.Point(280, 32);
             this.prbRightSensor.Margin = new System.Windows.Forms.Padding(4);
             this.prbRightSensor.Maximum = 1023;
             this.prbRightSensor.Name = "prbRightSensor";
-            this.prbRightSensor.Size = new System.Drawing.Size(133, 28);
+            this.prbRightSensor.Size = new System.Drawing.Size(42, 90);
             this.prbRightSensor.TabIndex = 22;
             // 
             // prbLeftSensor
             // 
-            this.prbLeftSensor.Location = new System.Drawing.Point(33, 58);
+            this.prbLeftSensor.Location = new System.Drawing.Point(122, 32);
             this.prbLeftSensor.Margin = new System.Windows.Forms.Padding(4);
             this.prbLeftSensor.Maximum = 1023;
             this.prbLeftSensor.Name = "prbLeftSensor";
             this.prbLeftSensor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.prbLeftSensor.RightToLeftLayout = true;
-            this.prbLeftSensor.Size = new System.Drawing.Size(133, 28);
+            this.prbLeftSensor.Size = new System.Drawing.Size(44, 90);
             this.prbLeftSensor.TabIndex = 21;
             // 
             // btnGetSensors
@@ -680,6 +752,17 @@
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
+            // 
+            // cbTorch
+            // 
+            this.cbTorch.AutoSize = true;
+            this.cbTorch.Location = new System.Drawing.Point(16, 267);
+            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
+            this.cbTorch.Name = "cbTorch";
+            this.cbTorch.Size = new System.Drawing.Size(79, 24);
+            this.cbTorch.TabIndex = 25;
+            this.cbTorch.Text = "Torch";
+            this.cbTorch.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -776,6 +859,15 @@
         private System.Windows.Forms.ToolStripMenuItem talkToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem tsmiConnectToMqtt;
         private System.Windows.Forms.ToolStripMenuItem tsmiDisconnectFromMqtt;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSonar;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSaveDiagram;
+        private System.Windows.Forms.ToolStripMenuItem tsmiAsCSV;
+        private System.Windows.Forms.ToolStripMenuItem tsmiAsXML;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearAll;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearUltrasonic;
+        private System.Windows.Forms.ToolStripMenuItem tsmiClearInfrared;
+        private System.Windows.Forms.CheckBox cbTorch;
     }
 }
 

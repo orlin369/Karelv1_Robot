@@ -139,8 +139,7 @@ namespace KarelV1Lib.Adapters
             if (this.mqttClient == null || !this.mqttClient.IsConnected) return;
 
             byte[] byteArray = Encoding.UTF8.GetBytes(command);
-            byte[] asciiArray = Encoding.Convert(Encoding.UTF8, Encoding.ASCII, byteArray);
-            this.mqttClient.Publish(this.outputTopic, asciiArray);
+            this.mqttClient.Publish(this.outputTopic, byteArray);
         }
 
         public override void Reset()

@@ -87,7 +87,11 @@ namespace KarelV1.Util
         /// <returns>Distance in [CM]</returns>
         public double Convert(double value)
         {
-            return SENSOR_SCALE * Math.Pow(this.Map(value, 0, this.adcMaximum, 0, (this.voltage * SCALER)) / SCALER, EXPONENTIAL_RATE);
+            //return SENSOR_SCALE * Math.Pow(this.Map(value, 0, this.adcMaximum, 0, (this.voltage * SCALER)) / SCALER, EXPONENTIAL_RATE);
+
+            double distanceCM = 2.7728 * Math.Pow(this.Map(value, 0, 1023, 0, 5000) / 1000.0, -1.2045);
+
+            return distanceCM;
         }
 
         #endregion

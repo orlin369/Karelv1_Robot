@@ -5,6 +5,9 @@ using System.Net;
 using System.Text;
 using System.Drawing;
 using System.IO;
+using IPWebcam.Data;
+using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 namespace IPWebcam
 {
@@ -59,7 +62,7 @@ namespace IPWebcam
         #endregion
 
         #region Methods
-
+        
         /// <summary>
         /// Get image from IP Camera.
         /// </summary>
@@ -71,7 +74,7 @@ namespace IPWebcam
                 this.SetTorch(true);
             }
 
-            WebRequest request = WebRequest.Create(this.uri.AbsoluteUri);
+            WebRequest request = WebRequest.Create(this.uri.AbsoluteUri + "/photo.jpg");
             WebResponse response = request.GetResponse();
             Stream stream = response.GetResponseStream();
 
@@ -84,13 +87,65 @@ namespace IPWebcam
 
         }
 
-        public Stream SetTorch(bool state)
-        {
-            string uriString = String.Format("http://{0}:{1}/{2}", this.uri.Host, this.uri.Port, (state) ? "enabletorch" : "disabletorch");
 
-            WebRequest request = WebRequest.Create(new Uri(uriString));
+        /// <summary>
+        /// Get focused image from IP Camera.
+        /// </summary>
+        /// <returns>The bitmap image.</returns>
+        public Bitmap CaptureFocused()
+        {
+            if (this.EnableTorch)
+            {
+                this.SetTorch(true);
+            }
+
+            WebRequest request = WebRequest.Create(this.uri.AbsoluteUri + "/photoaf.jpg");
             WebResponse response = request.GetResponse();
-            return response.GetResponseStream();
+            Stream stream = response.GetResponseStream();
+
+            if (EnableTorch)
+            {
+                this.SetTorch(false);
+            }
+
+            return new Bitmap(stream);
+
+        }
+
+        /// <summary>
+        /// Set torch.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns>Request result.</returns>
+        public Result SetTorch(bool state)
+        {
+            Result result = null;
+
+            string uriString = String.Format("http://{0}:{1}/{2}",
+                this.uri.Host,
+                this.uri.Port,
+                (state ? "enabletorch" : "disabletorch"));
+
+            WebRequest webRequest = WebRequest.Create(new Uri(uriString));
+
+            WebResponse webResponse = webRequest.GetResponse();
+
+            Stream streamResponse = webResponse.GetResponseStream();
+
+            if (streamResponse == null) return result;
+
+            streamResponse.Position = 0;
+
+            using (StreamReader reader = new StreamReader(streamResponse, Encoding.UTF8))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(Result));
+
+                result = (Result)serializer.Deserialize(reader);
+            }
+
+            streamResponse.Close();
+
+            return result;
         }
 
         #endregion
