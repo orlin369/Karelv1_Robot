@@ -92,7 +92,6 @@ namespace DatabaseConnection
                 // Close the Stream object.testclient
                 dataStream.Close();
                 // Get the response.
-                // TODO: Returns 404.
                 WebResponse response = request.GetResponse();
                 // Display the status.
                 Console.WriteLine(((HttpWebResponse)response).StatusDescription);

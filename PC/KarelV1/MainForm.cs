@@ -49,7 +49,6 @@ using IPWebcam;
 // Robot tasks ...
 // TODO: Add Tweeter publisher.
 // TODO: Create WEB application that listen for the tweets and show it on the screen.
-// TODO: Create glyph recognition module.
 // TODO: Add message when robot is moving and when it is not.
 // TODO: Add sensors.
 //
@@ -330,6 +329,20 @@ namespace KarelV1
 
         #region Menu Item
 
+        private void tsmiSettings_Click(object sender, EventArgs e)
+        {
+            using (SettingsForm sf = new SettingsForm())
+            {
+                sf.ShowDialog();
+            }
+        }
+
+        private void tsmiExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+
         private void tmsiPorts_Click(object sender, EventArgs e)
         {
             this.DisconnectFromRobotViaSerial();
@@ -361,15 +374,7 @@ namespace KarelV1
                 this.robot.Reset();
             }
         }
-
-        private void tsmiSettings_Click(object sender, EventArgs e)
-        {
-            using (SettingsForm sf = new SettingsForm())
-            {
-                sf.ShowDialog();
-            }
-        }
-
+        
         private void tsmiConnectToMqtt_Click(object sender, EventArgs e)
         {
             this.ConnectToRobotViaMqtt();
@@ -397,6 +402,12 @@ namespace KarelV1
                 this.lblIsConnected.Text = "Not Connected";
             }
 
+        }
+
+
+        private void tsmiClearAll_Click(object sender, EventArgs e)
+        {
+            this.SetupSonarChart();
         }
 
         private void tsmiAsCSV_Click(object sender, EventArgs e)
@@ -643,6 +654,8 @@ namespace KarelV1
         {
             this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.Position, e.UltrasonicTime, e.InfraRedADCValue), Color.White);
 
+            MetricScale Scale = (MetricScale)this.cbMetric.SelectedItem;
+            // TODO: Add scale.
             // TODO: Class HSR04.
             float us = e.UltrasonicTime / 58.0F;
             if (us > 330.0F) us = 330.0F;
@@ -1176,15 +1189,5 @@ namespace KarelV1
             }
         }
 
-
-        private void tsmiClearAll_Click(object sender, EventArgs e)
-        {
-            this.SetupSonarChart();
-        }
-
-        private void cbMetric_SelectedValueChanged(object sender, EventArgs e)
-        {
-            Console.WriteLine("Scale: {0}", (MetricScale)this.cbMetric.SelectedItem);
-        }
     }
 }

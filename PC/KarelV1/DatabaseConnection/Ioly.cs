@@ -8,7 +8,7 @@ namespace DatabaseConnection
     public class Ioly
     {
         //TODO: Evaluate to .NET 4.5.1
-        //TODO: Uncoment the azure conection.
+        //TODO: Uncomment the azure connection.
 
         #region Constants
 

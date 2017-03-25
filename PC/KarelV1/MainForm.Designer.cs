@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -77,6 +77,7 @@
             this.tbpGlyph = new System.Windows.Forms.TabPage();
             this.tblGlyph = new System.Windows.Forms.TableLayoutPanel();
             this.pnlGlyphControl = new System.Windows.Forms.Panel();
+            this.cbTorch = new System.Windows.Forms.CheckBox();
             this.lblURL = new System.Windows.Forms.Label();
             this.lblUTInterval = new System.Windows.Forms.Label();
             this.tbCameraUpdateTime = new System.Windows.Forms.TextBox();
@@ -92,7 +93,6 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
-            this.cbTorch = new System.Windows.Forms.CheckBox();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -139,21 +139,22 @@
             // tsmiSettings
             // 
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(161, 26);
+            this.tsmiSettings.Size = new System.Drawing.Size(181, 26);
             this.tsmiSettings.Text = "Settings";
             this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
             this.tsmiExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.tsmiExit.Size = new System.Drawing.Size(161, 26);
+            this.tsmiExit.Size = new System.Drawing.Size(181, 26);
             this.tsmiExit.Text = "Exit";
+            this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
             // tsmiConnection
             // 
@@ -482,7 +483,6 @@
             this.cbMetric.Name = "cbMetric";
             this.cbMetric.Size = new System.Drawing.Size(98, 28);
             this.cbMetric.TabIndex = 27;
-            this.cbMetric.SelectedValueChanged += new System.EventHandler(this.cbMetric_SelectedValueChanged);
             // 
             // lblDegreeSensor
             // 
@@ -519,29 +519,29 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea2.Area3DStyle.Rotation = 10;
-            chartArea2.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea2);
+            chartArea1.Area3DStyle.Rotation = 10;
+            chartArea1.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend1);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series3.BackSecondaryColor = System.Drawing.Color.Black;
-            series3.BorderColor = System.Drawing.Color.Black;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series3.Color = System.Drawing.Color.Green;
-            series3.Legend = "Legend1";
-            series3.MarkerColor = System.Drawing.Color.Black;
-            series3.Name = "Ultrasonic Sensor";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series4.Legend = "Legend1";
-            series4.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series3);
-            this.crtUltrasinicSensor.Series.Add(series4);
+            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series1.BackSecondaryColor = System.Drawing.Color.Black;
+            series1.BorderColor = System.Drawing.Color.Black;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series1.Color = System.Drawing.Color.Green;
+            series1.Legend = "Legend1";
+            series1.MarkerColor = System.Drawing.Color.Black;
+            series1.Name = "Ultrasonic Sensor";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Legend = "Legend1";
+            series2.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series1);
+            this.crtUltrasinicSensor.Series.Add(series2);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -590,6 +590,17 @@
             this.pnlGlyphControl.Name = "pnlGlyphControl";
             this.pnlGlyphControl.Size = new System.Drawing.Size(182, 552);
             this.pnlGlyphControl.TabIndex = 0;
+            // 
+            // cbTorch
+            // 
+            this.cbTorch.AutoSize = true;
+            this.cbTorch.Location = new System.Drawing.Point(16, 267);
+            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
+            this.cbTorch.Name = "cbTorch";
+            this.cbTorch.Size = new System.Drawing.Size(79, 24);
+            this.cbTorch.TabIndex = 25;
+            this.cbTorch.Text = "Torch";
+            this.cbTorch.UseVisualStyleBackColor = true;
             // 
             // lblURL
             // 
@@ -752,17 +763,6 @@
             this.btnGetSensors.TabIndex = 20;
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
-            // 
-            // cbTorch
-            // 
-            this.cbTorch.AutoSize = true;
-            this.cbTorch.Location = new System.Drawing.Point(16, 267);
-            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
-            this.cbTorch.Name = "cbTorch";
-            this.cbTorch.Size = new System.Drawing.Size(79, 24);
-            this.cbTorch.TabIndex = 25;
-            this.cbTorch.Text = "Torch";
-            this.cbTorch.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
