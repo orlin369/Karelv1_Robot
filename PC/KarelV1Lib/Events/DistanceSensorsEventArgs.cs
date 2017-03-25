@@ -22,6 +22,7 @@ SOFTWARE.
 
 */
 
+using KarelV1Lib.Data;
 using System;
 
 namespace KarelV1Lib.Events
@@ -36,19 +37,9 @@ namespace KarelV1Lib.Events
         #region Properties
 
         /// <summary>
-        /// Position [DEG]
+        /// Distance sensors.
         /// </summary>
-        public int Position { get; private set; }
-
-        /// <summary>
-        /// Ultrasonic distance sensor time. [us]
-        /// </summary>
-        public int UltrasonicTime { get; private set; }
-
-        /// <summary>
-        /// Infrared distance sensor value of ADC. [ADC 0-1023]
-        /// </summary>
-        public int InfraRedADCValue { get; private set; }
+        public DistanceSensors DistanceSensors { get; private set; }
         
         #endregion
 
@@ -57,20 +48,10 @@ namespace KarelV1Lib.Events
         /// <summary>
         /// Constructor
         /// </summary>
-        public DistanceSensorsEventArgs()
+        /// <param name="distanceSensors">Data</param>
+        public DistanceSensorsEventArgs(DistanceSensors distanceSensors)
         {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="position">Position [DEG]</param>
-        /// <param name="ultrasonicTime">Time [us]</param>
-        public DistanceSensorsEventArgs(int position, int ultrasonicTime, int infraRedADCValue)
-        {
-            this.Position = position;
-            this.UltrasonicTime = ultrasonicTime;
-            this.InfraRedADCValue = infraRedADCValue;
+            this.DistanceSensors = distanceSensors;
         }
 
         #endregion

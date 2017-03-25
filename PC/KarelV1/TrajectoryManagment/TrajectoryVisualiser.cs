@@ -19,11 +19,13 @@ namespace KarelV1.TrajectoryManagment
         /// Picture box to show the trajectory.
         /// </summary>
         private PictureBox pbTrajectory;
-        
+
+        private Positions trajectory = new Positions();
+
         /// <summary>
-        /// Trajectory container.
+        /// Actual robot position.
         /// </summary>
-        private Trajectory trajectory = new Trajectory();
+        private Position actualRobotPosition = new Position();
 
         /// <summary>
         /// Single trajectory point pen.
@@ -38,7 +40,7 @@ namespace KarelV1.TrajectoryManagment
         /// <summary>
         /// 
         /// </summary>
-        private Pen lockedCursorPen = new Pen(Color.Red, 1f);
+        private Pen lockedCursorPen = new Pen(Color.Orange, 1f);
 
         /// <summary>
         /// Trajectory pen
@@ -49,7 +51,12 @@ namespace KarelV1.TrajectoryManagment
         /// Selected point pen.
         /// </summary>
         private Pen selectedPointPen = new Pen(Color.Blue, 2f);
-        
+
+        /// <summary>
+        /// Robot marker pen.
+        /// </summary>
+        private Pen robotMarkerPen = new Pen(Color.Azure, 2f);
+
         /// <summary>
         /// Current cursor pen.
         /// </summary>
@@ -80,6 +87,11 @@ namespace KarelV1.TrajectoryManagment
         /// </summary>
         private int slsectedPointIndex = -1;
 
+        /// <summary>
+        /// Cursor visibility.
+        /// </summary>
+        private bool cursorVisible = false;
+
         #endregion
 
         #region Properties
@@ -89,9 +101,25 @@ namespace KarelV1.TrajectoryManagment
         /// </summary>
         public TrajectoryMode TrajectoryMode { get; set; }
 
-        public double TrajectoryDelay { get; set; }
+        /// <summary>
+        /// Trajectory container.
+        /// </summary>
+        public Positions Trajectory
+        {
+            get
+            {
+                return trajectory;
+            }
+            set
+            {
+                this.trajectory = value;
+                this.SafeGraphicsRefresh();
+            }
+        }
 
         public bool LockEditing { get; set; }
+
+        public double TrajectoryDelay { get; set; }
 
         #endregion
 
@@ -100,11 +128,25 @@ namespace KarelV1.TrajectoryManagment
         public TrajectoryVisualiser()
         {
             this.TrajectoryMode = TrajectoryMode.None;
+            robotMarkerPen.StartCap = LineCap.ArrowAnchor;
+            robotMarkerPen.EndCap = LineCap.RoundAnchor;
         }
 
         #endregion
 
         #region Private Methods
+
+        private void PbTrajectory_MouseLeave(object sender, EventArgs e)
+        {
+            this.cursorVisible = false;
+            this.SafeGraphicsRefresh();
+        }
+
+        private void PbTrajectory_MouseEnter(object sender, EventArgs e)
+        {
+            this.cursorVisible = true;
+            this.SafeGraphicsRefresh();
+        }
 
         private void DrawOn_MouseMove(object sender, MouseEventArgs e)
         {
@@ -123,7 +165,7 @@ namespace KarelV1.TrajectoryManagment
                     double y = this.Map(e.Y, this.pbTrajectory.Height, 0, this.pbTrajectory.Height, 0);
                     double x = this.Map(e.X, this.pbTrajectory.Width , 0, this.pbTrajectory.Width, 0);
                     Point p = new Point((int)y, (int)x);
-                    this.trajectory.Add(p, this.TrajectoryDelay);
+                    this.Trajectory.Add(p, this.TrajectoryDelay);
                 }
             }
             else if(e.Button == MouseButtons.Right)
@@ -146,11 +188,13 @@ namespace KarelV1.TrajectoryManagment
 
             e.Graphics.Clear(Color.White);
 
+            // Draw trajectory line.
             if (this.trajectory.Count > 1)
             { 
                 e.Graphics.DrawLines(this.trajectoryPen, this.trajectory.GetPoints());
             }
 
+            // Draw trajectory points.
             int index = 1;
             foreach (Position rp in this.trajectory)
             {
@@ -159,27 +203,45 @@ namespace KarelV1.TrajectoryManagment
 
                 PointF textLocation = new PointF(p.X + 3, p.Y);
                 e.Graphics.DrawString(string.Format("{0}", index), pointsFont, Brushes.Green, textLocation);
+
+                if(rp.DistanceSensors != null)
+                {
+                    if(rp.DistanceSensors.Count > 0)
+                    {
+                        foreach(DistanceSensors ds in rp.DistanceSensors)
+                        {
+                            //TODO: Draw the graphics to the screen.
+                        }
+                    }
+                }
+
                 index++;
             }
 
+            // Draw selected position.
             if (this.slsectedPointIndex > -1 && this.slsectedPointIndex < this.trajectory.Count)
             {
                 PointF p = this.trajectory[this.slsectedPointIndex].ToCartesian();
-
                 e.Graphics.DrawEllipse(this.selectedPointPen, p.X - this.selectedPointRadius, p.Y - this.selectedPointRadius, this.selectedPointRadius * 2, this.selectedPointRadius * 2);
             }
 
-            if(this.LockEditing)
+            // Draw robot position.
+            this.DrawRobot(e.Graphics, this.actualRobotPosition);
+
+            if (this.cursorVisible)
             {
-                e.Graphics.DrawLine(this.lockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbTrajectory.Height));
-                e.Graphics.DrawLine(this.lockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbTrajectory.Width, this.cursorPoint.Y));
-                e.Graphics.DrawEllipse(this.lockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
-            }
-            else
-            {
-                e.Graphics.DrawLine(this.unlockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbTrajectory.Height));
-                e.Graphics.DrawLine(this.unlockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbTrajectory.Width, this.cursorPoint.Y));
-                e.Graphics.DrawEllipse(this.unlockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
+                if (this.LockEditing)
+                {
+                    e.Graphics.DrawLine(this.lockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbTrajectory.Height));
+                    e.Graphics.DrawLine(this.lockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbTrajectory.Width, this.cursorPoint.Y));
+                    e.Graphics.DrawEllipse(this.lockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
+                }
+                else
+                {
+                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbTrajectory.Height));
+                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbTrajectory.Width, this.cursorPoint.Y));
+                    e.Graphics.DrawEllipse(this.unlockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
+                }
             }
         }
 
@@ -203,9 +265,28 @@ namespace KarelV1.TrajectoryManagment
             }
         }
 
+        private void DrawRobot(Graphics g, Position robotPosition)
+        {
+            PointF rp = actualRobotPosition.ToCartesian();
+            g.DrawRectangle(this.robotMarkerPen, rp.X - this.selectedPointRadius, rp.Y - this.selectedPointRadius, this.selectedPointRadius * 2, this.selectedPointRadius * 2);
+            //g.DrawLine(this.robotMarkerPen)
+        }
+
         #endregion
 
         #region Public Methods
+
+        public void AddControl(PictureBox controlToDrawOn)
+        {
+            if (controlToDrawOn == null) return;
+
+            this.pbTrajectory = controlToDrawOn;
+            this.pbTrajectory.Paint += DrawOn_Paint;
+            this.pbTrajectory.MouseDown += DrawOn_MouseDown;
+            this.pbTrajectory.MouseMove += DrawOn_MouseMove;
+            this.pbTrajectory.MouseEnter += PbTrajectory_MouseEnter;
+            this.pbTrajectory.MouseLeave += PbTrajectory_MouseLeave;
+        }
 
         public void SetCurrentPoint(int index)
         {
@@ -220,32 +301,14 @@ namespace KarelV1.TrajectoryManagment
             this.SafeGraphicsRefresh();
         }
 
-        public void AddControl(PictureBox controlToDrawOn)
+        public void SetRobotPosition(Position position)
         {
-            if (controlToDrawOn == null) return;
+            this.actualRobotPosition = position;
 
-            this.pbTrajectory = controlToDrawOn;
-            this.pbTrajectory.Paint += DrawOn_Paint;
-            this.pbTrajectory.MouseDown += DrawOn_MouseDown;
-            this.pbTrajectory.MouseMove += DrawOn_MouseMove;
-        }
-
-        public void AddPoint(Position rp)
-        {
-            this.trajectory.Add(rp);
-            this.SafeGraphicsRefresh();
-        }
-
-        public Trajectory GetTrajectory()
-        {
-            return this.trajectory;
-        }
-
-        internal void SetTrajectory(Trajectory trajectory)
-        {
-            if (trajectory == null) return;
-
-            this.trajectory = trajectory;
+            if (this.TrajectoryMode == TrajectoryMode.RecordMotion)
+            {
+                this.Trajectory.Add(position);
+            }
 
             this.SafeGraphicsRefresh();
         }

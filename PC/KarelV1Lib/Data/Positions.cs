@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace KarelV1Lib.Data
 {
     [Serializable]
-    public class Trajectory : IList<Position>
+    public class Positions : IList<Position>
     {
 
         #region Variables

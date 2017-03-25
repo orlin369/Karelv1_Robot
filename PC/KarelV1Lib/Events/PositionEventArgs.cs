@@ -1,17 +1,13 @@
 ﻿/*
-
 Copyright (c) [2016] [Orlin Dimitrov]
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,28 +15,36 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 */
 
+using KarelV1Lib.Data;
 using System;
 
 namespace KarelV1Lib.Events
 {
-    public class RobotPositionEventArgs : EventArgs
+    public class PositionEventArgs : EventArgs
     {
-        public int Alpha { get; private set; }
-        public int Radius { get; private set; }
+        #region Properties
 
-        public RobotPositionEventArgs()
+        /// <summary>
+        /// Position
+        /// </summary>
+        public Position Position { get; private set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="position">Data</param>
+        public PositionEventArgs(Position position)
         {
-            this.Alpha = 0;
-            this.Radius = 0;
+            this.Position = position;
         }
 
-        public RobotPositionEventArgs(int radius, int distance)
-        {
-            this.Alpha = radius;
-            this.Radius = distance;
-        }
+        #endregion
+
     }
 }

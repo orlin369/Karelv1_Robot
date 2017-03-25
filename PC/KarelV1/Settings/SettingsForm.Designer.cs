@@ -52,8 +52,8 @@
             this.tbYScale = new System.Windows.Forms.TextBox();
             this.lblYScale = new System.Windows.Forms.Label();
             this.tpNavigation = new System.Windows.Forms.TabPage();
-            this.tbCameraURL = new System.Windows.Forms.TextBox();
-            this.lblCameraURL = new System.Windows.Forms.Label();
+            this.tbCameraUri = new System.Windows.Forms.TextBox();
+            this.lblCameraUri = new System.Windows.Forms.Label();
             this.cbTorch = new System.Windows.Forms.CheckBox();
             this.tcSettings.SuspendLayout();
             this.tpMechanicalProperties.SuspendLayout();
@@ -277,29 +277,29 @@
             // 
             this.tpNavigation.BackColor = System.Drawing.SystemColors.Control;
             this.tpNavigation.Controls.Add(this.cbTorch);
-            this.tpNavigation.Controls.Add(this.tbCameraURL);
-            this.tpNavigation.Controls.Add(this.lblCameraURL);
+            this.tpNavigation.Controls.Add(this.tbCameraUri);
+            this.tpNavigation.Controls.Add(this.lblCameraUri);
             this.tpNavigation.Location = new System.Drawing.Point(4, 25);
             this.tpNavigation.Name = "tpNavigation";
             this.tpNavigation.Size = new System.Drawing.Size(873, 379);
             this.tpNavigation.TabIndex = 2;
             this.tpNavigation.Text = "Navigation";
             // 
-            // tbCameraURL
+            // tbCameraUri
             // 
-            this.tbCameraURL.Location = new System.Drawing.Point(107, 6);
-            this.tbCameraURL.Name = "tbCameraURL";
-            this.tbCameraURL.Size = new System.Drawing.Size(194, 22);
-            this.tbCameraURL.TabIndex = 13;
+            this.tbCameraUri.Location = new System.Drawing.Point(107, 6);
+            this.tbCameraUri.Name = "tbCameraUri";
+            this.tbCameraUri.Size = new System.Drawing.Size(194, 22);
+            this.tbCameraUri.TabIndex = 13;
             // 
-            // lblCameraURL
+            // lblCameraUri
             // 
-            this.lblCameraURL.AutoSize = true;
-            this.lblCameraURL.Location = new System.Drawing.Point(8, 9);
-            this.lblCameraURL.Name = "lblCameraURL";
-            this.lblCameraURL.Size = new System.Drawing.Size(93, 17);
-            this.lblCameraURL.TabIndex = 12;
-            this.lblCameraURL.Text = "Camera URL:";
+            this.lblCameraUri.AutoSize = true;
+            this.lblCameraUri.Location = new System.Drawing.Point(8, 9);
+            this.lblCameraUri.Name = "lblCameraUri";
+            this.lblCameraUri.Size = new System.Drawing.Size(93, 17);
+            this.lblCameraUri.TabIndex = 12;
+            this.lblCameraUri.Text = "Camera URL:";
             // 
             // cbTorch
             // 
@@ -361,8 +361,8 @@
         private System.Windows.Forms.TextBox tbXScale;
         private System.Windows.Forms.Label lblXScale;
         private System.Windows.Forms.TabPage tpNavigation;
-        private System.Windows.Forms.TextBox tbCameraURL;
-        private System.Windows.Forms.Label lblCameraURL;
+        private System.Windows.Forms.TextBox tbCameraUri;
+        private System.Windows.Forms.Label lblCameraUri;
         private System.Windows.Forms.CheckBox cbTorch;
     }
 }

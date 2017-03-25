@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -69,9 +69,9 @@
             this.gpbControls = new System.Windows.Forms.GroupBox();
             this.lblTime = new System.Windows.Forms.Label();
             this.tbCommandDelay = new System.Windows.Forms.TextBox();
-            this.tbAlpha = new System.Windows.Forms.TextBox();
+            this.tbPhase = new System.Windows.Forms.TextBox();
             this.tbDistande = new System.Windows.Forms.TextBox();
-            this.lblAlpha = new System.Windows.Forms.Label();
+            this.lblPhase = new System.Windows.Forms.Label();
             this.lblDistance = new System.Windows.Forms.Label();
             this.btnRight = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -89,16 +89,16 @@
             this.crtUltrasinicSensor = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tbpSensors = new System.Windows.Forms.TabPage();
             this.pnlSensors = new System.Windows.Forms.Panel();
-            this.btnLoginTest = new System.Windows.Forms.Button();
-            this.lblRobotPosition = new System.Windows.Forms.Label();
-            this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
             this.tbpProgram = new System.Windows.Forms.TabPage();
-            this.tlpTrajectory = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpMainProgram = new System.Windows.Forms.TableLayoutPanel();
+            this.tlpProgram = new System.Windows.Forms.TableLayoutPanel();
             this.pbTerrain = new System.Windows.Forms.PictureBox();
             this.pnlTrajectory = new System.Windows.Forms.Panel();
+            this.btnGetRobotPos = new System.Windows.Forms.Button();
+            this.btnReadSonar = new System.Windows.Forms.Button();
             this.btnCapture = new System.Windows.Forms.Button();
             this.btnResumeProgram = new System.Windows.Forms.Button();
             this.btnStopProgram = new System.Windows.Forms.Button();
@@ -106,6 +106,12 @@
             this.gbTrajectoryMode = new System.Windows.Forms.GroupBox();
             this.rbDefinePoints = new System.Windows.Forms.RadioButton();
             this.rbRecord = new System.Windows.Forms.RadioButton();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.XPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.YPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Distance = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Alpha = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -119,10 +125,12 @@
             this.tbpSensors.SuspendLayout();
             this.pnlSensors.SuspendLayout();
             this.tbpProgram.SuspendLayout();
-            this.tlpTrajectory.SuspendLayout();
+            this.tlpMainProgram.SuspendLayout();
+            this.tlpProgram.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTerrain)).BeginInit();
             this.pnlTrajectory.SuspendLayout();
             this.gbTrajectoryMode.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -420,9 +428,9 @@
             // 
             this.gpbControls.Controls.Add(this.lblTime);
             this.gpbControls.Controls.Add(this.tbCommandDelay);
-            this.gpbControls.Controls.Add(this.tbAlpha);
+            this.gpbControls.Controls.Add(this.tbPhase);
             this.gpbControls.Controls.Add(this.tbDistande);
-            this.gpbControls.Controls.Add(this.lblAlpha);
+            this.gpbControls.Controls.Add(this.lblPhase);
             this.gpbControls.Controls.Add(this.lblDistance);
             this.gpbControls.Controls.Add(this.btnRight);
             this.gpbControls.Controls.Add(this.btnStop);
@@ -443,7 +451,7 @@
             // lblTime
             // 
             this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(9, 221);
+            this.lblTime.Location = new System.Drawing.Point(218, 90);
             this.lblTime.Name = "lblTime";
             this.lblTime.Size = new System.Drawing.Size(26, 20);
             this.lblTime.TabIndex = 24;
@@ -451,41 +459,41 @@
             // 
             // tbCommandDelay
             // 
-            this.tbCommandDelay.Location = new System.Drawing.Point(44, 218);
+            this.tbCommandDelay.Location = new System.Drawing.Point(250, 87);
             this.tbCommandDelay.Name = "tbCommandDelay";
-            this.tbCommandDelay.Size = new System.Drawing.Size(64, 26);
+            this.tbCommandDelay.Size = new System.Drawing.Size(65, 26);
             this.tbCommandDelay.TabIndex = 23;
             this.tbCommandDelay.Text = "20";
             // 
-            // tbAlpha
+            // tbPhase
             // 
-            this.tbAlpha.Location = new System.Drawing.Point(250, 62);
-            this.tbAlpha.Name = "tbAlpha";
-            this.tbAlpha.Size = new System.Drawing.Size(65, 26);
-            this.tbAlpha.TabIndex = 22;
-            this.tbAlpha.Text = "90";
+            this.tbPhase.Location = new System.Drawing.Point(250, 55);
+            this.tbPhase.Name = "tbPhase";
+            this.tbPhase.Size = new System.Drawing.Size(65, 26);
+            this.tbPhase.TabIndex = 22;
+            this.tbPhase.Text = "90";
             // 
             // tbDistande
             // 
-            this.tbDistande.Location = new System.Drawing.Point(250, 30);
+            this.tbDistande.Location = new System.Drawing.Point(250, 23);
             this.tbDistande.Name = "tbDistande";
             this.tbDistande.Size = new System.Drawing.Size(65, 26);
             this.tbDistande.TabIndex = 21;
             this.tbDistande.Text = "10";
             // 
-            // lblAlpha
+            // lblPhase
             // 
-            this.lblAlpha.AutoSize = true;
-            this.lblAlpha.Location = new System.Drawing.Point(217, 65);
-            this.lblAlpha.Name = "lblAlpha";
-            this.lblAlpha.Size = new System.Drawing.Size(27, 20);
-            this.lblAlpha.TabIndex = 20;
-            this.lblAlpha.Text = "A:";
+            this.lblPhase.AutoSize = true;
+            this.lblPhase.Location = new System.Drawing.Point(218, 58);
+            this.lblPhase.Name = "lblPhase";
+            this.lblPhase.Size = new System.Drawing.Size(27, 20);
+            this.lblPhase.TabIndex = 20;
+            this.lblPhase.Text = "P:";
             // 
             // lblDistance
             // 
             this.lblDistance.AutoSize = true;
-            this.lblDistance.Location = new System.Drawing.Point(215, 33);
+            this.lblDistance.Location = new System.Drawing.Point(218, 26);
             this.lblDistance.Name = "lblDistance";
             this.lblDistance.Size = new System.Drawing.Size(29, 20);
             this.lblDistance.TabIndex = 19;
@@ -644,29 +652,29 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea2.Area3DStyle.Rotation = 10;
-            chartArea2.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea2);
+            chartArea4.Area3DStyle.Rotation = 10;
+            chartArea4.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea4);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend2);
+            legend4.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend4);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series3.BackSecondaryColor = System.Drawing.Color.Black;
-            series3.BorderColor = System.Drawing.Color.Black;
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series3.Color = System.Drawing.Color.Green;
-            series3.Legend = "Legend1";
-            series3.MarkerColor = System.Drawing.Color.Black;
-            series3.Name = "Ultrasonic Sensor";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series4.Legend = "Legend1";
-            series4.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series3);
-            this.crtUltrasinicSensor.Series.Add(series4);
+            series7.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series7.BackSecondaryColor = System.Drawing.Color.Black;
+            series7.BorderColor = System.Drawing.Color.Black;
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series7.Color = System.Drawing.Color.Green;
+            series7.Legend = "Legend1";
+            series7.MarkerColor = System.Drawing.Color.Black;
+            series7.Name = "Ultrasonic Sensor";
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series8.Legend = "Legend1";
+            series8.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series7);
+            this.crtUltrasinicSensor.Series.Add(series8);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
@@ -684,9 +692,6 @@
             // 
             // pnlSensors
             // 
-            this.pnlSensors.Controls.Add(this.btnLoginTest);
-            this.pnlSensors.Controls.Add(this.lblRobotPosition);
-            this.pnlSensors.Controls.Add(this.btnGetRobotPos);
             this.pnlSensors.Controls.Add(this.prbRightSensor);
             this.pnlSensors.Controls.Add(this.prbLeftSensor);
             this.pnlSensors.Controls.Add(this.btnGetSensors);
@@ -696,37 +701,6 @@
             this.pnlSensors.Name = "pnlSensors";
             this.pnlSensors.Size = new System.Drawing.Size(989, 568);
             this.pnlSensors.TabIndex = 0;
-            // 
-            // btnLoginTest
-            // 
-            this.btnLoginTest.Location = new System.Drawing.Point(1229, 20);
-            this.btnLoginTest.Margin = new System.Windows.Forms.Padding(4);
-            this.btnLoginTest.Name = "btnLoginTest";
-            this.btnLoginTest.Size = new System.Drawing.Size(97, 90);
-            this.btnLoginTest.TabIndex = 25;
-            this.btnLoginTest.Text = "Login Test";
-            this.btnLoginTest.UseVisualStyleBackColor = true;
-            // 
-            // lblRobotPosition
-            // 
-            this.lblRobotPosition.AutoSize = true;
-            this.lblRobotPosition.Location = new System.Drawing.Point(171, 303);
-            this.lblRobotPosition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblRobotPosition.Name = "lblRobotPosition";
-            this.lblRobotPosition.Size = new System.Drawing.Size(83, 20);
-            this.lblRobotPosition.TabIndex = 24;
-            this.lblRobotPosition.Text = "Position:";
-            // 
-            // btnGetRobotPos
-            // 
-            this.btnGetRobotPos.Image = global::KarelV1.Images.Sensor3;
-            this.btnGetRobotPos.Location = new System.Drawing.Point(175, 202);
-            this.btnGetRobotPos.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGetRobotPos.Name = "btnGetRobotPos";
-            this.btnGetRobotPos.Size = new System.Drawing.Size(97, 90);
-            this.btnGetRobotPos.TabIndex = 23;
-            this.btnGetRobotPos.UseVisualStyleBackColor = true;
-            this.btnGetRobotPos.Click += new System.EventHandler(this.btnGetRobotPos_Click);
             // 
             // prbRightSensor
             // 
@@ -762,27 +736,42 @@
             // tbpProgram
             // 
             this.tbpProgram.BackColor = System.Drawing.SystemColors.Control;
-            this.tbpProgram.Controls.Add(this.tlpTrajectory);
+            this.tbpProgram.Controls.Add(this.tlpMainProgram);
             this.tbpProgram.Location = new System.Drawing.Point(4, 29);
             this.tbpProgram.Name = "tbpProgram";
             this.tbpProgram.Size = new System.Drawing.Size(989, 568);
             this.tbpProgram.TabIndex = 3;
             this.tbpProgram.Text = "Program";
             // 
-            // tlpTrajectory
+            // tlpMainProgram
             // 
-            this.tlpTrajectory.ColumnCount = 2;
-            this.tlpTrajectory.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpTrajectory.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 228F));
-            this.tlpTrajectory.Controls.Add(this.pbTerrain, 0, 0);
-            this.tlpTrajectory.Controls.Add(this.pnlTrajectory, 1, 0);
-            this.tlpTrajectory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlpTrajectory.Location = new System.Drawing.Point(0, 0);
-            this.tlpTrajectory.Name = "tlpTrajectory";
-            this.tlpTrajectory.RowCount = 1;
-            this.tlpTrajectory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tlpTrajectory.Size = new System.Drawing.Size(989, 568);
-            this.tlpTrajectory.TabIndex = 0;
+            this.tlpMainProgram.ColumnCount = 1;
+            this.tlpMainProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpMainProgram.Controls.Add(this.tlpProgram, 0, 0);
+            this.tlpMainProgram.Controls.Add(this.dataGridView1, 0, 1);
+            this.tlpMainProgram.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpMainProgram.Location = new System.Drawing.Point(0, 0);
+            this.tlpMainProgram.Name = "tlpMainProgram";
+            this.tlpMainProgram.RowCount = 2;
+            this.tlpMainProgram.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpMainProgram.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 118F));
+            this.tlpMainProgram.Size = new System.Drawing.Size(989, 568);
+            this.tlpMainProgram.TabIndex = 1;
+            // 
+            // tlpProgram
+            // 
+            this.tlpProgram.ColumnCount = 2;
+            this.tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 228F));
+            this.tlpProgram.Controls.Add(this.pbTerrain, 0, 0);
+            this.tlpProgram.Controls.Add(this.pnlTrajectory, 1, 0);
+            this.tlpProgram.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpProgram.Location = new System.Drawing.Point(3, 3);
+            this.tlpProgram.Name = "tlpProgram";
+            this.tlpProgram.RowCount = 1;
+            this.tlpProgram.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpProgram.Size = new System.Drawing.Size(983, 444);
+            this.tlpProgram.TabIndex = 1;
             // 
             // pbTerrain
             // 
@@ -790,27 +779,50 @@
             this.pbTerrain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pbTerrain.Location = new System.Drawing.Point(3, 3);
             this.pbTerrain.Name = "pbTerrain";
-            this.pbTerrain.Size = new System.Drawing.Size(755, 562);
+            this.pbTerrain.Size = new System.Drawing.Size(749, 438);
             this.pbTerrain.TabIndex = 0;
             this.pbTerrain.TabStop = false;
             // 
             // pnlTrajectory
             // 
+            this.pnlTrajectory.Controls.Add(this.btnGetRobotPos);
+            this.pnlTrajectory.Controls.Add(this.btnReadSonar);
             this.pnlTrajectory.Controls.Add(this.btnCapture);
             this.pnlTrajectory.Controls.Add(this.btnResumeProgram);
             this.pnlTrajectory.Controls.Add(this.btnStopProgram);
             this.pnlTrajectory.Controls.Add(this.btnRunProgram);
             this.pnlTrajectory.Controls.Add(this.gbTrajectoryMode);
             this.pnlTrajectory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlTrajectory.Location = new System.Drawing.Point(764, 3);
+            this.pnlTrajectory.Location = new System.Drawing.Point(758, 3);
             this.pnlTrajectory.Name = "pnlTrajectory";
-            this.pnlTrajectory.Size = new System.Drawing.Size(222, 562);
+            this.pnlTrajectory.Size = new System.Drawing.Size(222, 438);
             this.pnlTrajectory.TabIndex = 1;
+            // 
+            // btnGetRobotPos
+            // 
+            this.btnGetRobotPos.Image = global::KarelV1.Images.Sensor3;
+            this.btnGetRobotPos.Location = new System.Drawing.Point(113, 306);
+            this.btnGetRobotPos.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetRobotPos.Name = "btnGetRobotPos";
+            this.btnGetRobotPos.Size = new System.Drawing.Size(97, 90);
+            this.btnGetRobotPos.TabIndex = 26;
+            this.btnGetRobotPos.UseVisualStyleBackColor = true;
+            this.btnGetRobotPos.Click += new System.EventHandler(this.btnGetRobotPos_Click);
+            // 
+            // btnReadSonar
+            // 
+            this.btnReadSonar.Image = global::KarelV1.Images.Sensor2;
+            this.btnReadSonar.Location = new System.Drawing.Point(113, 208);
+            this.btnReadSonar.Margin = new System.Windows.Forms.Padding(4);
+            this.btnReadSonar.Name = "btnReadSonar";
+            this.btnReadSonar.Size = new System.Drawing.Size(97, 90);
+            this.btnReadSonar.TabIndex = 25;
+            this.btnReadSonar.UseVisualStyleBackColor = true;
             // 
             // btnCapture
             // 
             this.btnCapture.Image = global::KarelV1.Images.Capture;
-            this.btnCapture.Location = new System.Drawing.Point(9, 302);
+            this.btnCapture.Location = new System.Drawing.Point(113, 110);
             this.btnCapture.Margin = new System.Windows.Forms.Padding(4);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(97, 90);
@@ -883,6 +895,47 @@
             this.rbRecord.UseVisualStyleBackColor = true;
             this.rbRecord.CheckedChanged += new System.EventHandler(this.rbRecord_CheckedChanged);
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.Index,
+            this.XPos,
+            this.YPos,
+            this.Distance,
+            this.Alpha});
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.Location = new System.Drawing.Point(3, 453);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowTemplate.Height = 24;
+            this.dataGridView1.Size = new System.Drawing.Size(983, 112);
+            this.dataGridView1.TabIndex = 2;
+            // 
+            // Index
+            // 
+            this.Index.HeaderText = "Index";
+            this.Index.Name = "Index";
+            // 
+            // XPos
+            // 
+            this.XPos.HeaderText = "X";
+            this.XPos.Name = "XPos";
+            // 
+            // YPos
+            // 
+            this.YPos.HeaderText = "Y";
+            this.YPos.Name = "YPos";
+            // 
+            // Distance
+            // 
+            this.Distance.HeaderText = "Distance";
+            this.Distance.Name = "Distance";
+            // 
+            // Alpha
+            // 
+            this.Alpha.HeaderText = "Alpha";
+            this.Alpha.Name = "Alpha";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -914,13 +967,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.crtUltrasinicSensor)).EndInit();
             this.tbpSensors.ResumeLayout(false);
             this.pnlSensors.ResumeLayout(false);
-            this.pnlSensors.PerformLayout();
             this.tbpProgram.ResumeLayout(false);
-            this.tlpTrajectory.ResumeLayout(false);
+            this.tlpMainProgram.ResumeLayout(false);
+            this.tlpProgram.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbTerrain)).EndInit();
             this.pnlTrajectory.ResumeLayout(false);
             this.gbTrajectoryMode.ResumeLayout(false);
             this.gbTrajectoryMode.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -954,9 +1008,6 @@
         private System.Windows.Forms.Button btnGetSensors;
         private System.Windows.Forms.ProgressBar prbRightSensor;
         private System.Windows.Forms.ProgressBar prbLeftSensor;
-        private System.Windows.Forms.Button btnGetRobotPos;
-        private System.Windows.Forms.Label lblRobotPosition;
-        private System.Windows.Forms.Button btnLoginTest;
         private System.Windows.Forms.DataVisualization.Charting.Chart crtUltrasinicSensor;
         private System.Windows.Forms.ToolStripMenuItem tsmiFile;
         private System.Windows.Forms.ToolStripMenuItem tsmiExit;
@@ -979,14 +1030,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiClearUltrasonic;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearInfrared;
         private System.Windows.Forms.TabPage tbpProgram;
-        private System.Windows.Forms.TableLayoutPanel tlpTrajectory;
-        private System.Windows.Forms.PictureBox pbTerrain;
-        private System.Windows.Forms.Panel pnlTrajectory;
-        private System.Windows.Forms.GroupBox gbTrajectoryMode;
-        private System.Windows.Forms.RadioButton rbDefinePoints;
-        private System.Windows.Forms.RadioButton rbRecord;
-        private System.Windows.Forms.Button btnRunProgram;
-        private System.Windows.Forms.Button btnStopProgram;
         private System.Windows.Forms.ToolStripMenuItem programToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tsmiSaveProgram;
         private System.Windows.Forms.ToolStripMenuItem tsmiLoadProgram;
@@ -994,14 +1037,31 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiRunProgram;
         private System.Windows.Forms.ToolStripMenuItem tsmiResumeProgram;
         private System.Windows.Forms.ToolStripMenuItem tsmiStopProgram;
-        private System.Windows.Forms.Button btnResumeProgram;
-        private System.Windows.Forms.TextBox tbAlpha;
+        private System.Windows.Forms.TextBox tbPhase;
         private System.Windows.Forms.TextBox tbDistande;
-        private System.Windows.Forms.Label lblAlpha;
+        private System.Windows.Forms.Label lblPhase;
         private System.Windows.Forms.Label lblDistance;
         private System.Windows.Forms.Label lblTime;
         private System.Windows.Forms.TextBox tbCommandDelay;
+        private System.Windows.Forms.TableLayoutPanel tlpMainProgram;
+        private System.Windows.Forms.TableLayoutPanel tlpProgram;
+        private System.Windows.Forms.PictureBox pbTerrain;
+        private System.Windows.Forms.Panel pnlTrajectory;
+        private System.Windows.Forms.Button btnReadSonar;
         private System.Windows.Forms.Button btnCapture;
+        private System.Windows.Forms.Button btnResumeProgram;
+        private System.Windows.Forms.Button btnStopProgram;
+        private System.Windows.Forms.Button btnRunProgram;
+        private System.Windows.Forms.GroupBox gbTrajectoryMode;
+        private System.Windows.Forms.RadioButton rbDefinePoints;
+        private System.Windows.Forms.RadioButton rbRecord;
+        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Index;
+        private System.Windows.Forms.DataGridViewTextBoxColumn XPos;
+        private System.Windows.Forms.DataGridViewTextBoxColumn YPos;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Distance;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Alpha;
+        private System.Windows.Forms.Button btnGetRobotPos;
     }
 }
 

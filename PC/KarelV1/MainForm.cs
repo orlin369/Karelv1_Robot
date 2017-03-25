@@ -22,11 +22,6 @@ SOFTWARE.
 
 */
 
-using DatabaseConnection;
-using DatabaseConnection.Device.Actuators;
-using DatabaseConnection.Device.Sensors;
-using DatabaseConnection.Units;
-
 using System;
 using System.Drawing;
 using System.Threading;
@@ -45,10 +40,6 @@ using KarelV1Lib.Data;
 using IPWebcam;
 using KarelV1Lib.Utils;
 using KarelV1.TrajectoryManagment;
-using System.Xml;
-using System.Xml.Serialization;
-using System.IO;
-
 
 // 
 // Robot tasks ...
@@ -79,7 +70,7 @@ namespace KarelV1
         private KarelV1Lib.KarelV1 robot;
 
         /// <summary>
-        /// The differential control model.
+        /// Differential control model.
         /// </summary>
         private DifferentialModel differentialModel;
 
@@ -130,10 +121,7 @@ namespace KarelV1
             this.programController.OnFinish += ProgramController_OnFinish;
             this.programController.OnRuning += ProgramController_OnRuning;
         }
-
-
-
-
+        
         #endregion
 
         #region Main Form
@@ -469,7 +457,7 @@ namespace KarelV1
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                sfd.FileName = GetDateTime() + ".CSV";
+                sfd.FileName = AppUtils.GetDateTime() + ".CSV";
 
                 if (!string.IsNullOrEmpty(sfd.FileName))
                 {
@@ -508,7 +496,7 @@ namespace KarelV1
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                sfd.FileName = GetDateTime() + ".XML";
+                sfd.FileName = AppUtils.GetDateTime() + ".XML";
 
                 if (!string.IsNullOrEmpty(sfd.FileName))
                 {
@@ -571,7 +559,7 @@ namespace KarelV1
         {
             try
             {
-                this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName));
+                this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName), this.differentialModel);
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnSensors += myRobot_OnSensors;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
@@ -595,7 +583,8 @@ namespace KarelV1
                     Properties.Settings.Default.BrokerHost,
                     Properties.Settings.Default.BrokerPort,
                     Properties.Settings.Default.MqttInputTopic,
-                    Properties.Settings.Default.MqttOutputTopic));
+                    Properties.Settings.Default.MqttOutputTopic),
+                    this.differentialModel);
 
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnSensors += myRobot_OnSensors;
@@ -638,8 +627,6 @@ namespace KarelV1
 
         private void MoveForward()
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
             double distance = 0.0D;
             if(!double.TryParse(this.tbDistande.Text, out distance))
             {
@@ -660,20 +647,16 @@ namespace KarelV1
                 return;
             }
 
-            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
-            {
-                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(distance, 0, delay));
-            }
+            Position rp = new Position(distance, 0, delay);
+            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
-            int steps = this.differentialModel.MmToStep(distance);
-            this.robot.Move(steps);
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GoToPosition(rp);
         }
 
         private void MoveBackward()
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
             double distance = 0.0D;
             if (!double.TryParse(this.tbDistande.Text, out distance))
             {
@@ -694,22 +677,20 @@ namespace KarelV1
                 return;
             }
 
-            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
-            {
-                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(-distance, 0, delay));
-            }
+            Position rp = new Position(-distance, 0, delay);
+            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
-            int steps = this.differentialModel.MmToStep(-distance);
-            this.robot.Move(steps);
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GoToPosition(rp);
+
         }
 
         private void MoveLeft()
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
 
-            double alpha = 0.0D;
-            if (!double.TryParse(this.tbAlpha.Text, out alpha))
+            double phase = 0.0D;
+            if (!double.TryParse(this.tbPhase.Text, out phase))
             {
                 // TODO: Show message incorrect distance.
                 return;
@@ -728,22 +709,18 @@ namespace KarelV1
                 return;
             }
 
-            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
-            {
-                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(0, -alpha, delay));
-            }
+            Position rp = new Position(0, -phase, delay);
+            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
-            int steps = this.differentialModel.DegToStep(-alpha);
-            this.robot.Rotate(steps);
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GoToPosition(rp);
         }
 
         private void MoveRight()
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
-            double alpha = 0.0D;
-            if (!double.TryParse(this.tbAlpha.Text, out alpha))
+            double phase = 0.0D;
+            if (!double.TryParse(this.tbPhase.Text, out phase))
             {
                 // TODO: Show message incorrect distance.
                 return;
@@ -762,14 +739,12 @@ namespace KarelV1
                 return;
             }
 
-            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
-            {
-                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(0, alpha, delay));
-            }
+            Position rp = new Position(0, phase, delay);
+            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
-            int steps = this.differentialModel.DegToStep(alpha);
-            this.robot.Rotate(steps);
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GoToPosition(rp);
         }
 
         private void myRobot_OnMessage(object sender, StringEventArgs e)
@@ -789,19 +764,19 @@ namespace KarelV1
 
         private void myRobot_OnDistanceSensors(object sender, DistanceSensorsEventArgs e)
         {
-            this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.Position, e.UltrasonicTime, e.InfraRedADCValue), Color.White);
+            this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.DistanceSensors.Position, e.DistanceSensors.UltraSonic, e.DistanceSensors.Infrared), Color.White);
 
             MetricScale Scale = (MetricScale)this.cbMetric.SelectedItem;
             // TODO: Add scale.
             // TODO: Class HSR04.
-            float us = e.UltrasonicTime / 58.0F;
+            double us = e.DistanceSensors.UltraSonic / 58.0F;
             if (us > 330.0F) us = 330.0F;
 
-            double ir = irSensor.Convert(e.InfraRedADCValue); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
+            double ir = irSensor.Convert(e.DistanceSensors.Infrared); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
             if (ir > 80.0F) us = 80.0F;
             //double ir = AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
 
-            sonarsData[e.Position] = new DistanceSensors(e.Position, us, ir);
+            sonarsData[(int)e.DistanceSensors.Position] = new DistanceSensors(e.DistanceSensors.Position, us, ir);
 
             this.UpdateSonarChart(sonarsData);
         }
@@ -810,20 +785,15 @@ namespace KarelV1
         {
             this.AddStatus(String.Format("Sensors: {0} {1}", e.Left, e.Right), Color.White);
 
-            this.SetLeftSensor((int)Math.Floor(e.Left));
-            this.SetRightSensor((int)Math.Floor(e.Right));
+            this.DisplayLeftSensor((int)Math.Floor(e.Left));
+            this.DisplayRightSensor((int)Math.Floor(e.Right));
         }
 
-        private void myRobot_OnPosition(object sender, RobotPositionEventArgs e)
+        private void myRobot_OnPosition(object sender, PositionEventArgs e)
         {
-            double mm = this.differentialModel.StepToMm(e.Radius);
+            this.visuliser.SetRobotPosition(e.Position);
 
-            this.SetRobotPos((float)mm, (float)e.Alpha);
-
-            this.SendRobotPos((float)e.Radius, (float)e.Alpha);
-
-            this.AddStatus(String.Format("Position: A:{0:F3} D:{1:F3}", e.Alpha, mm), Color.White);
-
+            this.AddStatus(String.Format("Position: P:{0:F3} D:{1:F3}", e.Position.Phase, e.Position.Distance), Color.White);
         }
 
         #endregion
@@ -832,9 +802,9 @@ namespace KarelV1
 
         private void ProgramController_OnExecutionIndexCanged(object sender, IntEventArgs e)
         {
-            KarelV1Lib.Data.Position rp = this.programController.Commands[e.Value];
+            Position rp = this.programController.Commands[e.Value];
 
-            Console.WriteLine("D:{0}; A:{1}; T:{2}", rp.Distance, rp.Alpha, rp.Delay);
+            Console.WriteLine("D:{0}; A:{1}; T:{2}", rp.Distance, rp.Phase, rp.Delay);
 
             this.visuliser.SetCurrentPoint(e.Value);
         }
@@ -852,41 +822,7 @@ namespace KarelV1
         }
 
         #endregion
-
-        #region Database
-
-        /// <summary>
-        /// Commit robot position to DB.
-        /// </summary>
-        /// <param name="radius"></param>
-        /// <param name="alpha"></param>
-        private void SendRobotPos(float radius, float alpha)
-        {
-            // Calculate position.
-            PointF point = PolarConversion.PolarToCartesian(radius, alpha);
-
-            // Create position.
-            DatabaseConnection.Position decartRobotPose = new DatabaseConnection.Position();
-            decartRobotPose.Point.Unit = Scales.Steps;
-            decartRobotPose.Point.X = point.X;
-            decartRobotPose.Point.Y = point.Y;
-            decartRobotPose.Orientation.Unit = Radial.Degree;
-            decartRobotPose.Orientation.C = alpha;
-
-            // Create sensor.
-            RobotPosition sensor = new RobotPosition();
-            sensor.Position = decartRobotPose;
-            sensor.Name = "Robot position";
-            sensor.Descripotion = "Actual robot position.";
-        }
-
-        private void SendRobotUltrasonicSensor(float radius, float alpha)
-        {
-
-        }
-
-        #endregion
-
+        
         #region Private
 
         /// <summary>
@@ -918,32 +854,10 @@ namespace KarelV1
         }
 
         /// <summary>
-        /// Set robot position.
-        /// </summary>
-        /// <param name="text">Position</param>
-        private void SetRobotPos(float distance, float alpha)
-        {
-            string text = String.Format("Position\r\nDistance: {0:F3}\r\nAlpha: {1:F3}", distance, alpha);
-
-            // + Environment.NewLine
-            if (this.lblRobotPosition.InvokeRequired)
-            {
-                this.lblRobotPosition.BeginInvoke((MethodInvoker)delegate()
-                {
-                    this.lblRobotPosition.Text = text;
-                });
-            }
-            else
-            {
-                this.lblRobotPosition.Text = text;
-            }
-        }
-
-        /// <summary>
         /// Set left sensor progress bar.
         /// </summary>
         /// <param name="value"></param>
-        private void SetLeftSensor(int value)
+        private void DisplayLeftSensor(int value)
         {
             if (this.prbLeftSensor.InvokeRequired)
             {
@@ -962,7 +876,7 @@ namespace KarelV1
         /// Set right sensor progress bar.
         /// </summary>
         /// <param name="value"></param>
-        private void SetRightSensor(int value)
+        private void DisplayRightSensor(int value)
         {
             if (this.prbRightSensor.InvokeRequired)
             {
@@ -984,7 +898,7 @@ namespace KarelV1
         /// <param name="textColor"></param>
         private void AddStatus(string text, Color textColor)
         {
-            string infoLine = String.Format("{0} -> {1}", this.GetDateTime(), text);
+            string infoLine = String.Format("{0} -> {1}", AppUtils.GetDateTime(), text);
             infoLine += Environment.NewLine;
 
             if (this.txtState.InvokeRequired)
@@ -1000,15 +914,6 @@ namespace KarelV1
                 this.txtState.AppendText(infoLine);
                 this.txtState.BackColor = textColor;
             }
-        }
-
-        /// <summary>
-        /// Return current data and time.
-        /// </summary>
-        /// <returns></returns>
-        private string GetDateTime()
-        {
-            return DateTime.Now.ToString("yyyy.MM.dd/HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo);
         }
 
         /// <summary>
@@ -1056,258 +961,6 @@ namespace KarelV1
         }
 
         /// <summary>
-        /// Unit test of LORA data base.
-        /// </summary>
-        private void TastDatabase()
-        {
-            try
-            {
-                // Database test.
-
-                #region Distance
-
-                // Create sensor.
-                Distance dstSens = new Distance();
-
-                // Date and time of mesurements.
-                dstSens.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                dstSens.Name = "Sensor 1";
-
-                // Description.
-                dstSens.Descripotion = "Ultrasonic sensor on the top of the robot.";
-
-                // Positional data.
-                dstSens.Position.Point.Unit = Scales.MM;
-                dstSens.Position.Point.X = 1.0f;
-                dstSens.Position.Point.Y = 2.0f;
-                dstSens.Position.Point.Z = 3.0f;
-                dstSens.Position.Orientation.Unit = Radial.Degree;
-                dstSens.Position.Orientation.A = 4.0f;
-                dstSens.Position.Orientation.B = 5.0f;
-                dstSens.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                dstSens.Unit = Scales.MM;
-                dstSens.Value = 100.0f;
-                dstSens.MaxValue = 50.0f;
-                dstSens.MinValue = 2000.0f;
-
-                #endregion
-
-                #region Humidity
-
-                // Create sensor.
-                Humidity humSens = new Humidity();
-
-                // Date and time of mesurements.
-                humSens.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                humSens.Name = "Sensor 2";
-
-                // Description.
-                humSens.Descripotion = "Humidite sensor on the back of the robot.";
-
-                // Positional data.
-                humSens.Position.Point.Unit = Scales.MM;
-                humSens.Position.Point.X = 1.0f;
-                humSens.Position.Point.Y = 2.0f;
-                humSens.Position.Point.Z = 3.0f;
-                humSens.Position.Orientation.Unit = Radial.Degree;
-                humSens.Position.Orientation.A = 4.0f;
-                humSens.Position.Orientation.B = 5.0f;
-                humSens.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                humSens.Unit = Scales.MM;
-                humSens.Value = 50.0f;
-                humSens.MaxValue = 100.0f;
-                humSens.MinValue = 0.0f;
-
-                #endregion
-
-                #region Presure
-
-                // Create sensor.
-                Pressure presSens = new Pressure();
-
-                // Date and time of mesurements.
-                presSens.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                presSens.Name = "Sensor 3";
-
-                // Description.
-                presSens.Descripotion = "Air tank sensor.";
-
-                // Positional data.
-                presSens.Position.Point.Unit = Scales.MM;
-                presSens.Position.Point.X = 1.0f;
-                presSens.Position.Point.Y = 2.0f;
-                presSens.Position.Point.Z = 3.0f;
-                presSens.Position.Orientation.Unit = Radial.Degree;
-                presSens.Position.Orientation.A = 4.0f;
-                presSens.Position.Orientation.B = 5.0f;
-                presSens.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                presSens.Unit = Pressures.Bar;
-                presSens.Value = 5.0f;
-                presSens.MaxValue = 10.0f;
-                presSens.MinValue = -1.0f;
-
-                #endregion
-
-                #region Temperature
-
-                // Create sensor.
-                Temperature tempSens = new Temperature();
-
-                // Date and time of mesurements.
-                tempSens.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                tempSens.Name = "Sensor 4";
-
-                // Description.
-                tempSens.Descripotion = "Left motor temperature sensor.";
-
-                // Positional data.
-                tempSens.Position.Point.Unit = Scales.MM;
-                tempSens.Position.Point.X = 1.0f;
-                tempSens.Position.Point.Y = 2.0f;
-                tempSens.Position.Point.Z = 3.0f;
-                tempSens.Position.Orientation.Unit = Radial.Degree;
-                tempSens.Position.Orientation.A = 4.0f;
-                tempSens.Position.Orientation.B = 5.0f;
-                tempSens.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                tempSens.Unit = TemperatureScale.Celsius;
-                tempSens.Value = 20.0f;
-                tempSens.MaxValue = 85.0f;
-                tempSens.MinValue = -20.0f;
-
-                #endregion
-
-                #region RobotPosition
-
-                // Create sensor.
-                RobotPosition robotPos = new RobotPosition();
-
-                // Date and time of mesurements.
-                humSens.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                humSens.Name = "Robot Position";
-
-                // Description.
-                humSens.Descripotion = "Actual robot position.";
-
-                // Positional data.
-                humSens.Position.Point.Unit = Scales.MM;
-                humSens.Position.Point.X = 1.0f;
-                humSens.Position.Point.Y = 2.0f;
-                humSens.Position.Point.Z = 3.0f;
-                humSens.Position.Orientation.Unit = Radial.Degree;
-                humSens.Position.Orientation.A = 4.0f;
-                humSens.Position.Orientation.B = 5.0f;
-                humSens.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                humSens.Unit = Scales.MM;
-                humSens.Value = 50.0f;
-                humSens.MaxValue = 100.0f;
-                humSens.MinValue = 0.0f;
-
-                #endregion
-
-                #region Left Stepper motor
-
-                // Create sensor.
-                StepperMotor lStepAct = new StepperMotor();
-
-                // Date and time of mesurements.
-                lStepAct.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                lStepAct.Name = "Left motor";
-
-                // Description.
-                lStepAct.Descripotion = "Left of the robot motor.";
-
-                // Positional data.
-                lStepAct.Position.Point.Unit = Scales.MM;
-                lStepAct.Position.Point.X = 1.0f;
-                lStepAct.Position.Point.Y = 2.0f;
-                lStepAct.Position.Point.Z = 3.0f;
-                lStepAct.Position.Orientation.Unit = Radial.Degree;
-                lStepAct.Position.Orientation.A = 4.0f;
-                lStepAct.Position.Orientation.B = 5.0f;
-                lStepAct.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                lStepAct.Unit = Scales.Steps;
-                lStepAct.Value = 20.0f;
-                lStepAct.MaxValue = 200.0f;
-                lStepAct.MinValue = 0.0f;
-                lStepAct.Acceleration = 50;
-                lStepAct.Jerk = 70;
-
-                #endregion
-
-                #region Right Stepper motor
-
-                // Create sensor.
-                StepperMotor rStepAct = new StepperMotor();
-
-                // Date and time of mesurements.
-                rStepAct.DateTime = DateTime.Now;
-
-                // Name of the sensor.
-                rStepAct.Name = "Left motor";
-
-                // Description.
-                rStepAct.Descripotion = "Left of the robot motor.";
-
-                // Positional data.
-                rStepAct.Position.Point.Unit = Scales.MM;
-                rStepAct.Position.Point.X = 1.0f;
-                rStepAct.Position.Point.Y = 2.0f;
-                rStepAct.Position.Point.Z = 3.0f;
-                rStepAct.Position.Orientation.Unit = Radial.Degree;
-                rStepAct.Position.Orientation.A = 4.0f;
-                rStepAct.Position.Orientation.B = 5.0f;
-                rStepAct.Position.Orientation.C = 6.0f;
-
-                // Mesurements units.
-                rStepAct.Unit = Scales.Steps;
-                rStepAct.Value = 20.0f;
-                rStepAct.MaxValue = 200.0f;
-                rStepAct.MinValue = 0.0f;
-                rStepAct.Acceleration = 50;
-                rStepAct.Jerk = 70;
-
-                #endregion
-
-                // Send data to the DB.
-                //this.database.CommitDevice(dstSens);
-                //this.database.CommitDevice(humSens);
-                //this.database.CommitDevice(presSens);
-                //this.database.CommitDevice(tempSens);
-                //this.database.CommitDevice(robotPos);
-                //this.database.CommitDevice(lStepAct);
-                //this.database.CommitDevice(rStepAct);
-            }
-            catch (Exception exception)
-            {
-                this.AddStatus(exception.ToString(), Color.White);
-            }
-        }
-
-        /// <summary>
         /// Setup the scale combo box.
         /// </summary>
         private void SetupScaleComboBox()
@@ -1327,14 +980,14 @@ namespace KarelV1
 
         private void SaveProgram()
         {
-            Trajectory trajectory = this.visuliser.GetTrajectory();
+            Positions trajectory = this.visuliser.Trajectory;
             if (trajectory == null) { return; }
 
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "XML (*.xml)|*.xml";
             sfd.FilterIndex = 1;
             sfd.RestoreDirectory = true;
-            sfd.FileName = GetDateTime() + ".XML";
+            sfd.FileName = AppUtils.GetDateTime() + ".XML";
             //sfd.Multiselect = false;
 
             // Show the dialog and get result.
@@ -1342,7 +995,7 @@ namespace KarelV1
             
             if (result == DialogResult.OK) // Test result.
             {
-                TrajectoryStore.Save(trajectory, sfd.FileName);
+                PositionsStore.Save(trajectory, sfd.FileName);
             }
         }
 
@@ -1362,11 +1015,11 @@ namespace KarelV1
             if (result == DialogResult.OK) // Test result.
             {
                 string path = ofd.FileName;
-                Trajectory trajectory = TrajectoryStore.Load(path);
+                Positions trajectory = PositionsStore.Load(path);
 
                 if (trajectory != null && trajectory.Count > 0)
                 {
-                    this.visuliser.SetTrajectory(trajectory);
+                    this.visuliser.Trajectory = trajectory;
                 }
             }
         }
@@ -1375,7 +1028,7 @@ namespace KarelV1
         {
             if (!this.programController.IsRuning)
             {
-                this.programController.Commands = this.visuliser.GetTrajectory();
+                this.programController.Commands = this.visuliser.Trajectory;
                 this.programController.RunProgram();
             }
         }
@@ -1412,6 +1065,26 @@ namespace KarelV1
 
 
         #endregion
+
+        private void btnReadSonar_Click(object sender, EventArgs e)
+        {
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int position = 0;
+            if (int.TryParse(this.tbSensorPosition.Text, out position))
+            {
+                if (position > 180 || position < 0)
+                {
+                    return;
+                }
+
+                this.robot.GetDistanceSensors(position);
+            }
+            else
+            {
+                this.robot.GetDistanceSensors();
+            }
+        }
 
     }
 }

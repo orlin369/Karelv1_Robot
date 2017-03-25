@@ -56,25 +56,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DatabaseConnection\Device\Actuators\Actuator.cs" />
-    <Compile Include="DatabaseConnection\Device\Actuators\StepperMotor.cs" />
-    <Compile Include="DatabaseConnection\Device\Device.cs" />
-    <Compile Include="DatabaseConnection\Data\Location.cs" />
-    <Compile Include="DatabaseConnection\Data\Orientation.cs" />
-    <Compile Include="DatabaseConnection\Data\Point.cs" />
-    <Compile Include="DatabaseConnection\Data\Position.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\Distance.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\Humidity.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\Pressure.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\RobotPosition.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\Sensor.cs" />
-    <Compile Include="DatabaseConnection\Device\Sensors\Temperature.cs" />
-    <Compile Include="DatabaseConnection\Lora.cs" />
-    <Compile Include="DatabaseConnection\Ioly.cs" />
-    <Compile Include="DatabaseConnection\Units\Pressures.cs" />
-    <Compile Include="DatabaseConnection\Units\Radial.cs" />
-    <Compile Include="DatabaseConnection\Units\Scales.cs" />
-    <Compile Include="DatabaseConnection\Units\TemperatureScale.cs" />
     <Compile Include="Images.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

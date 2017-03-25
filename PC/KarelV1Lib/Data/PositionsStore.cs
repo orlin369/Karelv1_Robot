@@ -30,7 +30,7 @@ namespace KarelV1Lib.Data
     /// <summary>
     /// Serialize command lists and store it to the files.
     /// </summary>
-    public static class TrajectoryStore
+    public static class PositionsStore
     {
 
         #region Public Methods
@@ -43,9 +43,9 @@ namespace KarelV1Lib.Data
         /// </remarks>
         /// <param name="trajecotry">Commands</param>
         /// <param name="path">File</param>
-        public static void Save(Trajectory trajecotry, string path)
+        public static void Save(Positions trajecotry, string path)
         {
-            XmlSerializer writer = new XmlSerializer(typeof(Trajectory));
+            XmlSerializer writer = new XmlSerializer(typeof(Positions));
             using (StreamWriter file = new StreamWriter(path))
             {
                 writer.Serialize(file, trajecotry);
@@ -58,14 +58,14 @@ namespace KarelV1Lib.Data
         /// <remarks>@"C:\Temp\SerializationOverview.xml"</remarks>
         /// <param name="path">File</param>
         /// <returns>Commands</returns>
-        public static Trajectory Load(string path)
+        public static Positions Load(string path)
         {
-            Trajectory trajecotry = new Trajectory();
+            Positions trajecotry = new Positions();
 
-            XmlSerializer reader = new XmlSerializer(typeof(Trajectory));
+            XmlSerializer reader = new XmlSerializer(typeof(Positions));
             using (StreamReader file = new StreamReader(path))
             {
-                trajecotry = (Trajectory)reader.Deserialize(file);
+                trajecotry = (Positions)reader.Deserialize(file);
             }
 
             return trajecotry;

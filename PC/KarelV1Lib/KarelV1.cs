@@ -25,6 +25,8 @@ SOFTWARE.
 using System;
 using KarelV1Lib.Events;
 using KarelV1Lib.Adapters;
+using KarelV1Lib.Utils;
+using KarelV1Lib.Data;
 
 namespace KarelV1Lib
 {
@@ -44,6 +46,8 @@ namespace KarelV1Lib
         #region Variables
 
         private Adapter adapter;
+
+        private DifferentialModel differentialModel;
 
         #endregion
 
@@ -87,7 +91,7 @@ namespace KarelV1Lib
 
         public event EventHandler<StringEventArgs> OnGreatingsMessage;
 
-        public event EventHandler<RobotPositionEventArgs> OnPosition;
+        public event EventHandler<PositionEventArgs> OnPosition;
 
         /// <summary>
         /// Received command message.
@@ -102,7 +106,7 @@ namespace KarelV1Lib
         /// Constructor
         /// </summary>
         /// <param name="port">Communication port.</param>
-        public KarelV1(Adapter adapter)
+        public KarelV1(Adapter adapter, DifferentialModel differentialModel)
         {
             this.adapter = adapter;
 
@@ -111,6 +115,8 @@ namespace KarelV1Lib
 
             // Attach the event handler.
             this.adapter.OnMessage += Adapter_OnMessage;
+
+            this.differentialModel = differentialModel;
         }
 
         /// <summary>
@@ -154,7 +160,7 @@ namespace KarelV1Lib
 
             this.adapter.Reset();
         }
-
+        
         /// <summary>
         /// Move the robots.
         /// </summary>
@@ -177,6 +183,18 @@ namespace KarelV1Lib
 
             string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
+        }
+
+        /// <summary>
+        /// Go To position.
+        /// </summary>
+        /// <param name="position"></param>
+        public void GoToPosition(Position position)
+        {
+            int stepsR = this.differentialModel.MmToStep(position.Phase);
+            this.Rotate(stepsR);
+            int stepsD = this.differentialModel.MmToStep(position.Distance);
+            this.Move(stepsD);
         }
 
         /// <summary>
@@ -328,7 +346,7 @@ namespace KarelV1Lib
 
                             if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out usTime)) && (int.TryParse(subTokens[2], out irAdc)))
                             {
-                                this.OnDistanceSensors?.Invoke(this, new DistanceSensorsEventArgs(phase, usTime, irAdc));
+                                this.OnDistanceSensors?.Invoke(this, new DistanceSensorsEventArgs(new DistanceSensors(phase, usTime, irAdc)));
                             }
 
                         }
@@ -339,7 +357,7 @@ namespace KarelV1Lib
 
                         if (token.Contains("POSITION"))
                         {
-                            int position = 0;
+                            int phase = 0;
                             int distance = 0;
 
                             string tmpToken = token.Replace("#POSITION;", "");
@@ -350,9 +368,10 @@ namespace KarelV1Lib
                             if (subTokens[0] == "T" && subTokens[2] == "R")
                             {
                                 if ((int.TryParse(subTokens[1], out distance))
-                                    && (int.TryParse(subTokens[3], out position)))
+                                    && (int.TryParse(subTokens[3], out phase)))
                                 {
-                                    this.OnPosition?.Invoke(this, new RobotPositionEventArgs(position, distance));
+                                    double distanceMm = this.differentialModel.StepToMm(distance);
+                                    this.OnPosition?.Invoke(this, new PositionEventArgs(new Position(distanceMm, phase, 0)));
                                 }
                             }
 

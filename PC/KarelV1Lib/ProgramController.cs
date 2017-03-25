@@ -41,7 +41,7 @@ namespace KarelV1Lib
         /// <summary>
         /// List of commands.
         /// </summary>
-        private Trajectory commands = new Trajectory();
+        private Positions commands = new Positions();
 
         /// <summary>
         /// Current command index.
@@ -75,7 +75,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Set of commands.
         /// </summary>
-        public Trajectory Commands
+        public Positions Commands
         {
             set
             {

@@ -40,54 +40,28 @@ namespace KarelV1.Settings
 
         private void LoadFields()
         {
-            this.tbBrokerDomain.Text = Properties.Settings.Default.BrokerHost;
-            this.tbBrokerPort.Text = Properties.Settings.Default.BrokerPort.ToString();
-            this.tbInputTopic.Text = Properties.Settings.Default.MqttInputTopic;
-            this.tbOutputTopic.Text = Properties.Settings.Default.MqttOutputTopic;
             this.tbSteppsCount.Text = Properties.Settings.Default.SteppsCount.ToString();
             this.tbStepperPostScaler.Text = Properties.Settings.Default.StepperPostScaler.ToString();
             this.tbDiameterOfWheel.Text = Properties.Settings.Default.DiameterOfWheel.ToString();
             this.tbDistanceBetweenWheels.Text = Properties.Settings.Default.DistanceBetweenWheels.ToString();
             this.tbXScale.Text = Properties.Settings.Default.XScale.ToString();
             this.tbYScale.Text = Properties.Settings.Default.YScale.ToString();
+
+            this.tbBrokerDomain.Text = Properties.Settings.Default.BrokerHost;
+            this.tbBrokerPort.Text = Properties.Settings.Default.BrokerPort.ToString();
+            this.tbInputTopic.Text = Properties.Settings.Default.MqttInputTopic;
+            this.tbOutputTopic.Text = Properties.Settings.Default.MqttOutputTopic;
+
+            this.tbCameraUri.Text = Properties.Settings.Default.CameraUri;
+            this.cbTorch.Checked = Properties.Settings.Default.CameraTorch;
         }
 
         private void SaveFields()
         {
             try
             {
-                int borkerPort;
-                
-                if (int.TryParse(this.tbBrokerPort.Text.Trim(), out borkerPort))
-                {
-                    if (borkerPort < 0 || borkerPort > 65535)
-                    {
-                        MessageBox.Show("Invalid Broker port. [0 - 65535]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                        return;
-                    }
 
-                    Properties.Settings.Default.BrokerPort = borkerPort;
-                }
-                else
-                {
-                    MessageBox.Show("Invalid Broker port.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-
-                if (!string.IsNullOrEmpty(this.tbBrokerDomain.Text))
-                {
-                    Properties.Settings.Default.BrokerHost = this.tbBrokerDomain.Text;
-                }
-
-                if (!string.IsNullOrEmpty(this.tbInputTopic.Text))
-                {
-                    Properties.Settings.Default.MqttInputTopic = this.tbInputTopic.Text;
-                }
-
-                if (!string.IsNullOrEmpty(this.tbOutputTopic.Text))
-                {
-                    Properties.Settings.Default.MqttOutputTopic = this.tbOutputTopic.Text;
-                }
+                #region Mechanical Properties
 
                 int stepsCount = 0;
                 if (int.TryParse(this.tbSteppsCount.Text.Trim(), out stepsCount))
@@ -157,6 +131,55 @@ namespace KarelV1.Settings
                     return;
                 }
 
+                #endregion
+                
+                #region MQTT Settings
+
+                int borkerPort;
+                if (int.TryParse(this.tbBrokerPort.Text.Trim(), out borkerPort))
+                {
+                    if (borkerPort < 0 || borkerPort > 65535)
+                    {
+                        MessageBox.Show("Invalid Broker port. [0 - 65535]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.BrokerPort = borkerPort;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid Broker port.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                if (!string.IsNullOrEmpty(this.tbBrokerDomain.Text))
+                {
+                    Properties.Settings.Default.BrokerHost = this.tbBrokerDomain.Text;
+                }
+
+                if (!string.IsNullOrEmpty(this.tbInputTopic.Text))
+                {
+                    Properties.Settings.Default.MqttInputTopic = this.tbInputTopic.Text;
+                }
+
+                if (!string.IsNullOrEmpty(this.tbOutputTopic.Text))
+                {
+                    Properties.Settings.Default.MqttOutputTopic = this.tbOutputTopic.Text;
+                }
+
+                #endregion
+
+                #region Navigation
+
+                if (!string.IsNullOrEmpty(this.tbCameraUri.Text))
+                {
+                    Properties.Settings.Default.CameraUri = this.tbCameraUri.Text;
+                }
+
+                Properties.Settings.Default.CameraTorch = this.cbTorch.Checked;
+
+                #endregion
+                
                 // Save settings.
                 Properties.Settings.Default.Save();
             }
