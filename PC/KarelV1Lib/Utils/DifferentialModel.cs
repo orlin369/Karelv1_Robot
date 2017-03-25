@@ -24,7 +24,7 @@ SOFTWARE.
 
 using System;
 
-namespace KarelV1Lib
+namespace KarelV1Lib.Utils
 {
     /// <summary>
     /// The differential controlling model.

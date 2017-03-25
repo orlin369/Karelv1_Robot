@@ -43,6 +43,11 @@ using KarelV1Lib.Adapters;
 using KarelV1Lib.Data;
 
 using IPWebcam;
+using KarelV1Lib.Utils;
+using KarelV1.TrajectoryManagment;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
 
 
 // 
@@ -79,11 +84,6 @@ namespace KarelV1
         private DifferentialModel differentialModel;
 
         /// <summary>
-        /// Update camera timer.
-        /// </summary>
-        private System.Windows.Forms.Timer cameraUpdateTimer;
-
-        /// <summary>
         /// IP Camera for the glyph recognizer.
         /// </summary>
         private IpCamera ipCamera;
@@ -102,6 +102,10 @@ namespace KarelV1
 
         private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
+        private TrajectoryVisualiser visuliser = new TrajectoryVisualiser();
+
+        private ProgramController programController = new ProgramController();
+
         #endregion
 
         #region Constructor
@@ -113,17 +117,22 @@ namespace KarelV1
         {
             InitializeComponent();
 
-            this.cameraUpdateTimer = new System.Windows.Forms.Timer();
-            this.cameraUpdateTimer.Stop();
-            this.cameraUpdateTimer.Tick += this.cameraUpdateTimer_Tick;
-
             // The differential controlling model.
             this.differentialModel = new DifferentialModel(
                 Properties.Settings.Default.SteppsCount,
                 Properties.Settings.Default.StepperPostScaler,
-                Properties.Settings.Default.DiametterOfWheel,
+                Properties.Settings.Default.DiameterOfWheel,
                 Properties.Settings.Default.DistanceBetweenWheels);
+
+            this.visuliser.AddControl(this.pbTerrain);
+
+            this.programController.OnExecutionIndexCanged += ProgramController_OnExecutionIndexCanged;
+            this.programController.OnFinish += ProgramController_OnFinish;
+            this.programController.OnRuning += ProgramController_OnRuning;
         }
+
+
+
 
         #endregion
 
@@ -152,8 +161,7 @@ namespace KarelV1
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            this.DisconnectFromRobotViaSerial();
-            this.DisconnectFromRobotViaMqtt();
+            this.DisconnectFromRobot();
         }
 
         #endregion
@@ -162,8 +170,6 @@ namespace KarelV1
 
         private void btnForward_Click(object sender, EventArgs e)
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
             this.MoveForward();
         }
 
@@ -176,8 +182,6 @@ namespace KarelV1
 
         private void btnLeft_Click(object sender, EventArgs e)
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
             this.MoveLeft();
         }
 
@@ -242,6 +246,21 @@ namespace KarelV1
             captureThread.Start();
         }
 
+        private void btnRunProgram_Click(object sender, EventArgs e)
+        {
+            this.RunProgram();
+        }
+
+        private void btnResumeProgram_Click(object sender, EventArgs e)
+        {
+            this.ResumeProgram();
+        }
+
+        private void btnStopProgram_Click(object sender, EventArgs e)
+        {
+            this.StopProgram();
+        }
+
         #endregion
 
         #region Text Box
@@ -251,6 +270,22 @@ namespace KarelV1
             if (e.KeyChar == (char)Keys.Enter)
             {
                 this.btnGetUltrasonic_Click(sender, new EventArgs());
+            }
+        }
+        
+        private void tbCommandDelay_TextChanged(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(this.tbCommandDelay.Text))
+            {
+                double delay = 0.0D;
+
+                if (double.TryParse(this.tbCommandDelay.Text, out delay))
+                {
+                    if (delay > 0.0)
+                    {
+                        this.visuliser.TrajectoryDelay = delay;
+                    }
+                }
             }
         }
 
@@ -342,10 +377,9 @@ namespace KarelV1
             Application.Exit();
         }
 
-
         private void tmsiPorts_Click(object sender, EventArgs e)
         {
-            this.DisconnectFromRobotViaSerial();
+            this.DisconnectFromRobot();
             ToolStripMenuItem item = (ToolStripMenuItem)sender;
             this.robotSerialPortName = item.Text;
             this.ConnectToRobotViaSerial();
@@ -374,7 +408,7 @@ namespace KarelV1
                 this.robot.Reset();
             }
         }
-        
+
         private void tsmiConnectToMqtt_Click(object sender, EventArgs e)
         {
             this.ConnectToRobotViaMqtt();
@@ -391,17 +425,32 @@ namespace KarelV1
 
         private void tsmiDisconnectFromMqtt_Click(object sender, EventArgs e)
         {
-            this.DisconnectFromRobotViaMqtt();
+            this.DisconnectFromRobot();
+        }
 
-            if (this.robot.IsConnected)
-            {
-                this.lblIsConnected.Text = String.Format("Connected: {0}:{1}", Properties.Settings.Default.BrokerHost, Properties.Settings.Default.BrokerPort);
-            }
-            else
-            {
-                this.lblIsConnected.Text = "Not Connected";
-            }
+        private void tsmiSaveProgram_Click(object sender, EventArgs e)
+        {
+            this.SaveProgram();
+        }
 
+        private void tsmiLoadProgram_Click(object sender, EventArgs e)
+        {
+            this.LoadProgram();
+        }
+
+        private void tsmiRunProgram_Click(object sender, EventArgs e)
+        {
+            this.RunProgram();
+        }
+
+        private void tsmiResumeProgram_Click(object sender, EventArgs e)
+        {
+            this.ResumeProgram();
+        }
+
+        private void tsmiStopProgram_Click(object sender, EventArgs e)
+        {
+            this.StopProgram();
         }
 
 
@@ -488,43 +537,33 @@ namespace KarelV1
             }
         }
 
-        #endregion
 
-        #region Continues Capture Check
-
-        private void chkContinuesCapture_CheckedChanged(object sender, EventArgs e)
+        private void talkToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            int interval = 500;
-            bool IsValidTime = int.TryParse(this.tbCameraUpdateTime.Text, out interval);
-            if (!IsValidTime)
+            // Initialize a new instance of the SpeechSynthesizer.
+            using (SpeechSynthesizer synth = new SpeechSynthesizer())
             {
-                return;
-            }
 
-            this.cameraUpdateTimer.Interval = interval;
+                // Output information about all of the installed voices. 
+                Console.WriteLine("Installed voices -");
+                var voices = synth.GetInstalledVoices();
+                foreach (InstalledVoice voice in voices)
+                {
+                    VoiceInfo info = voice.VoiceInfo;
+                    Console.WriteLine(" Voice Name: " + info.Name);
+                }
 
-            if (this.chkContinuesCapture.Checked)
-            {
-                this.cameraUpdateTimer.Start();
-            }
-            else
-            {
-                this.cameraUpdateTimer.Stop();
-            }
+                // Configure the audio output. 
+                synth.SetOutputToDefaultAudioDevice();
+                synth.SelectVoice("Microsoft Zira Desktop");
 
-            this.btnCapture.Enabled = !this.chkContinuesCapture.Checked;
+                // Speak a string.
+                synth.Speak("The robot are seeing a wall.");
+            }
         }
 
+
         #endregion
-
-        #region Camera Update Timer
-
-        private void cameraUpdateTimer_Tick(object sender, EventArgs e)
-        {
-            this.CaptureCamera();
-        }
-
-        #endregion.Events
 
         #region Robot
 
@@ -541,21 +580,6 @@ namespace KarelV1
                 this.robot.OnPosition += myRobot_OnPosition;
                 this.robot.Connect();
                 this.robot.Reset();
-            }
-            catch (Exception exception)
-            {
-                this.AddStatus(exception.ToString(), Color.White);
-            }
-        }
-
-        private void DisconnectFromRobotViaSerial()
-        {
-            try
-            {
-                if (this.robot != null && this.robot.IsConnected)
-                {
-                    this.robot.Disconnect();
-                }
             }
             catch (Exception exception)
             {
@@ -588,13 +612,22 @@ namespace KarelV1
             }
         }
 
-        private void DisconnectFromRobotViaMqtt()
+        private void DisconnectFromRobot()
         {
             try
             {
                 if (this.robot != null && this.robot.IsConnected)
                 {
                     this.robot.Disconnect();
+
+                    if (this.robot.IsConnected)
+                    {
+                        this.lblIsConnected.Text = String.Format("Connected: {0}:{1}", Properties.Settings.Default.BrokerHost, Properties.Settings.Default.BrokerPort);
+                    }
+                    else
+                    {
+                        this.lblIsConnected.Text = "Not Connected";
+                    }
                 }
             }
             catch (Exception exception)
@@ -607,7 +640,33 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.MmToStep(10.0d);
+            double distance = 0.0D;
+            if(!double.TryParse(this.tbDistande.Text, out distance))
+            {
+                // TODO: Show message incorrect distance.
+                return;
+            }
+
+            double delay = 0.0D;
+            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if(delay < 1)
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
+            {
+                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(distance, 0, delay));
+            }
+
+            // Move the robot.
+            int steps = this.differentialModel.MmToStep(distance);
             this.robot.Move(steps);
         }
 
@@ -615,7 +674,33 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.MmToStep(-10.0d);
+            double distance = 0.0D;
+            if (!double.TryParse(this.tbDistande.Text, out distance))
+            {
+                // TODO: Show message incorrect distance.
+                return;
+            }
+
+            double delay = 0.0D;
+            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (delay < 1)
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
+            {
+                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(-distance, 0, delay));
+            }
+
+            // Move the robot.
+            int steps = this.differentialModel.MmToStep(-distance);
             this.robot.Move(steps);
         }
 
@@ -623,7 +708,33 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.DegToStep(-90.0D);
+            double alpha = 0.0D;
+            if (!double.TryParse(this.tbAlpha.Text, out alpha))
+            {
+                // TODO: Show message incorrect distance.
+                return;
+            }
+
+            double delay = 0.0D;
+            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (delay < 1)
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
+            {
+                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(0, -alpha, delay));
+            }
+
+            // Move the robot.
+            int steps = this.differentialModel.DegToStep(-alpha);
             this.robot.Rotate(steps);
         }
 
@@ -631,7 +742,33 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
 
-            int steps = this.differentialModel.DegToStep(90.0D);
+            double alpha = 0.0D;
+            if (!double.TryParse(this.tbAlpha.Text, out alpha))
+            {
+                // TODO: Show message incorrect distance.
+                return;
+            }
+
+            double delay = 0.0D;
+            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (delay < 1)
+            {
+                // TODO: Show message incorrect delay.
+                return;
+            }
+
+            if (this.visuliser.TrajectoryMode == TrajectoryMode.RecordMotion)
+            {
+                this.visuliser.AddPoint(new KarelV1Lib.Data.Position(0, alpha, delay));
+            }
+
+            // Move the robot.
+            int steps = this.differentialModel.DegToStep(alpha);
             this.robot.Rotate(steps);
         }
 
@@ -691,6 +828,31 @@ namespace KarelV1
 
         #endregion
 
+        #region Program Controller
+
+        private void ProgramController_OnExecutionIndexCanged(object sender, IntEventArgs e)
+        {
+            KarelV1Lib.Data.Position rp = this.programController.Commands[e.Value];
+
+            Console.WriteLine("D:{0}; A:{1}; T:{2}", rp.Distance, rp.Alpha, rp.Delay);
+
+            this.visuliser.SetCurrentPoint(e.Value);
+        }
+
+
+        private void ProgramController_OnFinish(object sender, EventArgs e)
+        {
+            this.visuliser.ResetCurrentPoint();
+            this.visuliser.LockEditing = false;
+        }
+
+        private void ProgramController_OnRuning(object sender, EventArgs e)
+        {
+            this.visuliser.LockEditing = true;
+        }
+
+        #endregion
+
         #region Database
 
         /// <summary>
@@ -704,7 +866,7 @@ namespace KarelV1
             PointF point = PolarConversion.PolarToCartesian(radius, alpha);
 
             // Create position.
-            Position decartRobotPose = new Position();
+            DatabaseConnection.Position decartRobotPose = new DatabaseConnection.Position();
             decartRobotPose.Point.Unit = Scales.Steps;
             decartRobotPose.Point.X = point.X;
             decartRobotPose.Point.Y = point.Y;
@@ -860,7 +1022,7 @@ namespace KarelV1
                 // Mobile phone: http://192.168.0.104:8080/photoaf.jpg
 
                 Uri uri;
-                bool isValidUri = Uri.TryCreate(this.tbCameraIP.Text, UriKind.Absolute, out uri);
+                bool isValidUri = Uri.TryCreate(Properties.Settings.Default.CameraUri, UriKind.Absolute, out uri);
                 if (!isValidUri)
                 {
                     return;
@@ -882,9 +1044,9 @@ namespace KarelV1
 
                 try
                 {
-                    this.ipCamera.EnableTorch = this.cbTorch.Checked;
+                    this.ipCamera.EnableTorch = Properties.Settings.Default.CameraTorch;
                     this.capturedImage = this.ipCamera.CaptureFocused();
-                    this.pbGlyph.Image = AppUtils.FitImage(this.capturedImage, this.pbGlyph.Size);
+                    this.pbTerrain.Image = AppUtils.FitImage(this.capturedImage, this.pbTerrain.Size);
                 }
                 catch (Exception exception)
                 {
@@ -1163,31 +1325,93 @@ namespace KarelV1
             }
         }
 
-        #endregion
-
-        private void talkToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void SaveProgram()
         {
-            // Initialize a new instance of the SpeechSynthesizer.
-            using (SpeechSynthesizer synth = new SpeechSynthesizer())
+            Trajectory trajectory = this.visuliser.GetTrajectory();
+            if (trajectory == null) { return; }
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Filter = "XML (*.xml)|*.xml";
+            sfd.FilterIndex = 1;
+            sfd.RestoreDirectory = true;
+            sfd.FileName = GetDateTime() + ".XML";
+            //sfd.Multiselect = false;
+
+            // Show the dialog and get result.
+            DialogResult result = sfd.ShowDialog();
+            
+            if (result == DialogResult.OK) // Test result.
             {
-
-                // Output information about all of the installed voices. 
-                Console.WriteLine("Installed voices -");
-                var voices = synth.GetInstalledVoices();
-                foreach (InstalledVoice voice in voices)
-                {
-                    VoiceInfo info = voice.VoiceInfo;
-                    Console.WriteLine(" Voice Name: " + info.Name);
-                }
-
-                // Configure the audio output. 
-                synth.SetOutputToDefaultAudioDevice();
-                synth.SelectVoice("Microsoft Zira Desktop");
-
-                // Speak a string.
-                synth.Speak("The robot are seeing a wall.");
+                TrajectoryStore.Save(trajectory, sfd.FileName);
             }
         }
+
+        private void LoadProgram()
+        {
+            // Create an instance of the open file dialog box.
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            // Set filter options and filter index.
+            ofd.Filter = "XML Files (.xml)|*.xml|All Files (*.*)|*.*";
+            ofd.FilterIndex = 1;
+            ofd.Multiselect = false;
+
+            // Show the dialog and get result.
+            DialogResult result = ofd.ShowDialog();
+
+            if (result == DialogResult.OK) // Test result.
+            {
+                string path = ofd.FileName;
+                Trajectory trajectory = TrajectoryStore.Load(path);
+
+                if (trajectory != null && trajectory.Count > 0)
+                {
+                    this.visuliser.SetTrajectory(trajectory);
+                }
+            }
+        }
+
+        private void RunProgram()
+        {
+            if (!this.programController.IsRuning)
+            {
+                this.programController.Commands = this.visuliser.GetTrajectory();
+                this.programController.RunProgram();
+            }
+        }
+
+        private void StopProgram()
+        {
+            if (this.programController.IsRuning)
+            {
+                this.programController.StopProgram();
+            }
+        }
+
+        private void ResumeProgram()
+        {
+            if (!this.programController.IsRuning)
+            {
+                this.programController.ResumeProgram();
+            }
+        }
+        
+        #endregion
+
+        #region Radio Buttons
+
+        private void rbRecord_CheckedChanged(object sender, EventArgs e)
+        {
+            this.visuliser.TrajectoryMode = TrajectoryMode.RecordMotion;
+        }
+
+        private void rbDefinePoints_CheckedChanged(object sender, EventArgs e)
+        {
+            this.visuliser.TrajectoryMode = TrajectoryMode.DefinePoints;
+        }
+
+
+        #endregion
 
     }
 }

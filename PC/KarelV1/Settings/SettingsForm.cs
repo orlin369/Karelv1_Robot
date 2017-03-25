@@ -44,6 +44,12 @@ namespace KarelV1.Settings
             this.tbBrokerPort.Text = Properties.Settings.Default.BrokerPort.ToString();
             this.tbInputTopic.Text = Properties.Settings.Default.MqttInputTopic;
             this.tbOutputTopic.Text = Properties.Settings.Default.MqttOutputTopic;
+            this.tbSteppsCount.Text = Properties.Settings.Default.SteppsCount.ToString();
+            this.tbStepperPostScaler.Text = Properties.Settings.Default.StepperPostScaler.ToString();
+            this.tbDiameterOfWheel.Text = Properties.Settings.Default.DiameterOfWheel.ToString();
+            this.tbDistanceBetweenWheels.Text = Properties.Settings.Default.DistanceBetweenWheels.ToString();
+            this.tbXScale.Text = Properties.Settings.Default.XScale.ToString();
+            this.tbYScale.Text = Properties.Settings.Default.YScale.ToString();
         }
 
         private void SaveFields()
@@ -51,8 +57,7 @@ namespace KarelV1.Settings
             try
             {
                 int borkerPort;
-
-                // Validate baud rate.
+                
                 if (int.TryParse(this.tbBrokerPort.Text.Trim(), out borkerPort))
                 {
                     if (borkerPort < 0 || borkerPort > 65535)
@@ -84,6 +89,73 @@ namespace KarelV1.Settings
                     Properties.Settings.Default.MqttOutputTopic = this.tbOutputTopic.Text;
                 }
 
+                int stepsCount = 0;
+                if (int.TryParse(this.tbSteppsCount.Text.Trim(), out stepsCount))
+                {
+                    if (stepsCount < 0 || stepsCount > 100000)
+                    {
+                        MessageBox.Show("Invalid steps count. [0 - 100000]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.SteppsCount = stepsCount;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid steps count.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                int stepperPostScaler = 0;
+                if (int.TryParse(this.tbStepperPostScaler.Text.Trim(), out stepperPostScaler))
+                {
+                    if (stepperPostScaler < 0 || stepperPostScaler > 100000)
+                    {
+                        MessageBox.Show("Invalid stepper post scaler count. [0 - 100000]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.StepperPostScaler = stepperPostScaler;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid stepper post scaler count.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                double diameterOfWheel = 0;
+                if (double.TryParse(this.tbDiameterOfWheel.Text.Trim(), out diameterOfWheel))
+                {
+                    if (diameterOfWheel < 0)
+                    {
+                        MessageBox.Show("Invalid diameter of the wheel. [x > 0]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.DiameterOfWheel = diameterOfWheel;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid diameter of the wheel.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                double distanceBetweenWheels = 0;
+                if (double.TryParse(this.tbDiameterOfWheel.Text.Trim(), out distanceBetweenWheels))
+                {
+                    if (distanceBetweenWheels < 0)
+                    {
+                        MessageBox.Show("Invalid distance between the wheels. [x > 0]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.DistanceBetweenWheels = distanceBetweenWheels;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid distance between the wheels.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
 
                 // Save settings.
                 Properties.Settings.Default.Save();

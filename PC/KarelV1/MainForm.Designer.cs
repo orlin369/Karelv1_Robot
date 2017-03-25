@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,8 +44,13 @@
             this.tsmiDisconnectFromMqtt = new System.Windows.Forms.ToolStripMenuItem();
             this.tsSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.tsmiReset = new System.Windows.Forms.ToolStripMenuItem();
-            this.speachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.talkToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.programToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiSaveProgram = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiLoadProgram = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsmiRunProgram = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiResumeProgram = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiStopProgram = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSonar = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSaveDiagram = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiAsCSV = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,18 +59,26 @@
             this.tsmiClearAll = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClearUltrasonic = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiClearInfrared = new System.Windows.Forms.ToolStripMenuItem();
+            this.speachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.talkToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statBar = new System.Windows.Forms.StatusStrip();
             this.lblIsConnected = new System.Windows.Forms.ToolStripStatusLabel();
             this.tblMain = new System.Windows.Forms.TableLayoutPanel();
             this.tblControls = new System.Windows.Forms.TableLayoutPanel();
             this.txtState = new System.Windows.Forms.TextBox();
             this.gpbControls = new System.Windows.Forms.GroupBox();
+            this.lblTime = new System.Windows.Forms.Label();
+            this.tbCommandDelay = new System.Windows.Forms.TextBox();
+            this.tbAlpha = new System.Windows.Forms.TextBox();
+            this.tbDistande = new System.Windows.Forms.TextBox();
+            this.lblAlpha = new System.Windows.Forms.Label();
+            this.lblDistance = new System.Windows.Forms.Label();
             this.btnRight = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnBackward = new System.Windows.Forms.Button();
             this.btnLeft = new System.Windows.Forms.Button();
             this.btnForward = new System.Windows.Forms.Button();
-            this.tcSensorsFunctions = new System.Windows.Forms.TabControl();
+            this.tcRobotFunctions = new System.Windows.Forms.TabControl();
             this.tbpSonar = new System.Windows.Forms.TabPage();
             this.tlpSonar = new System.Windows.Forms.TableLayoutPanel();
             this.pnlSonar = new System.Windows.Forms.Panel();
@@ -74,17 +87,6 @@
             this.tbSensorPosition = new System.Windows.Forms.TextBox();
             this.btnGetUltrasonic = new System.Windows.Forms.Button();
             this.crtUltrasinicSensor = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.tbpGlyph = new System.Windows.Forms.TabPage();
-            this.tblGlyph = new System.Windows.Forms.TableLayoutPanel();
-            this.pnlGlyphControl = new System.Windows.Forms.Panel();
-            this.cbTorch = new System.Windows.Forms.CheckBox();
-            this.lblURL = new System.Windows.Forms.Label();
-            this.lblUTInterval = new System.Windows.Forms.Label();
-            this.tbCameraUpdateTime = new System.Windows.Forms.TextBox();
-            this.chkContinuesCapture = new System.Windows.Forms.CheckBox();
-            this.tbCameraIP = new System.Windows.Forms.TextBox();
-            this.btnCapture = new System.Windows.Forms.Button();
-            this.pbGlyph = new System.Windows.Forms.PictureBox();
             this.tbpSensors = new System.Windows.Forms.TabPage();
             this.pnlSensors = new System.Windows.Forms.Panel();
             this.btnLoginTest = new System.Windows.Forms.Button();
@@ -93,22 +95,34 @@
             this.prbRightSensor = new System.Windows.Forms.ProgressBar();
             this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
             this.btnGetSensors = new System.Windows.Forms.Button();
+            this.tbpProgram = new System.Windows.Forms.TabPage();
+            this.tlpTrajectory = new System.Windows.Forms.TableLayoutPanel();
+            this.pbTerrain = new System.Windows.Forms.PictureBox();
+            this.pnlTrajectory = new System.Windows.Forms.Panel();
+            this.btnCapture = new System.Windows.Forms.Button();
+            this.btnResumeProgram = new System.Windows.Forms.Button();
+            this.btnStopProgram = new System.Windows.Forms.Button();
+            this.btnRunProgram = new System.Windows.Forms.Button();
+            this.gbTrajectoryMode = new System.Windows.Forms.GroupBox();
+            this.rbDefinePoints = new System.Windows.Forms.RadioButton();
+            this.rbRecord = new System.Windows.Forms.RadioButton();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
             this.tblControls.SuspendLayout();
             this.gpbControls.SuspendLayout();
-            this.tcSensorsFunctions.SuspendLayout();
+            this.tcRobotFunctions.SuspendLayout();
             this.tbpSonar.SuspendLayout();
             this.tlpSonar.SuspendLayout();
             this.pnlSonar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crtUltrasinicSensor)).BeginInit();
-            this.tbpGlyph.SuspendLayout();
-            this.tblGlyph.SuspendLayout();
-            this.pnlGlyphControl.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbGlyph)).BeginInit();
             this.tbpSensors.SuspendLayout();
             this.pnlSensors.SuspendLayout();
+            this.tbpProgram.SuspendLayout();
+            this.tlpTrajectory.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbTerrain)).BeginInit();
+            this.pnlTrajectory.SuspendLayout();
+            this.gbTrajectoryMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -117,8 +131,9 @@
             this.mainMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiFile,
             this.tsmiConnection,
-            this.speachToolStripMenuItem,
-            this.tsmiSonar});
+            this.programToolStripMenuItem,
+            this.tsmiSonar,
+            this.speachToolStripMenuItem});
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
@@ -139,20 +154,20 @@
             // tsmiSettings
             // 
             this.tsmiSettings.Name = "tsmiSettings";
-            this.tsmiSettings.Size = new System.Drawing.Size(181, 26);
+            this.tsmiSettings.Size = new System.Drawing.Size(161, 26);
             this.tsmiSettings.Text = "Settings";
             this.tsmiSettings.Click += new System.EventHandler(this.tsmiSettings_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(178, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(158, 6);
             // 
             // tsmiExit
             // 
             this.tsmiExit.Name = "tsmiExit";
             this.tsmiExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.tsmiExit.Size = new System.Drawing.Size(181, 26);
+            this.tsmiExit.Size = new System.Drawing.Size(161, 26);
             this.tsmiExit.Text = "Exit";
             this.tsmiExit.Click += new System.EventHandler(this.tsmiExit_Click);
             // 
@@ -209,20 +224,58 @@
             this.tsmiReset.Text = "Reset";
             this.tsmiReset.Click += new System.EventHandler(this.tsmiReset_Click);
             // 
-            // speachToolStripMenuItem
+            // programToolStripMenuItem
             // 
-            this.speachToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.talkToolStripMenuItem1});
-            this.speachToolStripMenuItem.Name = "speachToolStripMenuItem";
-            this.speachToolStripMenuItem.Size = new System.Drawing.Size(69, 24);
-            this.speachToolStripMenuItem.Text = "Speach";
+            this.programToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsmiSaveProgram,
+            this.tsmiLoadProgram,
+            this.toolStripSeparator2,
+            this.tsmiRunProgram,
+            this.tsmiResumeProgram,
+            this.tsmiStopProgram});
+            this.programToolStripMenuItem.Name = "programToolStripMenuItem";
+            this.programToolStripMenuItem.Size = new System.Drawing.Size(78, 24);
+            this.programToolStripMenuItem.Text = "Program";
             // 
-            // talkToolStripMenuItem1
+            // tsmiSaveProgram
             // 
-            this.talkToolStripMenuItem1.Name = "talkToolStripMenuItem1";
-            this.talkToolStripMenuItem1.Size = new System.Drawing.Size(109, 26);
-            this.talkToolStripMenuItem1.Text = "Talk";
-            this.talkToolStripMenuItem1.Click += new System.EventHandler(this.talkToolStripMenuItem1_Click);
+            this.tsmiSaveProgram.Name = "tsmiSaveProgram";
+            this.tsmiSaveProgram.Size = new System.Drawing.Size(136, 26);
+            this.tsmiSaveProgram.Text = "Save";
+            this.tsmiSaveProgram.Click += new System.EventHandler(this.tsmiSaveProgram_Click);
+            // 
+            // tsmiLoadProgram
+            // 
+            this.tsmiLoadProgram.Name = "tsmiLoadProgram";
+            this.tsmiLoadProgram.Size = new System.Drawing.Size(136, 26);
+            this.tsmiLoadProgram.Text = "Load";
+            this.tsmiLoadProgram.Click += new System.EventHandler(this.tsmiLoadProgram_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(133, 6);
+            // 
+            // tsmiRunProgram
+            // 
+            this.tsmiRunProgram.Name = "tsmiRunProgram";
+            this.tsmiRunProgram.Size = new System.Drawing.Size(136, 26);
+            this.tsmiRunProgram.Text = "Run";
+            this.tsmiRunProgram.Click += new System.EventHandler(this.tsmiRunProgram_Click);
+            // 
+            // tsmiResumeProgram
+            // 
+            this.tsmiResumeProgram.Name = "tsmiResumeProgram";
+            this.tsmiResumeProgram.Size = new System.Drawing.Size(136, 26);
+            this.tsmiResumeProgram.Text = "Resume";
+            this.tsmiResumeProgram.Click += new System.EventHandler(this.tsmiResumeProgram_Click);
+            // 
+            // tsmiStopProgram
+            // 
+            this.tsmiStopProgram.Name = "tsmiStopProgram";
+            this.tsmiStopProgram.Size = new System.Drawing.Size(136, 26);
+            this.tsmiStopProgram.Text = "Stop";
+            this.tsmiStopProgram.Click += new System.EventHandler(this.tsmiStopProgram_Click);
             // 
             // tsmiSonar
             // 
@@ -285,6 +338,21 @@
             this.tsmiClearInfrared.Size = new System.Drawing.Size(145, 26);
             this.tsmiClearInfrared.Text = "Infrared";
             // 
+            // speachToolStripMenuItem
+            // 
+            this.speachToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.talkToolStripMenuItem1});
+            this.speachToolStripMenuItem.Name = "speachToolStripMenuItem";
+            this.speachToolStripMenuItem.Size = new System.Drawing.Size(69, 24);
+            this.speachToolStripMenuItem.Text = "Speach";
+            // 
+            // talkToolStripMenuItem1
+            // 
+            this.talkToolStripMenuItem1.Name = "talkToolStripMenuItem1";
+            this.talkToolStripMenuItem1.Size = new System.Drawing.Size(109, 26);
+            this.talkToolStripMenuItem1.Text = "Talk";
+            this.talkToolStripMenuItem1.Click += new System.EventHandler(this.talkToolStripMenuItem1_Click);
+            // 
             // statBar
             // 
             this.statBar.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -309,7 +377,7 @@
             this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 330F));
             this.tblMain.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tblMain.Controls.Add(this.tblControls, 0, 0);
-            this.tblMain.Controls.Add(this.tcSensorsFunctions, 1, 0);
+            this.tblMain.Controls.Add(this.tcRobotFunctions, 1, 0);
             this.tblMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tblMain.Location = new System.Drawing.Point(0, 28);
             this.tblMain.Margin = new System.Windows.Forms.Padding(4);
@@ -350,6 +418,12 @@
             // 
             // gpbControls
             // 
+            this.gpbControls.Controls.Add(this.lblTime);
+            this.gpbControls.Controls.Add(this.tbCommandDelay);
+            this.gpbControls.Controls.Add(this.tbAlpha);
+            this.gpbControls.Controls.Add(this.tbDistande);
+            this.gpbControls.Controls.Add(this.lblAlpha);
+            this.gpbControls.Controls.Add(this.lblDistance);
             this.gpbControls.Controls.Add(this.btnRight);
             this.gpbControls.Controls.Add(this.btnStop);
             this.gpbControls.Controls.Add(this.btnBackward);
@@ -365,6 +439,57 @@
             this.gpbControls.TabIndex = 0;
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
+            // 
+            // lblTime
+            // 
+            this.lblTime.AutoSize = true;
+            this.lblTime.Location = new System.Drawing.Point(9, 221);
+            this.lblTime.Name = "lblTime";
+            this.lblTime.Size = new System.Drawing.Size(26, 20);
+            this.lblTime.TabIndex = 24;
+            this.lblTime.Text = "T:";
+            // 
+            // tbCommandDelay
+            // 
+            this.tbCommandDelay.Location = new System.Drawing.Point(44, 218);
+            this.tbCommandDelay.Name = "tbCommandDelay";
+            this.tbCommandDelay.Size = new System.Drawing.Size(64, 26);
+            this.tbCommandDelay.TabIndex = 23;
+            this.tbCommandDelay.Text = "20";
+            // 
+            // tbAlpha
+            // 
+            this.tbAlpha.Location = new System.Drawing.Point(250, 62);
+            this.tbAlpha.Name = "tbAlpha";
+            this.tbAlpha.Size = new System.Drawing.Size(65, 26);
+            this.tbAlpha.TabIndex = 22;
+            this.tbAlpha.Text = "90";
+            // 
+            // tbDistande
+            // 
+            this.tbDistande.Location = new System.Drawing.Point(250, 30);
+            this.tbDistande.Name = "tbDistande";
+            this.tbDistande.Size = new System.Drawing.Size(65, 26);
+            this.tbDistande.TabIndex = 21;
+            this.tbDistande.Text = "10";
+            // 
+            // lblAlpha
+            // 
+            this.lblAlpha.AutoSize = true;
+            this.lblAlpha.Location = new System.Drawing.Point(217, 65);
+            this.lblAlpha.Name = "lblAlpha";
+            this.lblAlpha.Size = new System.Drawing.Size(27, 20);
+            this.lblAlpha.TabIndex = 20;
+            this.lblAlpha.Text = "A:";
+            // 
+            // lblDistance
+            // 
+            this.lblDistance.AutoSize = true;
+            this.lblDistance.Location = new System.Drawing.Point(215, 33);
+            this.lblDistance.Name = "lblDistance";
+            this.lblDistance.Size = new System.Drawing.Size(29, 20);
+            this.lblDistance.TabIndex = 19;
+            this.lblDistance.Text = "D:";
             // 
             // btnRight
             // 
@@ -421,19 +546,19 @@
             this.btnForward.UseVisualStyleBackColor = true;
             this.btnForward.Click += new System.EventHandler(this.btnForward_Click);
             // 
-            // tcSensorsFunctions
+            // tcRobotFunctions
             // 
-            this.tcSensorsFunctions.Controls.Add(this.tbpSonar);
-            this.tcSensorsFunctions.Controls.Add(this.tbpGlyph);
-            this.tcSensorsFunctions.Controls.Add(this.tbpSensors);
-            this.tcSensorsFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tcSensorsFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.tcSensorsFunctions.Location = new System.Drawing.Point(334, 4);
-            this.tcSensorsFunctions.Margin = new System.Windows.Forms.Padding(4);
-            this.tcSensorsFunctions.Name = "tcSensorsFunctions";
-            this.tcSensorsFunctions.SelectedIndex = 0;
-            this.tcSensorsFunctions.Size = new System.Drawing.Size(997, 601);
-            this.tcSensorsFunctions.TabIndex = 1;
+            this.tcRobotFunctions.Controls.Add(this.tbpSonar);
+            this.tcRobotFunctions.Controls.Add(this.tbpSensors);
+            this.tcRobotFunctions.Controls.Add(this.tbpProgram);
+            this.tcRobotFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tcRobotFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.tcRobotFunctions.Location = new System.Drawing.Point(334, 4);
+            this.tcRobotFunctions.Margin = new System.Windows.Forms.Padding(4);
+            this.tcRobotFunctions.Name = "tcRobotFunctions";
+            this.tcRobotFunctions.SelectedIndex = 0;
+            this.tcRobotFunctions.Size = new System.Drawing.Size(997, 601);
+            this.tcRobotFunctions.TabIndex = 1;
             // 
             // tbpSonar
             // 
@@ -519,162 +644,32 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea1.Area3DStyle.Rotation = 10;
-            chartArea1.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
+            chartArea2.Area3DStyle.Rotation = 10;
+            chartArea2.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea2);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend2);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series1.BackSecondaryColor = System.Drawing.Color.Black;
-            series1.BorderColor = System.Drawing.Color.Black;
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series1.Color = System.Drawing.Color.Green;
-            series1.Legend = "Legend1";
-            series1.MarkerColor = System.Drawing.Color.Black;
-            series1.Name = "Ultrasonic Sensor";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series2.Legend = "Legend1";
-            series2.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series1);
-            this.crtUltrasinicSensor.Series.Add(series2);
+            series3.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series3.BackSecondaryColor = System.Drawing.Color.Black;
+            series3.BorderColor = System.Drawing.Color.Black;
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series3.Color = System.Drawing.Color.Green;
+            series3.Legend = "Legend1";
+            series3.MarkerColor = System.Drawing.Color.Black;
+            series3.Name = "Ultrasonic Sensor";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series4.Legend = "Legend1";
+            series4.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series3);
+            this.crtUltrasinicSensor.Series.Add(series4);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
-            // 
-            // tbpGlyph
-            // 
-            this.tbpGlyph.Controls.Add(this.tblGlyph);
-            this.tbpGlyph.Location = new System.Drawing.Point(4, 29);
-            this.tbpGlyph.Margin = new System.Windows.Forms.Padding(4);
-            this.tbpGlyph.Name = "tbpGlyph";
-            this.tbpGlyph.Padding = new System.Windows.Forms.Padding(4);
-            this.tbpGlyph.Size = new System.Drawing.Size(989, 568);
-            this.tbpGlyph.TabIndex = 1;
-            this.tbpGlyph.Text = "Glyph";
-            this.tbpGlyph.UseVisualStyleBackColor = true;
-            // 
-            // tblGlyph
-            // 
-            this.tblGlyph.ColumnCount = 2;
-            this.tblGlyph.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 80.67318F));
-            this.tblGlyph.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 19.32682F));
-            this.tblGlyph.Controls.Add(this.pnlGlyphControl, 1, 0);
-            this.tblGlyph.Controls.Add(this.pbGlyph, 0, 0);
-            this.tblGlyph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tblGlyph.Location = new System.Drawing.Point(4, 4);
-            this.tblGlyph.Margin = new System.Windows.Forms.Padding(4);
-            this.tblGlyph.Name = "tblGlyph";
-            this.tblGlyph.RowCount = 1;
-            this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblGlyph.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tblGlyph.Size = new System.Drawing.Size(981, 560);
-            this.tblGlyph.TabIndex = 0;
-            // 
-            // pnlGlyphControl
-            // 
-            this.pnlGlyphControl.Controls.Add(this.cbTorch);
-            this.pnlGlyphControl.Controls.Add(this.lblURL);
-            this.pnlGlyphControl.Controls.Add(this.lblUTInterval);
-            this.pnlGlyphControl.Controls.Add(this.tbCameraUpdateTime);
-            this.pnlGlyphControl.Controls.Add(this.chkContinuesCapture);
-            this.pnlGlyphControl.Controls.Add(this.tbCameraIP);
-            this.pnlGlyphControl.Controls.Add(this.btnCapture);
-            this.pnlGlyphControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlGlyphControl.Location = new System.Drawing.Point(795, 4);
-            this.pnlGlyphControl.Margin = new System.Windows.Forms.Padding(4);
-            this.pnlGlyphControl.Name = "pnlGlyphControl";
-            this.pnlGlyphControl.Size = new System.Drawing.Size(182, 552);
-            this.pnlGlyphControl.TabIndex = 0;
-            // 
-            // cbTorch
-            // 
-            this.cbTorch.AutoSize = true;
-            this.cbTorch.Location = new System.Drawing.Point(16, 267);
-            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
-            this.cbTorch.Name = "cbTorch";
-            this.cbTorch.Size = new System.Drawing.Size(79, 24);
-            this.cbTorch.TabIndex = 25;
-            this.cbTorch.Text = "Torch";
-            this.cbTorch.UseVisualStyleBackColor = true;
-            // 
-            // lblURL
-            // 
-            this.lblURL.AutoSize = true;
-            this.lblURL.Location = new System.Drawing.Point(8, 16);
-            this.lblURL.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblURL.Name = "lblURL";
-            this.lblURL.Size = new System.Drawing.Size(46, 20);
-            this.lblURL.TabIndex = 24;
-            this.lblURL.Text = "URL";
-            // 
-            // lblUTInterval
-            // 
-            this.lblUTInterval.AutoSize = true;
-            this.lblUTInterval.Location = new System.Drawing.Point(12, 340);
-            this.lblUTInterval.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblUTInterval.Name = "lblUTInterval";
-            this.lblUTInterval.Size = new System.Drawing.Size(99, 20);
-            this.lblUTInterval.TabIndex = 23;
-            this.lblUTInterval.Text = "Time [ms]:";
-            // 
-            // tbCameraUpdateTime
-            // 
-            this.tbCameraUpdateTime.Location = new System.Drawing.Point(117, 334);
-            this.tbCameraUpdateTime.Margin = new System.Windows.Forms.Padding(4);
-            this.tbCameraUpdateTime.Name = "tbCameraUpdateTime";
-            this.tbCameraUpdateTime.Size = new System.Drawing.Size(47, 26);
-            this.tbCameraUpdateTime.TabIndex = 22;
-            this.tbCameraUpdateTime.Text = "500";
-            // 
-            // chkContinuesCapture
-            // 
-            this.chkContinuesCapture.AutoSize = true;
-            this.chkContinuesCapture.Location = new System.Drawing.Point(14, 371);
-            this.chkContinuesCapture.Margin = new System.Windows.Forms.Padding(4);
-            this.chkContinuesCapture.Name = "chkContinuesCapture";
-            this.chkContinuesCapture.Size = new System.Drawing.Size(97, 24);
-            this.chkContinuesCapture.TabIndex = 21;
-            this.chkContinuesCapture.Text = "Capture";
-            this.chkContinuesCapture.UseVisualStyleBackColor = true;
-            this.chkContinuesCapture.CheckedChanged += new System.EventHandler(this.chkContinuesCapture_CheckedChanged);
-            // 
-            // tbCameraIP
-            // 
-            this.tbCameraIP.Location = new System.Drawing.Point(12, 39);
-            this.tbCameraIP.Margin = new System.Windows.Forms.Padding(4);
-            this.tbCameraIP.Multiline = true;
-            this.tbCameraIP.Name = "tbCameraIP";
-            this.tbCameraIP.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbCameraIP.Size = new System.Drawing.Size(150, 122);
-            this.tbCameraIP.TabIndex = 20;
-            this.tbCameraIP.Text = "http://192.168.1.187:8080";
-            // 
-            // btnCapture
-            // 
-            this.btnCapture.Image = global::KarelV1.Images.Capture;
-            this.btnCapture.Location = new System.Drawing.Point(12, 169);
-            this.btnCapture.Margin = new System.Windows.Forms.Padding(4);
-            this.btnCapture.Name = "btnCapture";
-            this.btnCapture.Size = new System.Drawing.Size(97, 90);
-            this.btnCapture.TabIndex = 19;
-            this.btnCapture.UseVisualStyleBackColor = true;
-            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
-            // 
-            // pbGlyph
-            // 
-            this.pbGlyph.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pbGlyph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbGlyph.Location = new System.Drawing.Point(4, 4);
-            this.pbGlyph.Margin = new System.Windows.Forms.Padding(4);
-            this.pbGlyph.Name = "pbGlyph";
-            this.pbGlyph.Size = new System.Drawing.Size(783, 552);
-            this.pbGlyph.TabIndex = 1;
-            this.pbGlyph.TabStop = false;
             // 
             // tbpSensors
             // 
@@ -764,6 +759,130 @@
             this.btnGetSensors.UseVisualStyleBackColor = true;
             this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
             // 
+            // tbpProgram
+            // 
+            this.tbpProgram.BackColor = System.Drawing.SystemColors.Control;
+            this.tbpProgram.Controls.Add(this.tlpTrajectory);
+            this.tbpProgram.Location = new System.Drawing.Point(4, 29);
+            this.tbpProgram.Name = "tbpProgram";
+            this.tbpProgram.Size = new System.Drawing.Size(989, 568);
+            this.tbpProgram.TabIndex = 3;
+            this.tbpProgram.Text = "Program";
+            // 
+            // tlpTrajectory
+            // 
+            this.tlpTrajectory.ColumnCount = 2;
+            this.tlpTrajectory.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpTrajectory.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 228F));
+            this.tlpTrajectory.Controls.Add(this.pbTerrain, 0, 0);
+            this.tlpTrajectory.Controls.Add(this.pnlTrajectory, 1, 0);
+            this.tlpTrajectory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlpTrajectory.Location = new System.Drawing.Point(0, 0);
+            this.tlpTrajectory.Name = "tlpTrajectory";
+            this.tlpTrajectory.RowCount = 1;
+            this.tlpTrajectory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tlpTrajectory.Size = new System.Drawing.Size(989, 568);
+            this.tlpTrajectory.TabIndex = 0;
+            // 
+            // pbTerrain
+            // 
+            this.pbTerrain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pbTerrain.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbTerrain.Location = new System.Drawing.Point(3, 3);
+            this.pbTerrain.Name = "pbTerrain";
+            this.pbTerrain.Size = new System.Drawing.Size(755, 562);
+            this.pbTerrain.TabIndex = 0;
+            this.pbTerrain.TabStop = false;
+            // 
+            // pnlTrajectory
+            // 
+            this.pnlTrajectory.Controls.Add(this.btnCapture);
+            this.pnlTrajectory.Controls.Add(this.btnResumeProgram);
+            this.pnlTrajectory.Controls.Add(this.btnStopProgram);
+            this.pnlTrajectory.Controls.Add(this.btnRunProgram);
+            this.pnlTrajectory.Controls.Add(this.gbTrajectoryMode);
+            this.pnlTrajectory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnlTrajectory.Location = new System.Drawing.Point(764, 3);
+            this.pnlTrajectory.Name = "pnlTrajectory";
+            this.pnlTrajectory.Size = new System.Drawing.Size(222, 562);
+            this.pnlTrajectory.TabIndex = 1;
+            // 
+            // btnCapture
+            // 
+            this.btnCapture.Image = global::KarelV1.Images.Capture;
+            this.btnCapture.Location = new System.Drawing.Point(9, 302);
+            this.btnCapture.Margin = new System.Windows.Forms.Padding(4);
+            this.btnCapture.Name = "btnCapture";
+            this.btnCapture.Size = new System.Drawing.Size(97, 90);
+            this.btnCapture.TabIndex = 20;
+            this.btnCapture.UseVisualStyleBackColor = true;
+            this.btnCapture.Click += new System.EventHandler(this.btnCapture_Click);
+            // 
+            // btnResumeProgram
+            // 
+            this.btnResumeProgram.Location = new System.Drawing.Point(9, 173);
+            this.btnResumeProgram.Name = "btnResumeProgram";
+            this.btnResumeProgram.Size = new System.Drawing.Size(97, 58);
+            this.btnResumeProgram.TabIndex = 4;
+            this.btnResumeProgram.Text = "Resume";
+            this.btnResumeProgram.UseVisualStyleBackColor = true;
+            this.btnResumeProgram.Click += new System.EventHandler(this.btnResumeProgram_Click);
+            // 
+            // btnStopProgram
+            // 
+            this.btnStopProgram.Location = new System.Drawing.Point(9, 237);
+            this.btnStopProgram.Name = "btnStopProgram";
+            this.btnStopProgram.Size = new System.Drawing.Size(97, 58);
+            this.btnStopProgram.TabIndex = 3;
+            this.btnStopProgram.Text = "Stop";
+            this.btnStopProgram.UseVisualStyleBackColor = true;
+            this.btnStopProgram.Click += new System.EventHandler(this.btnStopProgram_Click);
+            // 
+            // btnRunProgram
+            // 
+            this.btnRunProgram.Location = new System.Drawing.Point(9, 109);
+            this.btnRunProgram.Name = "btnRunProgram";
+            this.btnRunProgram.Size = new System.Drawing.Size(97, 58);
+            this.btnRunProgram.TabIndex = 2;
+            this.btnRunProgram.Text = "Run";
+            this.btnRunProgram.UseVisualStyleBackColor = true;
+            this.btnRunProgram.Click += new System.EventHandler(this.btnRunProgram_Click);
+            // 
+            // gbTrajectoryMode
+            // 
+            this.gbTrajectoryMode.Controls.Add(this.rbDefinePoints);
+            this.gbTrajectoryMode.Controls.Add(this.rbRecord);
+            this.gbTrajectoryMode.Location = new System.Drawing.Point(3, 5);
+            this.gbTrajectoryMode.Name = "gbTrajectoryMode";
+            this.gbTrajectoryMode.Size = new System.Drawing.Size(216, 98);
+            this.gbTrajectoryMode.TabIndex = 1;
+            this.gbTrajectoryMode.TabStop = false;
+            this.gbTrajectoryMode.Text = "Modes";
+            // 
+            // rbDefinePoints
+            // 
+            this.rbDefinePoints.AutoSize = true;
+            this.rbDefinePoints.Location = new System.Drawing.Point(6, 25);
+            this.rbDefinePoints.Name = "rbDefinePoints";
+            this.rbDefinePoints.Size = new System.Drawing.Size(144, 24);
+            this.rbDefinePoints.TabIndex = 1;
+            this.rbDefinePoints.TabStop = true;
+            this.rbDefinePoints.Text = "Define Points";
+            this.rbDefinePoints.UseVisualStyleBackColor = true;
+            this.rbDefinePoints.CheckedChanged += new System.EventHandler(this.rbDefinePoints_CheckedChanged);
+            // 
+            // rbRecord
+            // 
+            this.rbRecord.AutoSize = true;
+            this.rbRecord.Location = new System.Drawing.Point(6, 55);
+            this.rbRecord.Name = "rbRecord";
+            this.rbRecord.Size = new System.Drawing.Size(152, 24);
+            this.rbRecord.TabIndex = 0;
+            this.rbRecord.TabStop = true;
+            this.rbRecord.Text = "Record Motion";
+            this.rbRecord.UseVisualStyleBackColor = true;
+            this.rbRecord.CheckedChanged += new System.EventHandler(this.rbRecord_CheckedChanged);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -786,20 +905,22 @@
             this.tblControls.ResumeLayout(false);
             this.tblControls.PerformLayout();
             this.gpbControls.ResumeLayout(false);
-            this.tcSensorsFunctions.ResumeLayout(false);
+            this.gpbControls.PerformLayout();
+            this.tcRobotFunctions.ResumeLayout(false);
             this.tbpSonar.ResumeLayout(false);
             this.tlpSonar.ResumeLayout(false);
             this.pnlSonar.ResumeLayout(false);
             this.pnlSonar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crtUltrasinicSensor)).EndInit();
-            this.tbpGlyph.ResumeLayout(false);
-            this.tblGlyph.ResumeLayout(false);
-            this.pnlGlyphControl.ResumeLayout(false);
-            this.pnlGlyphControl.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbGlyph)).EndInit();
             this.tbpSensors.ResumeLayout(false);
             this.pnlSensors.ResumeLayout(false);
             this.pnlSensors.PerformLayout();
+            this.tbpProgram.ResumeLayout(false);
+            this.tlpTrajectory.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pbTerrain)).EndInit();
+            this.pnlTrajectory.ResumeLayout(false);
+            this.gbTrajectoryMode.ResumeLayout(false);
+            this.gbTrajectoryMode.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -821,11 +942,8 @@
         private System.Windows.Forms.Button btnBackward;
         private System.Windows.Forms.Button btnLeft;
         private System.Windows.Forms.Button btnForward;
-        private System.Windows.Forms.TabControl tcSensorsFunctions;
+        private System.Windows.Forms.TabControl tcRobotFunctions;
         private System.Windows.Forms.TabPage tbpSonar;
-        private System.Windows.Forms.TabPage tbpGlyph;
-        private System.Windows.Forms.TableLayoutPanel tblGlyph;
-        private System.Windows.Forms.Panel pnlGlyphControl;
         private System.Windows.Forms.TableLayoutPanel tlpSonar;
         private System.Windows.Forms.Panel pnlSonar;
         private System.Windows.Forms.Label lblDegreeSensor;
@@ -834,13 +952,6 @@
         private System.Windows.Forms.TabPage tbpSensors;
         private System.Windows.Forms.Panel pnlSensors;
         private System.Windows.Forms.Button btnGetSensors;
-        private System.Windows.Forms.PictureBox pbGlyph;
-        private System.Windows.Forms.Button btnCapture;
-        private System.Windows.Forms.TextBox tbCameraIP;
-        private System.Windows.Forms.CheckBox chkContinuesCapture;
-        private System.Windows.Forms.TextBox tbCameraUpdateTime;
-        private System.Windows.Forms.Label lblURL;
-        private System.Windows.Forms.Label lblUTInterval;
         private System.Windows.Forms.ProgressBar prbRightSensor;
         private System.Windows.Forms.ProgressBar prbLeftSensor;
         private System.Windows.Forms.Button btnGetRobotPos;
@@ -867,7 +978,30 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiClearAll;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearUltrasonic;
         private System.Windows.Forms.ToolStripMenuItem tsmiClearInfrared;
-        private System.Windows.Forms.CheckBox cbTorch;
+        private System.Windows.Forms.TabPage tbpProgram;
+        private System.Windows.Forms.TableLayoutPanel tlpTrajectory;
+        private System.Windows.Forms.PictureBox pbTerrain;
+        private System.Windows.Forms.Panel pnlTrajectory;
+        private System.Windows.Forms.GroupBox gbTrajectoryMode;
+        private System.Windows.Forms.RadioButton rbDefinePoints;
+        private System.Windows.Forms.RadioButton rbRecord;
+        private System.Windows.Forms.Button btnRunProgram;
+        private System.Windows.Forms.Button btnStopProgram;
+        private System.Windows.Forms.ToolStripMenuItem programToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem tsmiSaveProgram;
+        private System.Windows.Forms.ToolStripMenuItem tsmiLoadProgram;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem tsmiRunProgram;
+        private System.Windows.Forms.ToolStripMenuItem tsmiResumeProgram;
+        private System.Windows.Forms.ToolStripMenuItem tsmiStopProgram;
+        private System.Windows.Forms.Button btnResumeProgram;
+        private System.Windows.Forms.TextBox tbAlpha;
+        private System.Windows.Forms.TextBox tbDistande;
+        private System.Windows.Forms.Label lblAlpha;
+        private System.Windows.Forms.Label lblDistance;
+        private System.Windows.Forms.Label lblTime;
+        private System.Windows.Forms.TextBox tbCommandDelay;
+        private System.Windows.Forms.Button btnCapture;
     }
 }
 

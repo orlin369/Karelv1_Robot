@@ -25,7 +25,7 @@ SOFTWARE.
 using System;
 using System.Drawing;
 
-namespace KarelV1Lib
+namespace KarelV1Lib.Utils
 {
     public class PolarConversion
     {

@@ -11,7 +11,7 @@
     <Setting Name="StepperPostScaler" Type="System.Double" Scope="User">
       <Value Profile="(Default)">16</Value>
     </Setting>
-    <Setting Name="DiametterOfWheel" Type="System.Double" Scope="User">
+    <Setting Name="DiameterOfWheel" Type="System.Double" Scope="User">
       <Value Profile="(Default)">53.5</Value>
     </Setting>
     <Setting Name="DistanceBetweenWheels" Type="System.Double" Scope="User">
@@ -28,6 +28,18 @@
     </Setting>
     <Setting Name="MqttOutputTopic" Type="System.String" Scope="User">
       <Value Profile="(Default)">pt/str/o/robot/1</Value>
+    </Setting>
+    <Setting Name="CameraTorch" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="CameraUri" Type="(Web Service URL)" Scope="User">
+      <Value Profile="(Default)">http://localhost/</Value>
+    </Setting>
+    <Setting Name="XScale" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="YScale" Type="System.Double" Scope="User">
+      <Value Profile="(Default)">1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

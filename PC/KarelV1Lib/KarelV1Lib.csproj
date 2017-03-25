@@ -56,15 +56,20 @@
     <Compile Include="Adapters\SerialAdapter.cs" />
     <Compile Include="Data\DistanceSensors.cs" />
     <Compile Include="Data\DistanceSensorsList.cs" />
+    <Compile Include="Data\Position.cs" />
+    <Compile Include="Data\Trajectory.cs" />
+    <Compile Include="Data\TrajectoryStore.cs" />
     <Compile Include="Events\RobotPositionEventArgs.cs" />
     <Compile Include="Events\SensorsEventArgs.cs" />
+    <Compile Include="Events\IntEventArgs.cs" />
     <Compile Include="Events\StringEventArgs.cs" />
     <Compile Include="Events\DistanceSensorsEventArgs.cs" />
     <Compile Include="KarelV1.cs" />
     <Compile Include="Data\MetricScale.cs" />
-    <Compile Include="DifferentialModel.cs" />
+    <Compile Include="ProgramController.cs" />
+    <Compile Include="Utils\DifferentialModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PolarConversion.cs" />
+    <Compile Include="Utils\PolarConversion.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

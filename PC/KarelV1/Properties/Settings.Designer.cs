@@ -63,12 +63,12 @@ namespace KarelV1.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("53.5")]
-        public double DiametterOfWheel {
+        public double DiameterOfWheel {
             get {
-                return ((double)(this["DiametterOfWheel"]));
+                return ((double)(this["DiameterOfWheel"]));
             }
             set {
-                this["DiametterOfWheel"] = value;
+                this["DiameterOfWheel"] = value;
             }
         }
         
@@ -129,6 +129,55 @@ namespace KarelV1.Properties {
             }
             set {
                 this["MqttOutputTopic"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool CameraTorch {
+            get {
+                return ((bool)(this["CameraTorch"]));
+            }
+            set {
+                this["CameraTorch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.WebServiceUrl)]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/")]
+        public string CameraUri {
+            get {
+                return ((string)(this["CameraUri"]));
+            }
+            set {
+                this["CameraUri"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double XScale {
+            get {
+                return ((double)(this["XScale"]));
+            }
+            set {
+                this["XScale"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public double YScale {
+            get {
+                return ((double)(this["YScale"]));
+            }
+            set {
+                this["YScale"] = value;
             }
         }
     }
