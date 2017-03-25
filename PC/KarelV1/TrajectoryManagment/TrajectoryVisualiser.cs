@@ -268,7 +268,7 @@ namespace KarelV1.TrajectoryManagment
         private void DrawRobot(Graphics g, Position robotPosition)
         {
             PointF rp = actualRobotPosition.ToCartesian();
-            g.DrawRectangle(this.robotMarkerPen, rp.X - this.selectedPointRadius, rp.Y - this.selectedPointRadius, this.selectedPointRadius * 2, this.selectedPointRadius * 2);
+            g.DrawRectangle(Pens.Black, rp.X - this.selectedPointRadius, rp.Y - this.selectedPointRadius, this.selectedPointRadius * 2, this.selectedPointRadius * 2);
             //g.DrawLine(this.robotMarkerPen)
         }
 

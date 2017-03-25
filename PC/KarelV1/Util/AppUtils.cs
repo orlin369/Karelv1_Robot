@@ -471,7 +471,7 @@ namespace KarelV1.Util
         /// <returns></returns>
         public static string GetDateTime()
         {
-            return DateTime.Now.ToString("yyyy.MM.dd_HH.mm.ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+            return DateTime.Now.ToString("yyyyMMddHHmmss", System.Globalization.DateTimeFormatInfo.InvariantInfo);
         }
 
         #endregion

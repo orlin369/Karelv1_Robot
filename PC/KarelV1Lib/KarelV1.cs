@@ -169,7 +169,7 @@ namespace KarelV1Lib
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
-            string command = String.Format("?M{0}{1:D4}", (value > 0) ? "+" : "", value);
+            string command = String.Format("?M{0}{1:D4}", (value >= 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
         }
 
@@ -181,7 +181,7 @@ namespace KarelV1Lib
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
-            string command = String.Format("?R{0}{1:D4}", (value > 0) ? "+" : "", value);
+            string command = String.Format("?R{0}{1:D4}", (value >= 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
         }
 

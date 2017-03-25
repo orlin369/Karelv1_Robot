@@ -216,9 +216,7 @@ namespace KarelV1
 
         private void btnGetRobotPos_Click(object sender, EventArgs e)
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
-            this.robot.GetPosition();
+            this.GetRobotPosition();
         }
 
         private void btnCapture_Click(object sender, EventArgs e)
@@ -747,6 +745,18 @@ namespace KarelV1
             this.robot.GoToPosition(rp);
         }
 
+        private void GoToPosition(Position position)
+        {
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GoToPosition(position);
+        }
+
+        private void GetRobotPosition()
+        {
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GetPosition();
+        }
+
         private void myRobot_OnMessage(object sender, StringEventArgs e)
         {
             this.AddStatus(e.Message, Color.White);
@@ -807,6 +817,8 @@ namespace KarelV1
             Console.WriteLine("D:{0}; A:{1}; T:{2}", rp.Distance, rp.Phase, rp.Delay);
 
             this.visuliser.SetCurrentPoint(e.Value);
+            this.GetRobotPosition();
+            this.GoToPosition(rp);
         }
 
 
@@ -814,15 +826,17 @@ namespace KarelV1
         {
             this.visuliser.ResetCurrentPoint();
             this.visuliser.LockEditing = false;
+            this.GetRobotPosition();
         }
 
         private void ProgramController_OnRuning(object sender, EventArgs e)
         {
             this.visuliser.LockEditing = true;
+            this.GetRobotPosition();
         }
 
         #endregion
-        
+
         #region Private
 
         /// <summary>
