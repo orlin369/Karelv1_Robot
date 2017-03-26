@@ -30,6 +30,10 @@
         {
             this.tcSettings = new System.Windows.Forms.TabControl();
             this.tpMechanicalProperties = new System.Windows.Forms.TabPage();
+            this.tbYScale = new System.Windows.Forms.TextBox();
+            this.lblYScale = new System.Windows.Forms.Label();
+            this.tbXScale = new System.Windows.Forms.TextBox();
+            this.lblXScale = new System.Windows.Forms.Label();
             this.tbDistanceBetweenWheels = new System.Windows.Forms.TextBox();
             this.lblDistanceBetweenWheels = new System.Windows.Forms.Label();
             this.tbDiameterOfWheel = new System.Windows.Forms.TextBox();
@@ -47,14 +51,12 @@
             this.tbOutputTopic = new System.Windows.Forms.TextBox();
             this.lblOutputTopic = new System.Windows.Forms.Label();
             this.lblInputTopic = new System.Windows.Forms.Label();
-            this.tbXScale = new System.Windows.Forms.TextBox();
-            this.lblXScale = new System.Windows.Forms.Label();
-            this.tbYScale = new System.Windows.Forms.TextBox();
-            this.lblYScale = new System.Windows.Forms.Label();
             this.tpNavigation = new System.Windows.Forms.TabPage();
+            this.cbTorch = new System.Windows.Forms.CheckBox();
             this.tbCameraUri = new System.Windows.Forms.TextBox();
             this.lblCameraUri = new System.Windows.Forms.Label();
-            this.cbTorch = new System.Windows.Forms.CheckBox();
+            this.tbStepsPerSecond = new System.Windows.Forms.TextBox();
+            this.lblStepsPerSecond = new System.Windows.Forms.Label();
             this.tcSettings.SuspendLayout();
             this.tpMechanicalProperties.SuspendLayout();
             this.tpMQTTSettings.SuspendLayout();
@@ -76,6 +78,8 @@
             // tpMechanicalProperties
             // 
             this.tpMechanicalProperties.BackColor = System.Drawing.SystemColors.Control;
+            this.tpMechanicalProperties.Controls.Add(this.tbStepsPerSecond);
+            this.tpMechanicalProperties.Controls.Add(this.lblStepsPerSecond);
             this.tpMechanicalProperties.Controls.Add(this.tbYScale);
             this.tpMechanicalProperties.Controls.Add(this.lblYScale);
             this.tpMechanicalProperties.Controls.Add(this.tbXScale);
@@ -94,6 +98,38 @@
             this.tpMechanicalProperties.Size = new System.Drawing.Size(873, 379);
             this.tpMechanicalProperties.TabIndex = 0;
             this.tpMechanicalProperties.Text = "Mechanical Properties";
+            // 
+            // tbYScale
+            // 
+            this.tbYScale.Location = new System.Drawing.Point(224, 191);
+            this.tbYScale.Name = "tbYScale";
+            this.tbYScale.Size = new System.Drawing.Size(194, 22);
+            this.tbYScale.TabIndex = 11;
+            // 
+            // lblYScale
+            // 
+            this.lblYScale.AutoSize = true;
+            this.lblYScale.Location = new System.Drawing.Point(8, 194);
+            this.lblYScale.Name = "lblYScale";
+            this.lblYScale.Size = new System.Drawing.Size(60, 17);
+            this.lblYScale.TabIndex = 10;
+            this.lblYScale.Text = "Y Scale:";
+            // 
+            // tbXScale
+            // 
+            this.tbXScale.Location = new System.Drawing.Point(224, 163);
+            this.tbXScale.Name = "tbXScale";
+            this.tbXScale.Size = new System.Drawing.Size(194, 22);
+            this.tbXScale.TabIndex = 9;
+            // 
+            // lblXScale
+            // 
+            this.lblXScale.AutoSize = true;
+            this.lblXScale.Location = new System.Drawing.Point(8, 166);
+            this.lblXScale.Name = "lblXScale";
+            this.lblXScale.Size = new System.Drawing.Size(60, 17);
+            this.lblXScale.TabIndex = 8;
+            this.lblXScale.Text = "X Scale:";
             // 
             // tbDistanceBetweenWheels
             // 
@@ -241,38 +277,6 @@
             this.lblInputTopic.TabIndex = 11;
             this.lblInputTopic.Text = "Input Topic:";
             // 
-            // tbXScale
-            // 
-            this.tbXScale.Location = new System.Drawing.Point(224, 135);
-            this.tbXScale.Name = "tbXScale";
-            this.tbXScale.Size = new System.Drawing.Size(194, 22);
-            this.tbXScale.TabIndex = 9;
-            // 
-            // lblXScale
-            // 
-            this.lblXScale.AutoSize = true;
-            this.lblXScale.Location = new System.Drawing.Point(8, 138);
-            this.lblXScale.Name = "lblXScale";
-            this.lblXScale.Size = new System.Drawing.Size(60, 17);
-            this.lblXScale.TabIndex = 8;
-            this.lblXScale.Text = "X Scale:";
-            // 
-            // tbYScale
-            // 
-            this.tbYScale.Location = new System.Drawing.Point(224, 163);
-            this.tbYScale.Name = "tbYScale";
-            this.tbYScale.Size = new System.Drawing.Size(194, 22);
-            this.tbYScale.TabIndex = 11;
-            // 
-            // lblYScale
-            // 
-            this.lblYScale.AutoSize = true;
-            this.lblYScale.Location = new System.Drawing.Point(8, 166);
-            this.lblYScale.Name = "lblYScale";
-            this.lblYScale.Size = new System.Drawing.Size(60, 17);
-            this.lblYScale.TabIndex = 10;
-            this.lblYScale.Text = "Y Scale:";
-            // 
             // tpNavigation
             // 
             this.tpNavigation.BackColor = System.Drawing.SystemColors.Control;
@@ -284,6 +288,17 @@
             this.tpNavigation.Size = new System.Drawing.Size(873, 379);
             this.tpNavigation.TabIndex = 2;
             this.tpNavigation.Text = "Navigation";
+            // 
+            // cbTorch
+            // 
+            this.cbTorch.AutoSize = true;
+            this.cbTorch.Location = new System.Drawing.Point(9, 40);
+            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
+            this.cbTorch.Name = "cbTorch";
+            this.cbTorch.Size = new System.Drawing.Size(67, 21);
+            this.cbTorch.TabIndex = 26;
+            this.cbTorch.Text = "Torch";
+            this.cbTorch.UseVisualStyleBackColor = true;
             // 
             // tbCameraUri
             // 
@@ -301,16 +316,21 @@
             this.lblCameraUri.TabIndex = 12;
             this.lblCameraUri.Text = "Camera URL:";
             // 
-            // cbTorch
+            // tbStepsPerSecond
             // 
-            this.cbTorch.AutoSize = true;
-            this.cbTorch.Location = new System.Drawing.Point(9, 40);
-            this.cbTorch.Margin = new System.Windows.Forms.Padding(4);
-            this.cbTorch.Name = "cbTorch";
-            this.cbTorch.Size = new System.Drawing.Size(67, 21);
-            this.cbTorch.TabIndex = 26;
-            this.cbTorch.Text = "Torch";
-            this.cbTorch.UseVisualStyleBackColor = true;
+            this.tbStepsPerSecond.Location = new System.Drawing.Point(224, 135);
+            this.tbStepsPerSecond.Name = "tbStepsPerSecond";
+            this.tbStepsPerSecond.Size = new System.Drawing.Size(194, 22);
+            this.tbStepsPerSecond.TabIndex = 13;
+            // 
+            // lblStepsPerSecond
+            // 
+            this.lblStepsPerSecond.AutoSize = true;
+            this.lblStepsPerSecond.Location = new System.Drawing.Point(8, 138);
+            this.lblStepsPerSecond.Name = "lblStepsPerSecond";
+            this.lblStepsPerSecond.Size = new System.Drawing.Size(126, 17);
+            this.lblStepsPerSecond.TabIndex = 12;
+            this.lblStepsPerSecond.Text = "Steps Per Second:";
             // 
             // SettingsForm
             // 
@@ -364,5 +384,7 @@
         private System.Windows.Forms.TextBox tbCameraUri;
         private System.Windows.Forms.Label lblCameraUri;
         private System.Windows.Forms.CheckBox cbTorch;
+        private System.Windows.Forms.TextBox tbStepsPerSecond;
+        private System.Windows.Forms.Label lblStepsPerSecond;
     }
 }

@@ -75,8 +75,8 @@
     <Compile Include="Settings\SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TrajectoryManagment\TrajectoryMode.cs" />
-    <Compile Include="TrajectoryManagment\TrajectoryVisualiser.cs" />
+    <Compile Include="VisualisationManager\CaptureMode.cs" />
+    <Compile Include="VisualisationManager\RobotVisualiser.cs" />
     <Compile Include="Util\AppUtils.cs" />
     <Compile Include="Util\GP2Y0A21YK.cs" />
     <Compile Include="Util\MetricScale.cs" />

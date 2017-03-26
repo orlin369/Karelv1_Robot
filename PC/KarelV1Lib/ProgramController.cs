@@ -201,7 +201,7 @@ namespace KarelV1Lib
                 Position command = this.commands[this.commandIndex];
 
                 // Calculate the delay.
-                double delay = command.WaitTime();
+                double delay = 100;
 
                 // Send it to the robot.
                 //this.MoveRelative(command);

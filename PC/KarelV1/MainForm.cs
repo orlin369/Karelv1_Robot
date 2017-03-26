@@ -31,23 +31,15 @@ using System.Speech.Synthesis;
 
 using KarelV1.Util;
 using KarelV1.Settings;
+using KarelV1.VisualisationManager;
 
 using KarelV1Lib;
 using KarelV1Lib.Events;
 using KarelV1Lib.Adapters;
 using KarelV1Lib.Data;
+using KarelV1Lib.Utils;
 
 using IPWebcam;
-using KarelV1Lib.Utils;
-using KarelV1.TrajectoryManagment;
-
-// 
-// Robot tasks ...
-// TODO: Add Tweeter publisher.
-// TODO: Create WEB application that listen for the tweets and show it on the screen.
-// TODO: Add message when robot is moving and when it is not.
-// TODO: Add sensors.
-//
 
 namespace KarelV1
 {
@@ -93,7 +85,7 @@ namespace KarelV1
 
         private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
-        private TrajectoryVisualiser visuliser = new TrajectoryVisualiser();
+        private RobotVisualiser visuliser = new RobotVisualiser();
 
         private ProgramController programController = new ProgramController();
 
@@ -189,9 +181,7 @@ namespace KarelV1
 
         private void btnGetSensors_Click(object sender, EventArgs e)
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
-            this.robot.GetSensors();
+            this.GetRobotSensors();
         }
 
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
@@ -256,22 +246,6 @@ namespace KarelV1
             if (e.KeyChar == (char)Keys.Enter)
             {
                 this.btnGetUltrasonic_Click(sender, new EventArgs());
-            }
-        }
-        
-        private void tbCommandDelay_TextChanged(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(this.tbCommandDelay.Text))
-            {
-                double delay = 0.0D;
-
-                if (double.TryParse(this.tbCommandDelay.Text, out delay))
-                {
-                    if (delay > 0.0)
-                    {
-                        this.visuliser.TrajectoryDelay = delay;
-                    }
-                }
             }
         }
 
@@ -632,20 +606,7 @@ namespace KarelV1
                 return;
             }
 
-            double delay = 0.0D;
-            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            if(delay < 1)
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            Position rp = new Position(distance, 0, delay);
+            Position rp = new Position(distance, 0, Properties.Settings.Default.StepsPerSecond);
             this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
@@ -662,20 +623,7 @@ namespace KarelV1
                 return;
             }
 
-            double delay = 0.0D;
-            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            if (delay < 1)
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            Position rp = new Position(-distance, 0, delay);
+            Position rp = new Position(-distance, 0, Properties.Settings.Default.StepsPerSecond);
             this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
@@ -694,20 +642,7 @@ namespace KarelV1
                 return;
             }
 
-            double delay = 0.0D;
-            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            if (delay < 1)
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            Position rp = new Position(0, -phase, delay);
+            Position rp = new Position(0, -phase, Properties.Settings.Default.StepsPerSecond);
             this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
@@ -724,20 +659,7 @@ namespace KarelV1
                 return;
             }
 
-            double delay = 0.0D;
-            if (!double.TryParse(this.tbCommandDelay.Text, out delay))
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            if (delay < 1)
-            {
-                // TODO: Show message incorrect delay.
-                return;
-            }
-
-            Position rp = new Position(0, phase, delay);
+            Position rp = new Position(0, phase, Properties.Settings.Default.StepsPerSecond);
             this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
@@ -755,6 +677,12 @@ namespace KarelV1
         {
             if (this.robot == null || !this.robot.IsConnected) return;
             this.robot.GetPosition();
+        }
+
+        private void GetRobotSensors()
+        {
+            if (this.robot == null || !this.robot.IsConnected) return;
+            this.robot.GetSensors();
         }
 
         private void myRobot_OnMessage(object sender, StringEventArgs e)
@@ -776,14 +704,14 @@ namespace KarelV1
         {
             this.AddStatus(String.Format("US Sensor: {0}[deg] {1}[us] {2}[ADC]", e.DistanceSensors.Position, e.DistanceSensors.UltraSonic, e.DistanceSensors.Infrared), Color.White);
 
-            MetricScale Scale = (MetricScale)this.cbMetric.SelectedItem;
+            //MetricScale Scale = (MetricScale)this.cbMetric.SelectedItem;
             // TODO: Add scale.
             // TODO: Class HSR04.
             double us = e.DistanceSensors.UltraSonic / 58.0F;
             if (us > 330.0F) us = 330.0F;
 
             double ir = irSensor.Convert(e.DistanceSensors.Infrared); // AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
-            if (ir > 80.0F) us = 80.0F;
+            if (ir > 80.0F) ir = 80.0F;
             //double ir = AppUtils.Map(e.InfraRedADCValue, 0, 1023, 80, 10);
 
             sonarsData[(int)e.DistanceSensors.Position] = new DistanceSensors(e.DistanceSensors.Position, us, ir);
@@ -793,10 +721,8 @@ namespace KarelV1
 
         private void myRobot_OnSensors(object sender, SensorsEventArgs e)
         {
-            this.AddStatus(String.Format("Sensors: {0} {1}", e.Left, e.Right), Color.White);
-
-            this.DisplayLeftSensor((int)Math.Floor(e.Left));
-            this.DisplayRightSensor((int)Math.Floor(e.Right));
+            this.AddStatus(String.Format("Sensors: {0} {1}", e.Sensors.Left, e.Sensors.Right), Color.White);
+            this.visuliser.SetSideSensors(e.Sensors);
         }
 
         private void myRobot_OnPosition(object sender, PositionEventArgs e)
@@ -813,11 +739,10 @@ namespace KarelV1
         private void ProgramController_OnExecutionIndexCanged(object sender, IntEventArgs e)
         {
             Position rp = this.programController.Commands[e.Value];
-
-            Console.WriteLine("D:{0}; A:{1}; T:{2}", rp.Distance, rp.Phase, rp.Delay);
-
             this.visuliser.SetCurrentPoint(e.Value);
+
             this.GetRobotPosition();
+            Thread.Sleep(100);
             this.GoToPosition(rp);
         }
 
@@ -864,44 +789,6 @@ namespace KarelV1
                 item.Click += tmsiPorts_Click;
                 item.Enabled = true;
                 item.Checked = false;
-            }
-        }
-
-        /// <summary>
-        /// Set left sensor progress bar.
-        /// </summary>
-        /// <param name="value"></param>
-        private void DisplayLeftSensor(int value)
-        {
-            if (this.prbLeftSensor.InvokeRequired)
-            {
-                this.prbLeftSensor.BeginInvoke((MethodInvoker)delegate()
-                {
-                    this.prbLeftSensor.Value = value;
-                });
-            }
-            else
-            {
-                this.prbLeftSensor.Value = value;
-            }
-        }
-
-        /// <summary>
-        /// Set right sensor progress bar.
-        /// </summary>
-        /// <param name="value"></param>
-        private void DisplayRightSensor(int value)
-        {
-            if (this.prbRightSensor.InvokeRequired)
-            {
-                this.prbRightSensor.BeginInvoke((MethodInvoker)delegate()
-                {
-                    this.prbRightSensor.Value = value;
-                });
-            }
-            else
-            {
-                this.prbRightSensor.Value = value;
             }
         }
 
@@ -965,7 +852,7 @@ namespace KarelV1
                 {
                     this.ipCamera.EnableTorch = Properties.Settings.Default.CameraTorch;
                     this.capturedImage = this.ipCamera.CaptureFocused();
-                    this.pbTerrain.Image = AppUtils.FitImage(this.capturedImage, this.pbTerrain.Size);
+                    this.visuliser.SetBackgroundImage(capturedImage);
                 }
                 catch (Exception exception)
                 {
@@ -1069,12 +956,12 @@ namespace KarelV1
 
         private void rbRecord_CheckedChanged(object sender, EventArgs e)
         {
-            this.visuliser.TrajectoryMode = TrajectoryMode.RecordMotion;
+            this.visuliser.CaptureMode = CaptureMode.RecordMotion;
         }
 
         private void rbDefinePoints_CheckedChanged(object sender, EventArgs e)
         {
-            this.visuliser.TrajectoryMode = TrajectoryMode.DefinePoints;
+            this.visuliser.CaptureMode = CaptureMode.DefinePoints;
         }
 
 

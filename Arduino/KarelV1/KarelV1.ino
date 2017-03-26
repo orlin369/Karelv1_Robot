@@ -145,8 +145,9 @@ const uint8_t  RightMotorIndex = 2;
 const int16_t MaxSteps = 9999;
 /** \brief Average filter samples count. */
 const long AvgFilterSamples = 3;
-/** \brief Echo bit. */
-boolean Echo = false;
+/** \brief Interval at which to send motion state ti the host. (milliseconds) */
+const long interval = 1000;
+
 
 /* -- Peripheral objects. -- */
 /** \brief Ultra soic sensor: HC-SR04 */
@@ -165,6 +166,10 @@ AccelStepper Translation(TranslateForwardCB, TranslateBackwardCB);
 Servo SensorServo;
 /** \brief Output serial buffer. */
 char PrintArr[256];
+/** \brief Echo bit. */
+boolean Echo = false;
+/** \brief Enable motion flag. */
+bool EnableMotion = false;
 
 /* -- Functions -- */
 /** @brief Setup the peripheral hardware and variables.
@@ -202,9 +207,39 @@ void setup()
  */
 void loop()
 {
+  static bool rotation_run = false;
+  static bool translation_run = false;
+  static unsigned long currentMillis = 0;
+  static unsigned long previousMillis = 0;
+
+  //
   ReadCommand();
-  Rotation.run();
-  Translation.run();
+  
+  if(EnableMotion)
+  {
+    rotation_run = Rotation.run();
+    translation_run = Translation.run();
+  }
+  
+  // Update time.
+  currentMillis = millis();
+
+  // Check and send motion state.
+  if (currentMillis - previousMillis >= interval)
+  {
+    // save the last time you blinked the LED
+    previousMillis = currentMillis;
+
+    // Check motion state.
+    if(EnableMotion && (rotation_run || translation_run))
+    {
+      SendRunResponse();
+    }
+    else
+    {
+      SendStopResponse();      
+    }
+  }
 }
 
 /** @brief Read incomming data from the serial buffer.
@@ -353,7 +388,9 @@ void ParseCommand(String command)
     {
       ;
     }
-    
+
+    // Enable the regulation of the motor.
+    EnableMotion = true;
     Translation.move(steps);
   }
   else if(command[1] == 'R')
@@ -367,6 +404,8 @@ void ParseCommand(String command)
       ;
     }
     
+    // Enable the regulation of the motor.
+    EnableMotion = true;
     Rotation.move(steps);
   }
   else if(command == "?SENSORS\n")
@@ -386,9 +425,10 @@ void ParseCommand(String command)
   }
   else if(command == "?STOP\n")
   {
+    EnableMotion = false;
     MotorLeft->release();
     MotorRight->release();
-    Serial.println("#STOP");
+    SendStopResponse();
   }
   else if(command == "?USA\n")
   {
@@ -507,5 +547,15 @@ void TranslateBackwardCB()
 {
   MotorLeft->onestep(BACKWARD, MICROSTEP);
   MotorRight->onestep(BACKWARD, MICROSTEP);
+}
+
+void SendStopResponse()
+{
+  Serial.println("#STOP");
+}
+
+void SendRunResponse()
+{
+  Serial.println("#RUN");
 }
 

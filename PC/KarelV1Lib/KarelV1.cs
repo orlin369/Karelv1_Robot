@@ -23,6 +23,9 @@ SOFTWARE.
 */
 
 using System;
+using System.Timers;
+using System.Threading;
+
 using KarelV1Lib.Events;
 using KarelV1Lib.Adapters;
 using KarelV1Lib.Utils;
@@ -35,19 +38,49 @@ namespace KarelV1Lib
 
         #region Constants
 
+        /// <summary>
+        /// Terminating symbol.
+        /// </summary>
         private const char TERMIN = '\n';
 
+        /// <summary>
+        /// Response sign.
+        /// </summary>
         private const string RESPONSE_SIGN = "#";
 
+        /// <summary>
+        /// Response delimiter.
+        /// </summary>
         private const string RESPONSE_DELIMITER = "\r\n";
+
+        /// <summary>
+        /// Hart rate of the communication protocol.
+        /// </summary>
+        private const int HART_RATE = 1000;
 
         #endregion
 
         #region Variables
 
+        /// <summary>
+        /// Communication adapter.
+        /// </summary>
         private Adapter adapter;
 
+        /// <summary>
+        /// Robot differential model.
+        /// </summary>
         private DifferentialModel differentialModel;
+
+        /// <summary>
+        /// Hart beat timer.
+        /// </summary>
+        private System.Timers.Timer hgartBeatTimer = new System.Timers.Timer();
+
+        /// <summary>
+        /// Communication latency.
+        /// </summary>
+        private int communicationLatency = 0;
 
         #endregion
 
@@ -79,18 +112,60 @@ namespace KarelV1Lib
             }
         }
 
+        /// <summary>
+        /// Indicates if the robot is alive.
+        /// </summary>
+        public bool IsAlive { get; private set; }
+
+        /// <summary>
+        /// Communication latency.
+        /// It is used for adjustment of the hart beat protocol.
+        /// </summary>
+        public int CommunicationLatency
+        {
+            set
+            {
+                this.communicationLatency = value;
+                this.hgartBeatTimer.Interval = HART_RATE + communicationLatency;
+            }
+            get
+            {
+                return this.communicationLatency;
+            }
+        }
+
         #endregion
 
         #region Events
 
+        /// <summary>
+        /// Raise on sensor data arrives.
+        /// </summary>
         public event EventHandler<SensorsEventArgs> OnSensors;
 
+        /// <summary>
+        /// Raise on distance sensor data arrives.
+        /// </summary>
         public event EventHandler<DistanceSensorsEventArgs> OnDistanceSensors;
 
+        /// <summary>
+        /// Raise on robot stops.
+        /// </summary>
         public event EventHandler<EventArgs> OnStoped;
 
+        /// <summary>
+        /// Raise on robot runs.
+        /// </summary>
+        public event EventHandler<EventArgs> OnRun;
+
+        /// <summary>
+        /// Raise gratings message is arrived.
+        /// </summary>
         public event EventHandler<StringEventArgs> OnGreatingsMessage;
 
+        /// <summary>
+        /// Raise on position data arrives.
+        /// </summary>
         public event EventHandler<PositionEventArgs> OnPosition;
 
         /// <summary>
@@ -105,18 +180,20 @@ namespace KarelV1Lib
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="port">Communication port.</param>
+        /// <param name="adapter">Communication adapter.</param>
+        /// <param name="differentialModel">Differential model.</param>
         public KarelV1(Adapter adapter, DifferentialModel differentialModel)
         {
+            // Set the adapter.
             this.adapter = adapter;
-
-            // max time 5 minutes
             this.adapter.MaxTimeout = 30000;
-
-            // Attach the event handler.
             this.adapter.OnMessage += Adapter_OnMessage;
 
+            // Set the differential model of the robot.
             this.differentialModel = differentialModel;
+
+            // Set the hart beat timer.
+            this.hgartBeatTimer.Interval = HART_RATE;
         }
 
         /// <summary>
@@ -124,7 +201,15 @@ namespace KarelV1Lib
         /// </summary>
         ~KarelV1()
         {
+            // Detach the event handler.
+            this.adapter.OnMessage -= Adapter_OnMessage;
             this.adapter.Dispose();
+            this.adapter = null;
+
+            // Stop the hart beat timer.
+            this.hgartBeatTimer.Stop();
+            this.hgartBeatTimer.Dispose();
+            this.hgartBeatTimer = null;
         }
 
         #endregion
@@ -137,8 +222,11 @@ namespace KarelV1Lib
         public void Connect()
         {
             this.Disconnect();
-            this.adapter.Connect();
             this.adapter.OnMessage += Adapter_OnMessage;
+            this.adapter.Connect();
+
+            this.hgartBeatTimer.Elapsed += HartBeatTimer_Elapsed;
+            this.hgartBeatTimer.Start();
         }
 
         /// <summary>
@@ -149,6 +237,9 @@ namespace KarelV1Lib
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
             this.adapter.Disconnect();
+
+            this.hgartBeatTimer.Elapsed -= HartBeatTimer_Elapsed;
+            this.hgartBeatTimer.Stop();
         }
 
         /// <summary>
@@ -165,7 +256,7 @@ namespace KarelV1Lib
         /// Move the robots.
         /// </summary>
         /// <param name="value">Value of the movement tenth of the [mm].</param>
-        public void Move(int value)
+        public void MoveSteps(int value)
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
@@ -177,7 +268,7 @@ namespace KarelV1Lib
         /// Rotate the robots.
         /// </summary>
         /// <param name="value">Value of the rotation tenth of the degree.</param>
-        public void Rotate(int value)
+        public void RotateStaps(int value)
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
@@ -192,9 +283,14 @@ namespace KarelV1Lib
         public void GoToPosition(Position position)
         {
             int stepsR = this.differentialModel.MmToStep(position.Phase);
-            this.Rotate(stepsR);
+            int msR = (int)((stepsR / position.StepsPerSecond) * 1000) + 100;
+            this.RotateStaps(stepsR);
+            Thread.Sleep(msR);
+
             int stepsD = this.differentialModel.MmToStep(position.Distance);
-            this.Move(stepsD);
+            int msD = (int)((stepsD / position.StepsPerSecond) * 1000) + 100;
+            this.MoveSteps(stepsD);
+            Thread.Sleep(msD);
         }
 
         /// <summary>
@@ -266,15 +362,37 @@ namespace KarelV1Lib
 
         #endregion
 
-        #region Private
+        #region Hart beat Timer
 
+        /// <summary>
+        /// Hart beat callback method.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HartBeatTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            this.IsAlive = false;
+        }
+
+        #endregion
+
+        #region Adapter
+
+        /// <summary>
+        /// Adapter data arrive callback method.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Adapter_OnMessage(object sender, StringEventArgs e)
         {
             this.OnMessage?.Invoke(this, e);
-
             this.ResponseParser(e.Message);
         }
 
+        #endregion
+
+        #region Private
+        
         /// <summary>
         /// Parse response message from the device.
         /// </summary>
@@ -298,24 +416,12 @@ namespace KarelV1Lib
                             continue;
                         }
 
-                        #region SENSORS
+                        #region RUN
 
-                        if (token.Contains("SENSORS"))
+                        if (token.Contains("RUN"))
                         {
-                            string[] subTokens = token.Split(new char[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (subTokens[1] == "L" && subTokens[3] == "R")
-                            {
-                                float left = 0.0f;
-                                float right = 0.0f;
-
-                                if ((float.TryParse(subTokens[2], out left)) && (float.TryParse(subTokens[4], out right)))
-                                {
-                                    if (this.OnSensors != null)
-                                    {
-                                        this.OnSensors(this, new SensorsEventArgs(left, right));
-                                    }
-                                }
-                            }
+                            this.IsAlive = true;
+                            this.OnRun?.Invoke(this, new EventArgs());
                         }
 
                         #endregion
@@ -324,9 +430,26 @@ namespace KarelV1Lib
 
                         if (token.Contains("STOP"))
                         {
-                            if (this.OnStoped != null)
+                            this.IsAlive = true;
+                            this.OnStoped?.Invoke(this, new EventArgs());
+                        }
+
+                        #endregion
+
+                        #region SENSORS
+
+                        if (token.Contains("SENSORS"))
+                        {
+                            string[] subTokens = token.Split(new char[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
+                            if (subTokens[1] == "L" && subTokens[3] == "R")
                             {
-                                this.OnStoped(this, new EventArgs());
+                                int left = 0;
+                                int right = 0;
+
+                                if ((int.TryParse(subTokens[2], out left)) && (int.TryParse(subTokens[4], out right)))
+                                {
+                                    this.OnSensors?.Invoke(this, new SensorsEventArgs(new Sensors(left, right)));
+                                }
                             }
                         }
 

@@ -30,31 +30,62 @@ namespace KarelV1Lib.Data
 
         #region Properties
 
+        /// <summary>
+        /// Distance
+        /// </summary>
         public double Distance { get; set; }
 
+        /// <summary>
+        /// Phase orientation of the robot.
+        /// </summary>
         public double Phase { get; set; }
 
-        public double Delay { get; set; }
+        /// <summary>
+        /// Steps per second.
+        /// </summary>
+        public double StepsPerSecond { get; set; }
 
+        /// <summary>
+        /// Distance sensor.
+        /// </summary>
         public DistanceSensorsList DistanceSensors { get; set; }
+
+        /// <summary>
+        /// Sensors
+        /// </summary>
+        public Sensors Sensors { get; set; }
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public Position()
         {
             
         }
 
-        public Position(double distance, double phase, double delay)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="distance">Distance</param>
+        /// <param name="phase">Orientation of the robot.</param>
+        /// <param name="stepsPerSecon">Steps per second.</param>
+        public Position(double distance, double phase, double stepsPerSecon)
         {
             this.Distance = distance;
             this.Phase = phase;
-            this.Delay = delay;
+            this.StepsPerSecond = stepsPerSecon;
         }
 
-        public Position(PointF point, double delay)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="point">Point</param>
+        /// <param name="stepsPerSecon">Steps per second.</param>
+        public Position(PointF point, double stepsPerSecon)
         {
             double distance = 0.0D;
             double phase = 0.0D;
@@ -63,23 +94,17 @@ namespace KarelV1Lib.Data
 
             this.Distance = distance;
             this.Phase = phase;
-            this.Delay = delay;
+            this.StepsPerSecond = stepsPerSecon;
         }
-
-
+        
         #endregion
 
         #region Public Methods
 
         /// <summary>
-        /// Calculate motion time.
+        /// Transform polar position to Cartesian position.
         /// </summary>
-        /// <returns>Consumed motion time.</returns>
-        public double WaitTime()
-        {
-            return (Math.Abs(this.Phase) + Math.Abs(this.Distance) * this.Delay);
-        }
-
+        /// <returns>Cartesian point.</returns>
         public PointF ToCartesian()
         {
             return PolarConversion.PolarToCartesian(this.Distance, this.Phase);

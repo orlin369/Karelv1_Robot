@@ -60,8 +60,9 @@
     <Compile Include="Data\Positions.cs" />
     <Compile Include="Data\PositionsStore.cs" />
     <Compile Include="Events\PositionEventArgs.cs" />
-    <Compile Include="Events\SensorsEventArgs.cs" />
+    <Compile Include="Data\Sensors.cs" />
     <Compile Include="Events\IntEventArgs.cs" />
+    <Compile Include="Events\SensorsEventArgs.cs" />
     <Compile Include="Events\StringEventArgs.cs" />
     <Compile Include="Events\DistanceSensorsEventArgs.cs" />
     <Compile Include="KarelV1.cs" />

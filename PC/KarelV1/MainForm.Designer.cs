@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.tsmiFile = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiSettings = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,8 +67,6 @@
             this.tblControls = new System.Windows.Forms.TableLayoutPanel();
             this.txtState = new System.Windows.Forms.TextBox();
             this.gpbControls = new System.Windows.Forms.GroupBox();
-            this.lblTime = new System.Windows.Forms.Label();
-            this.tbCommandDelay = new System.Windows.Forms.TextBox();
             this.tbPhase = new System.Windows.Forms.TextBox();
             this.tbDistande = new System.Windows.Forms.TextBox();
             this.lblPhase = new System.Windows.Forms.Label();
@@ -87,16 +85,12 @@
             this.tbSensorPosition = new System.Windows.Forms.TextBox();
             this.btnGetUltrasonic = new System.Windows.Forms.Button();
             this.crtUltrasinicSensor = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.tbpSensors = new System.Windows.Forms.TabPage();
-            this.pnlSensors = new System.Windows.Forms.Panel();
-            this.prbRightSensor = new System.Windows.Forms.ProgressBar();
-            this.prbLeftSensor = new System.Windows.Forms.ProgressBar();
-            this.btnGetSensors = new System.Windows.Forms.Button();
             this.tbpProgram = new System.Windows.Forms.TabPage();
             this.tlpMainProgram = new System.Windows.Forms.TableLayoutPanel();
             this.tlpProgram = new System.Windows.Forms.TableLayoutPanel();
             this.pbTerrain = new System.Windows.Forms.PictureBox();
             this.pnlTrajectory = new System.Windows.Forms.Panel();
+            this.btnGetSensors = new System.Windows.Forms.Button();
             this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.btnReadSonar = new System.Windows.Forms.Button();
             this.btnCapture = new System.Windows.Forms.Button();
@@ -106,12 +100,13 @@
             this.gbTrajectoryMode = new System.Windows.Forms.GroupBox();
             this.rbDefinePoints = new System.Windows.Forms.RadioButton();
             this.rbRecord = new System.Windows.Forms.RadioButton();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dgvPositions = new System.Windows.Forms.DataGridView();
             this.Index = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Alpha = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Distance = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StepsPerSeconds = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.XPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.YPos = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Distance = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Alpha = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.mainMenu.SuspendLayout();
             this.statBar.SuspendLayout();
             this.tblMain.SuspendLayout();
@@ -122,15 +117,13 @@
             this.tlpSonar.SuspendLayout();
             this.pnlSonar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crtUltrasinicSensor)).BeginInit();
-            this.tbpSensors.SuspendLayout();
-            this.pnlSensors.SuspendLayout();
             this.tbpProgram.SuspendLayout();
             this.tlpMainProgram.SuspendLayout();
             this.tlpProgram.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbTerrain)).BeginInit();
             this.pnlTrajectory.SuspendLayout();
             this.gbTrajectoryMode.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPositions)).BeginInit();
             this.SuspendLayout();
             // 
             // mainMenu
@@ -426,8 +419,6 @@
             // 
             // gpbControls
             // 
-            this.gpbControls.Controls.Add(this.lblTime);
-            this.gpbControls.Controls.Add(this.tbCommandDelay);
             this.gpbControls.Controls.Add(this.tbPhase);
             this.gpbControls.Controls.Add(this.tbDistande);
             this.gpbControls.Controls.Add(this.lblPhase);
@@ -447,23 +438,6 @@
             this.gpbControls.TabIndex = 0;
             this.gpbControls.TabStop = false;
             this.gpbControls.Text = "Controls";
-            // 
-            // lblTime
-            // 
-            this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(218, 90);
-            this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(26, 20);
-            this.lblTime.TabIndex = 24;
-            this.lblTime.Text = "T:";
-            // 
-            // tbCommandDelay
-            // 
-            this.tbCommandDelay.Location = new System.Drawing.Point(250, 87);
-            this.tbCommandDelay.Name = "tbCommandDelay";
-            this.tbCommandDelay.Size = new System.Drawing.Size(65, 26);
-            this.tbCommandDelay.TabIndex = 23;
-            this.tbCommandDelay.Text = "20";
             // 
             // tbPhase
             // 
@@ -557,7 +531,6 @@
             // tcRobotFunctions
             // 
             this.tcRobotFunctions.Controls.Add(this.tbpSonar);
-            this.tcRobotFunctions.Controls.Add(this.tbpSensors);
             this.tcRobotFunctions.Controls.Add(this.tbpProgram);
             this.tcRobotFunctions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tcRobotFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
@@ -652,86 +625,32 @@
             this.crtUltrasinicSensor.BackColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackImageTransparentColor = System.Drawing.Color.Transparent;
             this.crtUltrasinicSensor.BackSecondaryColor = System.Drawing.Color.Transparent;
-            chartArea4.Area3DStyle.Rotation = 10;
-            chartArea4.Name = "ChartArea1";
-            this.crtUltrasinicSensor.ChartAreas.Add(chartArea4);
+            chartArea1.Area3DStyle.Rotation = 10;
+            chartArea1.Name = "ChartArea1";
+            this.crtUltrasinicSensor.ChartAreas.Add(chartArea1);
             this.crtUltrasinicSensor.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend4.Name = "Legend1";
-            this.crtUltrasinicSensor.Legends.Add(legend4);
+            legend1.Name = "Legend1";
+            this.crtUltrasinicSensor.Legends.Add(legend1);
             this.crtUltrasinicSensor.Location = new System.Drawing.Point(3, 3);
             this.crtUltrasinicSensor.Name = "crtUltrasinicSensor";
-            series7.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
-            series7.BackSecondaryColor = System.Drawing.Color.Black;
-            series7.BorderColor = System.Drawing.Color.Black;
-            series7.ChartArea = "ChartArea1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series7.Color = System.Drawing.Color.Green;
-            series7.Legend = "Legend1";
-            series7.MarkerColor = System.Drawing.Color.Black;
-            series7.Name = "Ultrasonic Sensor";
-            series8.ChartArea = "ChartArea1";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
-            series8.Legend = "Legend1";
-            series8.Name = "Infrared";
-            this.crtUltrasinicSensor.Series.Add(series7);
-            this.crtUltrasinicSensor.Series.Add(series8);
+            series1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.Center;
+            series1.BackSecondaryColor = System.Drawing.Color.Black;
+            series1.BorderColor = System.Drawing.Color.Black;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series1.Color = System.Drawing.Color.Green;
+            series1.Legend = "Legend1";
+            series1.MarkerColor = System.Drawing.Color.Black;
+            series1.Name = "Ultrasonic Sensor";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Legend = "Legend1";
+            series2.Name = "Infrared";
+            this.crtUltrasinicSensor.Series.Add(series1);
+            this.crtUltrasinicSensor.Series.Add(series2);
             this.crtUltrasinicSensor.Size = new System.Drawing.Size(855, 554);
             this.crtUltrasinicSensor.TabIndex = 14;
             this.crtUltrasinicSensor.Text = "Sonar";
-            // 
-            // tbpSensors
-            // 
-            this.tbpSensors.Controls.Add(this.pnlSensors);
-            this.tbpSensors.Location = new System.Drawing.Point(4, 29);
-            this.tbpSensors.Margin = new System.Windows.Forms.Padding(4);
-            this.tbpSensors.Name = "tbpSensors";
-            this.tbpSensors.Size = new System.Drawing.Size(989, 568);
-            this.tbpSensors.TabIndex = 2;
-            this.tbpSensors.Text = "Sensors";
-            this.tbpSensors.UseVisualStyleBackColor = true;
-            // 
-            // pnlSensors
-            // 
-            this.pnlSensors.Controls.Add(this.prbRightSensor);
-            this.pnlSensors.Controls.Add(this.prbLeftSensor);
-            this.pnlSensors.Controls.Add(this.btnGetSensors);
-            this.pnlSensors.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSensors.Location = new System.Drawing.Point(0, 0);
-            this.pnlSensors.Margin = new System.Windows.Forms.Padding(4);
-            this.pnlSensors.Name = "pnlSensors";
-            this.pnlSensors.Size = new System.Drawing.Size(989, 568);
-            this.pnlSensors.TabIndex = 0;
-            // 
-            // prbRightSensor
-            // 
-            this.prbRightSensor.Location = new System.Drawing.Point(280, 32);
-            this.prbRightSensor.Margin = new System.Windows.Forms.Padding(4);
-            this.prbRightSensor.Maximum = 1023;
-            this.prbRightSensor.Name = "prbRightSensor";
-            this.prbRightSensor.Size = new System.Drawing.Size(42, 90);
-            this.prbRightSensor.TabIndex = 22;
-            // 
-            // prbLeftSensor
-            // 
-            this.prbLeftSensor.Location = new System.Drawing.Point(122, 32);
-            this.prbLeftSensor.Margin = new System.Windows.Forms.Padding(4);
-            this.prbLeftSensor.Maximum = 1023;
-            this.prbLeftSensor.Name = "prbLeftSensor";
-            this.prbLeftSensor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.prbLeftSensor.RightToLeftLayout = true;
-            this.prbLeftSensor.Size = new System.Drawing.Size(44, 90);
-            this.prbLeftSensor.TabIndex = 21;
-            // 
-            // btnGetSensors
-            // 
-            this.btnGetSensors.Image = global::KarelV1.Images.Sensor1;
-            this.btnGetSensors.Location = new System.Drawing.Point(175, 32);
-            this.btnGetSensors.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGetSensors.Name = "btnGetSensors";
-            this.btnGetSensors.Size = new System.Drawing.Size(97, 90);
-            this.btnGetSensors.TabIndex = 20;
-            this.btnGetSensors.UseVisualStyleBackColor = true;
-            this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
             // 
             // tbpProgram
             // 
@@ -748,7 +667,7 @@
             this.tlpMainProgram.ColumnCount = 1;
             this.tlpMainProgram.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpMainProgram.Controls.Add(this.tlpProgram, 0, 0);
-            this.tlpMainProgram.Controls.Add(this.dataGridView1, 0, 1);
+            this.tlpMainProgram.Controls.Add(this.dgvPositions, 0, 1);
             this.tlpMainProgram.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlpMainProgram.Location = new System.Drawing.Point(0, 0);
             this.tlpMainProgram.Name = "tlpMainProgram";
@@ -785,6 +704,7 @@
             // 
             // pnlTrajectory
             // 
+            this.pnlTrajectory.Controls.Add(this.btnGetSensors);
             this.pnlTrajectory.Controls.Add(this.btnGetRobotPos);
             this.pnlTrajectory.Controls.Add(this.btnReadSonar);
             this.pnlTrajectory.Controls.Add(this.btnCapture);
@@ -797,6 +717,17 @@
             this.pnlTrajectory.Name = "pnlTrajectory";
             this.pnlTrajectory.Size = new System.Drawing.Size(222, 438);
             this.pnlTrajectory.TabIndex = 1;
+            // 
+            // btnGetSensors
+            // 
+            this.btnGetSensors.Image = global::KarelV1.Images.Sensor1;
+            this.btnGetSensors.Location = new System.Drawing.Point(9, 306);
+            this.btnGetSensors.Margin = new System.Windows.Forms.Padding(4);
+            this.btnGetSensors.Name = "btnGetSensors";
+            this.btnGetSensors.Size = new System.Drawing.Size(97, 90);
+            this.btnGetSensors.TabIndex = 27;
+            this.btnGetSensors.UseVisualStyleBackColor = true;
+            this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
             // 
             // btnGetRobotPos
             // 
@@ -895,46 +826,53 @@
             this.rbRecord.UseVisualStyleBackColor = true;
             this.rbRecord.CheckedChanged += new System.EventHandler(this.rbRecord_CheckedChanged);
             // 
-            // dataGridView1
+            // dgvPositions
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.dgvPositions.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvPositions.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Index,
-            this.XPos,
-            this.YPos,
+            this.Alpha,
             this.Distance,
-            this.Alpha});
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(3, 453);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(983, 112);
-            this.dataGridView1.TabIndex = 2;
+            this.StepsPerSeconds,
+            this.XPos,
+            this.YPos});
+            this.dgvPositions.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgvPositions.Location = new System.Drawing.Point(3, 453);
+            this.dgvPositions.Name = "dgvPositions";
+            this.dgvPositions.RowTemplate.Height = 24;
+            this.dgvPositions.Size = new System.Drawing.Size(983, 112);
+            this.dgvPositions.TabIndex = 2;
             // 
             // Index
             // 
             this.Index.HeaderText = "Index";
             this.Index.Name = "Index";
             // 
-            // XPos
+            // Alpha
             // 
-            this.XPos.HeaderText = "X";
-            this.XPos.Name = "XPos";
-            // 
-            // YPos
-            // 
-            this.YPos.HeaderText = "Y";
-            this.YPos.Name = "YPos";
+            this.Alpha.HeaderText = "Alpha";
+            this.Alpha.Name = "Alpha";
             // 
             // Distance
             // 
             this.Distance.HeaderText = "Distance";
             this.Distance.Name = "Distance";
             // 
-            // Alpha
+            // StepsPerSeconds
             // 
-            this.Alpha.HeaderText = "Alpha";
-            this.Alpha.Name = "Alpha";
+            this.StepsPerSeconds.HeaderText = "Steps Per Seconds";
+            this.StepsPerSeconds.Name = "StepsPerSeconds";
+            this.StepsPerSeconds.Width = 200;
+            // 
+            // XPos
+            // 
+            this.XPos.HeaderText = "XPos";
+            this.XPos.Name = "XPos";
+            // 
+            // YPos
+            // 
+            this.YPos.HeaderText = "YPos";
+            this.YPos.Name = "YPos";
             // 
             // MainForm
             // 
@@ -965,8 +903,6 @@
             this.pnlSonar.ResumeLayout(false);
             this.pnlSonar.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.crtUltrasinicSensor)).EndInit();
-            this.tbpSensors.ResumeLayout(false);
-            this.pnlSensors.ResumeLayout(false);
             this.tbpProgram.ResumeLayout(false);
             this.tlpMainProgram.ResumeLayout(false);
             this.tlpProgram.ResumeLayout(false);
@@ -974,7 +910,7 @@
             this.pnlTrajectory.ResumeLayout(false);
             this.gbTrajectoryMode.ResumeLayout(false);
             this.gbTrajectoryMode.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvPositions)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1003,11 +939,6 @@
         private System.Windows.Forms.Label lblDegreeSensor;
         private System.Windows.Forms.TextBox tbSensorPosition;
         private System.Windows.Forms.Button btnGetUltrasonic;
-        private System.Windows.Forms.TabPage tbpSensors;
-        private System.Windows.Forms.Panel pnlSensors;
-        private System.Windows.Forms.Button btnGetSensors;
-        private System.Windows.Forms.ProgressBar prbRightSensor;
-        private System.Windows.Forms.ProgressBar prbLeftSensor;
         private System.Windows.Forms.DataVisualization.Charting.Chart crtUltrasinicSensor;
         private System.Windows.Forms.ToolStripMenuItem tsmiFile;
         private System.Windows.Forms.ToolStripMenuItem tsmiExit;
@@ -1041,8 +972,6 @@
         private System.Windows.Forms.TextBox tbDistande;
         private System.Windows.Forms.Label lblPhase;
         private System.Windows.Forms.Label lblDistance;
-        private System.Windows.Forms.Label lblTime;
-        private System.Windows.Forms.TextBox tbCommandDelay;
         private System.Windows.Forms.TableLayoutPanel tlpMainProgram;
         private System.Windows.Forms.TableLayoutPanel tlpProgram;
         private System.Windows.Forms.PictureBox pbTerrain;
@@ -1055,13 +984,15 @@
         private System.Windows.Forms.GroupBox gbTrajectoryMode;
         private System.Windows.Forms.RadioButton rbDefinePoints;
         private System.Windows.Forms.RadioButton rbRecord;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnGetRobotPos;
+        private System.Windows.Forms.DataGridView dgvPositions;
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Alpha;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Distance;
+        private System.Windows.Forms.DataGridViewTextBoxColumn StepsPerSeconds;
         private System.Windows.Forms.DataGridViewTextBoxColumn XPos;
         private System.Windows.Forms.DataGridViewTextBoxColumn YPos;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Distance;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Alpha;
-        private System.Windows.Forms.Button btnGetRobotPos;
+        private System.Windows.Forms.Button btnGetSensors;
     }
 }
 

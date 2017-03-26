@@ -22,26 +22,12 @@ SOFTWARE.
 
 */
 
-namespace KarelV1.Data
+namespace KarelV1.VisualisationManager
 {
-    /// <summary>
-    /// Metric scale class.
-    /// </summary>
-    public enum MetricScale
+    public enum CaptureMode
     {
-        /// <summary>
-        /// Millimeter scale.
-        /// </summary>
-        MM = 0,
-
-        /// <summary>
-        /// Centimeter scale. 
-        /// </summary>
-        CM = 1,
-
-        /// <summary>
-        /// Meter scale.
-        /// </summary>
-        M = 2,
+        None = 0,
+        RecordMotion = 1,
+        DefinePoints = 2,
     }
 }

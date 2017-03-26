@@ -22,26 +22,50 @@ SOFTWARE.
 
 */
 
-namespace KarelV1.Data
+using System;
+
+namespace KarelV1Lib.Data
 {
-    /// <summary>
-    /// Metric scale class.
-    /// </summary>
-    public enum MetricScale
+    [Serializable]
+    public class Sensors
     {
-        /// <summary>
-        /// Millimeter scale.
-        /// </summary>
-        MM = 0,
+
+        #region Properties
 
         /// <summary>
-        /// Centimeter scale. 
+        /// Left sensor value.
         /// </summary>
-        CM = 1,
+        public int Left { get; set; }
 
         /// <summary>
-        /// Meter scale.
+        /// Right sensor value.
         /// </summary>
-        M = 2,
+        public int Right { get; set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Sensors()
+        {
+
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="left">Left sensor value.</param>
+        /// <param name="right">Right sensor value.</param>
+        public Sensors(int left, int right)
+        {
+            this.Left = left;
+            this.Right = right;
+        }
+
+        #endregion
+
     }
 }

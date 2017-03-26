@@ -44,6 +44,7 @@ namespace KarelV1.Settings
             this.tbStepperPostScaler.Text = Properties.Settings.Default.StepperPostScaler.ToString();
             this.tbDiameterOfWheel.Text = Properties.Settings.Default.DiameterOfWheel.ToString();
             this.tbDistanceBetweenWheels.Text = Properties.Settings.Default.DistanceBetweenWheels.ToString();
+            this.tbStepsPerSecond.Text = Properties.Settings.Default.StepsPerSecond.ToString();
             this.tbXScale.Text = Properties.Settings.Default.XScale.ToString();
             this.tbYScale.Text = Properties.Settings.Default.YScale.ToString();
 
@@ -115,7 +116,7 @@ namespace KarelV1.Settings
                 }
 
                 double distanceBetweenWheels = 0;
-                if (double.TryParse(this.tbDiameterOfWheel.Text.Trim(), out distanceBetweenWheels))
+                if (double.TryParse(this.tbDistanceBetweenWheels.Text.Trim(), out distanceBetweenWheels))
                 {
                     if (distanceBetweenWheels < 0)
                     {
@@ -131,8 +132,26 @@ namespace KarelV1.Settings
                     return;
                 }
 
+                double stepsPerSecond = 0;
+                if (double.TryParse(this.tbStepsPerSecond.Text.Trim(), out stepsPerSecond))
+                {
+                    if (stepsPerSecond < 0)
+                    {
+                        MessageBox.Show("Invalid steps per second. [x > 0]", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        return;
+                    }
+
+                    Properties.Settings.Default.StepsPerSecond = stepsPerSecond;
+                }
+                else
+                {
+                    MessageBox.Show("Invalid steps per second.", "Invalid value", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+
                 #endregion
-                
+
                 #region MQTT Settings
 
                 int borkerPort;

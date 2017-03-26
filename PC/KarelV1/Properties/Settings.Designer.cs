@@ -180,5 +180,17 @@ namespace KarelV1.Properties {
                 this["YScale"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("200")]
+        public double StepsPerSecond {
+            get {
+                return ((double)(this["StepsPerSecond"]));
+            }
+            set {
+                this["StepsPerSecond"] = value;
+            }
+        }
     }
 }

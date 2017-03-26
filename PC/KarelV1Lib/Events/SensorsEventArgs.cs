@@ -24,23 +24,34 @@ SOFTWARE.
 
 using System;
 
+using KarelV1Lib.Data;
+
 namespace KarelV1Lib.Events
 {
     public class SensorsEventArgs : EventArgs
     {
-        public float Left { get; private set; }
-        public float Right { get; private set; }
 
-        public SensorsEventArgs()
+        #region Properties
+
+        /// <summary>
+        /// Sensors values.
+        /// </summary>
+        public Sensors Sensors { get; private set; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="sensors">Sensors values.</param>
+        public SensorsEventArgs(Sensors sensors)
         {
-            this.Left = 0.0f;
-            this.Right = 0.0f;
+            this.Sensors = sensors;
         }
 
-        public SensorsEventArgs(float left, float right)
-        {
-            this.Left = left;
-            this.Right = right;
-        }
+        #endregion
+
     }
 }

@@ -18,16 +18,18 @@ SOFTWARE.
 */
 
 using KarelV1Lib.Data;
+
 using System;
 
 namespace KarelV1Lib.Events
 {
     public class PositionEventArgs : EventArgs
     {
+
         #region Properties
 
         /// <summary>
-        /// Position
+        /// Position value.
         /// </summary>
         public Position Position { get; private set; }
 
