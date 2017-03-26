@@ -105,10 +105,13 @@ boolean ValidateCommand(String command);
 void ParseCommand(String command);
 long ReadDistanceUS();
 long ReadDistanceIR();
-void RotateLeftCB();
-void RotateRihtCB();
-void TranslateForwardCB();
-void TranslateBackwardCB();
+void CwCb();
+void CcwCb();
+void SendStopResponse();
+void SendRunResponse();
+void SendGreatingsResponse();
+
+enum MotionType_t { None = 0, Rotate = 1, Translate = 2 };
 
 /* -- Pins -- */
 /** \brief Ultrasonic sensor trig pin 4.*/
@@ -129,14 +132,10 @@ const uint8_t IrSensor = 0;
 const uint8_t ShieldAddress = 0x60;
 /** \brief Motors max steps. */
 const uint8_t MotorSteps = 200;
-/** \brief Maximum rotation speed. */
-float MaxRotSpeed = 200.0;
-/** \brief Maximum rotation acceleration. */
-float MaxRotAccel = 100.0;
-/** \brief Maximum translation speed. */
-float MaxTransSpeed = 200.0;
-/** \brief Maximum translation acceleration. */
-float MaxTransAccel = 100.0;
+/** \brief Maximum speed. */
+float MaxSpeed = 200.0;
+/** \brief Maximum acceleration. */
+float MaxAccel = 100.0;
 /** \brief Left motor index. */
 const uint8_t  LeftMotorIndex = 1;
 /** \brief Right motor index. */
@@ -158,18 +157,17 @@ Adafruit_MotorShield MotorShield(ShieldAddress);
 Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MotorSteps, 1);
 /** \brief Right motors on chanel 2. */
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MotorSteps, 2);
-/** \brief Rotation acceleration controller. */
-AccelStepper Rotation(RotateLeftCB, RotateRihtCB);
-/** \brief Translation acceleration controller. */
-AccelStepper Translation(TranslateForwardCB, TranslateBackwardCB);
+/** \brief Motion acceleration controller. */
+AccelStepper MotionController (CwCb, CcwCb);
+
 /** \brief Ultrasonic sensor servo controller. */
 Servo SensorServo;
 /** \brief Output serial buffer. */
 char PrintArr[256];
 /** \brief Echo bit. */
 boolean Echo = false;
-/** \brief Enable motion flag. */
-bool EnableMotion = false;
+
+MotionType_t MotionType = MotionType_t::None; 
 
 /* -- Functions -- */
 /** @brief Setup the peripheral hardware and variables.
@@ -191,15 +189,12 @@ void setup()
   SensorServo.write(0);
    
   // Setup Serial port at 115200 bps.
-  Serial.begin(115200);         
-  Serial.println("#GREATINGS;I am Karel v1 ");
+  Serial.begin(115200);
+  SendGreatingsResponse();
   
   // ...
-  Rotation.setMaxSpeed(MaxRotSpeed);
-  Rotation.setAcceleration(MaxRotAccel);
-  // ...  
-  Translation.setMaxSpeed(MaxTransSpeed);
-  Translation.setAcceleration(MaxTransAccel);
+  MotionController.setMaxSpeed(MaxSpeed);
+  MotionController.setAcceleration(MaxAccel);
 }
 
 /** @brief Main loop of the program.
@@ -207,20 +202,24 @@ void setup()
  */
 void loop()
 {
-  static bool rotation_run = false;
-  static bool translation_run = false;
+  static bool isRuning = false;
   static unsigned long currentMillis = 0;
   static unsigned long previousMillis = 0;
 
   //
   ReadCommand();
-  
-  if(EnableMotion)
+
+  //
+  if(MotionType != MotionType_t::None)
   {
-    rotation_run = Rotation.run();
-    translation_run = Translation.run();
+    isRuning = MotionController.run();
+    
+    if(!isRuning)
+    {
+      MotionType = MotionType_t::None;
+    }
   }
-  
+ 
   // Update time.
   currentMillis = millis();
 
@@ -229,15 +228,15 @@ void loop()
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-
+    
     // Check motion state.
-    if(EnableMotion && (rotation_run || translation_run))
+    if(MotionType == MotionType_t::None)
     {
-      SendRunResponse();
+      SendStopResponse();
     }
     else
     {
-      SendStopResponse();      
+      SendRunResponse();    
     }
   }
 }
@@ -265,7 +264,7 @@ void ReadCommand()
     if(isValid)
     {
       ParseCommand(IncommingCommnad);
-          // Print command for feedback.
+      // Print command for feedback.
       if(Echo)
       {
         Serial.print("Cmd; ");
@@ -390,8 +389,8 @@ void ParseCommand(String command)
     }
 
     // Enable the regulation of the motor.
-    EnableMotion = true;
-    Translation.move(steps);
+    MotionType = MotionType_t::Translate;
+    MotionController.move(steps);
   }
   else if(command[1] == 'R')
   {
@@ -405,8 +404,8 @@ void ParseCommand(String command)
     }
     
     // Enable the regulation of the motor.
-    EnableMotion = true;
-    Rotation.move(steps);
+    MotionType = MotionType_t::Rotate;
+    MotionController.move(steps);
   }
   else if(command == "?SENSORS\n")
   {
@@ -418,17 +417,16 @@ void ParseCommand(String command)
   }
   else if(command == "?POSITION\n")
   {
-    rotationSteps = Rotation.currentPosition();
-    translationSteps = Translation.currentPosition();
-    sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", translationSteps, rotationSteps);
-    Serial.println(PrintArr);   
+    //rotationSteps = Rotation.currentPosition();
+    //translationSteps = Translation.currentPosition();
+    //sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", translationSteps, rotationSteps);
+    //Serial.println(PrintArr);   
   }
   else if(command == "?STOP\n")
   {
-    EnableMotion = false;
+    MotionType = MotionType_t::None;
     MotorLeft->release();
     MotorRight->release();
-    SendStopResponse();
   }
   else if(command == "?USA\n")
   {
@@ -516,37 +514,35 @@ long ReadDistanceIR()
 /** @brief This fuctions is callbacck for left motion.
  *  @return Void.
  */
-void RotateLeftCB()
+void CwCb()
 {
-  MotorLeft->onestep(BACKWARD, MICROSTEP);
-  MotorRight->onestep(FORWARD, MICROSTEP);
+  if(MotionType != MotionType_t::Translate)
+  {
+    MotorLeft->onestep(BACKWARD, MICROSTEP);
+    MotorRight->onestep(FORWARD, MICROSTEP);
+  }
+  else if(MotionType != MotionType_t::Rotate)
+  {
+    MotorLeft->onestep(FORWARD, MICROSTEP);
+    MotorRight->onestep(FORWARD, MICROSTEP);
+  }
 }
 
 /** @brief This fuctions is callbacck for right motion.
  *  @return Void.
  */
-void RotateRihtCB()
+void CcwCb()
 {
-  MotorLeft->onestep(FORWARD, MICROSTEP);
-  MotorRight->onestep(BACKWARD, MICROSTEP);
-}
-
-/** @brief This fuctions is callbacck for forward motion.
- *  @return Void.
- */
-void TranslateForwardCB()
-{
-  MotorLeft->onestep(FORWARD, MICROSTEP);
-  MotorRight->onestep(FORWARD, MICROSTEP);
-}
-
-/** @brief This fuctions is callbacck for backward motion.
- *  @return Void.
- */
-void TranslateBackwardCB()
-{
-  MotorLeft->onestep(BACKWARD, MICROSTEP);
-  MotorRight->onestep(BACKWARD, MICROSTEP);
+  if(MotionType != MotionType_t::Translate)
+  {
+    MotorLeft->onestep(FORWARD, MICROSTEP);
+    MotorRight->onestep(BACKWARD, MICROSTEP);
+  }
+  else if(MotionType != MotionType_t::Rotate)
+  {
+    MotorLeft->onestep(BACKWARD, MICROSTEP);
+    MotorRight->onestep(BACKWARD, MICROSTEP);    
+  }
 }
 
 /** @brief Send to the host a stop response command.
@@ -565,5 +561,14 @@ void SendStopResponse()
 void SendRunResponse()
 {
   Serial.println("#RUN");
+}
+
+/** @brief Send to the host a greatings command.
+ *  @param Void.
+ *  @return Void.
+ */
+void SendGreatingsResponse()
+{
+  Serial.println("#GREATINGS;I am Karel v1 ");
 }
 
