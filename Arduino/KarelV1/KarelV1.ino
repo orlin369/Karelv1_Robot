@@ -146,7 +146,7 @@ const int16_t MaxSteps = 9999;
 /** \brief Average filter samples count. */
 const long AvgFilterSamples = 3;
 /** \brief Interval at which to send motion state ti the host. (milliseconds) */
-const long interval = 1000;
+const long HartReat = 1000;
 
 
 /* -- Peripheral objects. -- */
@@ -225,7 +225,7 @@ void loop()
   currentMillis = millis();
 
   // Check and send motion state.
-  if (currentMillis - previousMillis >= interval)
+  if (currentMillis - previousMillis >= HartReat)
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
@@ -549,11 +549,19 @@ void TranslateBackwardCB()
   MotorRight->onestep(BACKWARD, MICROSTEP);
 }
 
+/** @brief Send to the host a stop response command.
+ *  @param Void.
+ *  @return Void.
+ */
 void SendStopResponse()
 {
   Serial.println("#STOP");
 }
 
+/** @brief Send to the host a stop response command.
+ *  @param Void.
+ *  @return Void.
+ */
 void SendRunResponse()
 {
   Serial.println("#RUN");
