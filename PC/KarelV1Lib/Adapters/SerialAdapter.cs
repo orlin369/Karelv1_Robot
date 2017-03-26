@@ -191,7 +191,7 @@ namespace KarelV1Lib.Adapters
                 if (!this.isConnected)
                 {
                     this.SerialPort = new SerialPort(this.portName);
-                    this.SerialPort.BaudRate = 9600;
+                    this.SerialPort.BaudRate = 115200;
                     this.SerialPort.DataBits = 8;
                     this.SerialPort.StopBits = StopBits.One;
                     this.SerialPort.Parity = Parity.None;

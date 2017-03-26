@@ -167,8 +167,6 @@ namespace KarelV1
 
         private void btnRight_Click(object sender, EventArgs e)
         {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
             this.MoveRight();
         }
 
@@ -531,7 +529,7 @@ namespace KarelV1
         {
             try
             {
-                this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName), this.differentialModel);
+                this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName));
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnSensors += myRobot_OnSensors;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
@@ -555,8 +553,7 @@ namespace KarelV1
                     Properties.Settings.Default.BrokerHost,
                     Properties.Settings.Default.BrokerPort,
                     Properties.Settings.Default.MqttInputTopic,
-                    Properties.Settings.Default.MqttOutputTopic),
-                    this.differentialModel);
+                    Properties.Settings.Default.MqttOutputTopic));
 
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnSensors += myRobot_OnSensors;
@@ -611,7 +608,8 @@ namespace KarelV1
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GoToPosition(rp);
+            int stepsD = this.differentialModel.MmToStep(rp.Distance);
+            this.robot.MoveSteps(stepsD);
         }
 
         private void MoveBackward()
@@ -628,13 +626,12 @@ namespace KarelV1
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GoToPosition(rp);
-
+            int stepsD = this.differentialModel.MmToStep(rp.Distance);
+            this.robot.MoveSteps(stepsD);
         }
 
         private void MoveLeft()
         {
-
             double phase = 0.0D;
             if (!double.TryParse(this.tbPhase.Text, out phase))
             {
@@ -647,7 +644,8 @@ namespace KarelV1
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GoToPosition(rp);
+            int stepsR = this.differentialModel.MmToStep(rp.Phase);
+            this.robot.RotateStaps(stepsR);
         }
 
         private void MoveRight()
@@ -664,13 +662,23 @@ namespace KarelV1
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GoToPosition(rp);
+            int stepsR = this.differentialModel.MmToStep(rp.Phase);
+            this.robot.RotateStaps(stepsR);
         }
 
         private void GoToPosition(Position position)
         {
             if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GoToPosition(position);
+
+            int stepsR = this.differentialModel.MmToStep(position.Phase);
+            int msR = (int)((stepsR / position.StepsPerSecond) * 1000) + 100;
+            this.robot.RotateStaps(stepsR);
+            Thread.Sleep(msR);
+
+            int stepsD = this.differentialModel.MmToStep(position.Distance);
+            int msD = (int)((stepsD / position.StepsPerSecond) * 1000) + 100;
+            this.robot.MoveSteps(stepsD);
+            Thread.Sleep(msD);
         }
 
         private void GetRobotPosition()
@@ -727,7 +735,15 @@ namespace KarelV1
 
         private void myRobot_OnPosition(object sender, PositionEventArgs e)
         {
-            this.visuliser.SetRobotPosition(e.Position);
+            // Extract and scale positional data.
+            double distanceMm = this.differentialModel.StepToMm((int)e.Position.Distance);
+            double alphaDeg = this.differentialModel.StepToMm((int)e.Position.Phase);
+
+            // Recreate data.
+            Position scaledPosition = new Position(distanceMm, alphaDeg, Properties.Settings.Default.StepsPerSecond);
+
+            // Set the visualization.
+            this.visuliser.SetRobotPosition(scaledPosition);
 
             this.AddStatus(String.Format("Position: P:{0:F3} D:{1:F3}", e.Position.Phase, e.Position.Distance), Color.White);
         }

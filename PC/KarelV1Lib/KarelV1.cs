@@ -68,11 +68,6 @@ namespace KarelV1Lib
         private Adapter adapter;
 
         /// <summary>
-        /// Robot differential model.
-        /// </summary>
-        private DifferentialModel differentialModel;
-
-        /// <summary>
         /// Hart beat timer.
         /// </summary>
         private System.Timers.Timer hgartBeatTimer = new System.Timers.Timer();
@@ -182,15 +177,12 @@ namespace KarelV1Lib
         /// </summary>
         /// <param name="adapter">Communication adapter.</param>
         /// <param name="differentialModel">Differential model.</param>
-        public KarelV1(Adapter adapter, DifferentialModel differentialModel)
+        public KarelV1(Adapter adapter)
         {
             // Set the adapter.
             this.adapter = adapter;
             this.adapter.MaxTimeout = 30000;
             this.adapter.OnMessage += Adapter_OnMessage;
-
-            // Set the differential model of the robot.
-            this.differentialModel = differentialModel;
 
             // Set the hart beat timer.
             this.hgartBeatTimer.Interval = HART_RATE;
@@ -274,23 +266,6 @@ namespace KarelV1Lib
 
             string command = String.Format("?R{0}{1:D4}", (value >= 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
-        }
-
-        /// <summary>
-        /// Go To position.
-        /// </summary>
-        /// <param name="position"></param>
-        public void GoToPosition(Position position)
-        {
-            int stepsR = this.differentialModel.MmToStep(position.Phase);
-            int msR = (int)((stepsR / position.StepsPerSecond) * 1000) + 100;
-            this.RotateStaps(stepsR);
-            Thread.Sleep(msR);
-
-            int stepsD = this.differentialModel.MmToStep(position.Distance);
-            int msD = (int)((stepsD / position.StepsPerSecond) * 1000) + 100;
-            this.MoveSteps(stepsD);
-            Thread.Sleep(msD);
         }
 
         /// <summary>
@@ -493,8 +468,7 @@ namespace KarelV1Lib
                                 if ((int.TryParse(subTokens[1], out distance))
                                     && (int.TryParse(subTokens[3], out phase)))
                                 {
-                                    double distanceMm = this.differentialModel.StepToMm(distance);
-                                    this.OnPosition?.Invoke(this, new PositionEventArgs(new Position(distanceMm, phase, 0)));
+                                    this.OnPosition?.Invoke(this, new PositionEventArgs(new Position(distance, phase, 0)));
                                 }
                             }
 
