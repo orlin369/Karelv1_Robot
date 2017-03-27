@@ -248,11 +248,11 @@ namespace KarelV1Lib
         /// Move the robots.
         /// </summary>
         /// <param name="value">Value of the movement tenth of the [mm].</param>
-        public void MoveSteps(int value)
+        public void TranslateSteps(int value)
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
-            string command = String.Format("?M{0}{1:D4}", (value >= 0) ? "+" : "", value);
+            string command = String.Format("?T{0}{1:D4}", (value >= 0) ? "+" : "", value);
             this.adapter.SendRequest(command + TERMIN);
         }
 

@@ -609,7 +609,7 @@ namespace KarelV1
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
             int stepsD = this.differentialModel.MmToStep(rp.Distance);
-            this.robot.MoveSteps(stepsD);
+            this.robot.TranslateSteps(stepsD);
         }
 
         private void MoveBackward()
@@ -627,7 +627,7 @@ namespace KarelV1
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
             int stepsD = this.differentialModel.MmToStep(rp.Distance);
-            this.robot.MoveSteps(stepsD);
+            this.robot.TranslateSteps(stepsD);
         }
 
         private void MoveLeft()
@@ -677,7 +677,7 @@ namespace KarelV1
 
             int stepsD = this.differentialModel.MmToStep(position.Distance);
             int msD = (int)((stepsD / position.StepsPerSecond) * 1000) + 100;
-            this.robot.MoveSteps(stepsD);
+            this.robot.TranslateSteps(stepsD);
             Thread.Sleep(msD);
         }
 

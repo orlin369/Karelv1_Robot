@@ -124,7 +124,7 @@ const uint8_t SensorLeftEdge = 6;
 const uint8_t SensorRightEdge = 7;
 /** \brief Servo pin that cotrols the sensor position.*/
 const uint8_t ServoPinUltrasonicSensor = 9;
-
+/** \brief IR sensor pin.*/
 const uint8_t IrSensor = 0;
 
 /* -- Parametters -- */
@@ -159,15 +159,18 @@ Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MotorSteps, 1);
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MotorSteps, 2);
 /** \brief Motion acceleration controller. */
 AccelStepper MotionController (CwCb, CcwCb);
-
 /** \brief Ultrasonic sensor servo controller. */
 Servo SensorServo;
 /** \brief Output serial buffer. */
 char PrintArr[256];
 /** \brief Echo bit. */
 boolean Echo = false;
-
+/** \brief Motion state holder. */
 MotionType_t MotionType = MotionType_t::None; 
+/** \brief Translation steps */
+long TranslationSteps = 0;
+/** \brief Rotation steps */
+long RotationSteps = 0;
 
 /* -- Functions -- */
 /** @brief Setup the peripheral hardware and variables.
@@ -295,7 +298,7 @@ boolean ValidateCommand(String command)
   {
     if(command[2] == '-' || command[2] == '+')
     {
-      if(command[1] == 'M')
+      if(command[1] == 'T')
       {
         // Convert commands from string to numbers.
         numValue = atoi(command.substring(3, 7).c_str());
@@ -361,23 +364,17 @@ void ParseCommand(String command)
 {
   // Number value.
   static int steps;
-  static long rotationSteps;
-  static long translationSteps;
-  static float cmMsec;
   static long microsecond;
   static long irSensorValue;
   
   steps = 0;
-  rotationSteps = 0;
-  translationSteps = 0;
-  cmMsec = 0;
   microsecond = 0;
   irSensorValue = 0;
   
   // Convert commands from string to numbers.
   steps = atoi(command.substring(3, 7).c_str());
   
-  if(command[1] == 'M')
+  if(command[1] == 'T')
   {
     if(command[2] == '-')
     {
@@ -409,7 +406,7 @@ void ParseCommand(String command)
   }
   else if(command == "?SENSORS\n")
   {
-    // read the analog in value:
+    // Read sensors values.
     int leftSensor = digitalRead(SensorLeftEdge);
     int rightSensor = digitalRead(SensorRightEdge);
     sprintf(PrintArr, "#SENSORS;L:%d;R:%d", leftSensor, rightSensor);
@@ -417,13 +414,13 @@ void ParseCommand(String command)
   }
   else if(command == "?POSITION\n")
   {
-    //rotationSteps = Rotation.currentPosition();
-    //translationSteps = Translation.currentPosition();
-    //sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", translationSteps, rotationSteps);
-    //Serial.println(PrintArr);   
+    // Send positional data.
+    sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", TranslationSteps, RotationSteps);
+    Serial.println(PrintArr);   
   }
   else if(command == "?STOP\n")
   {
+    // Stop the drivers.
     MotionType = MotionType_t::None;
     MotorLeft->release();
     MotorRight->release();
@@ -480,7 +477,6 @@ void ParseCommand(String command)
  */
 long ReadDistanceUS()
 {
-
   static long sum;
   sum = 0;
   
@@ -498,7 +494,6 @@ long ReadDistanceUS()
  */
 long ReadDistanceIR()
 {
-
   static long sum;
   sum = 0;
   
@@ -511,42 +506,45 @@ long ReadDistanceIR()
   return sum / AvgFilterSamples; 
 }
 
-/** @brief This fuctions is callbacck for left motion.
+/** @brief This fuctions is callbacck for CW motion.
  *  @return Void.
  */
 void CwCb()
 {
-  if(MotionType != MotionType_t::Translate)
+  if(MotionType == MotionType_t::Translate)
   {
-    MotorLeft->onestep(BACKWARD, MICROSTEP);
+    TranslationSteps++;
+    MotorLeft->onestep(FORWARD, MICROSTEP);
     MotorRight->onestep(FORWARD, MICROSTEP);
   }
-  else if(MotionType != MotionType_t::Rotate)
+  else if(MotionType == MotionType_t::Rotate)
   {
-    MotorLeft->onestep(FORWARD, MICROSTEP);
+    RotationSteps++;
+    MotorLeft->onestep(BACKWARD, MICROSTEP);
     MotorRight->onestep(FORWARD, MICROSTEP);
   }
 }
 
-/** @brief This fuctions is callbacck for right motion.
+/** @brief This fuctions is callbacck for CCW motion.
  *  @return Void.
  */
 void CcwCb()
 {
-  if(MotionType != MotionType_t::Translate)
+  if(MotionType == MotionType_t::Translate)
   {
-    MotorLeft->onestep(FORWARD, MICROSTEP);
-    MotorRight->onestep(BACKWARD, MICROSTEP);
-  }
-  else if(MotionType != MotionType_t::Rotate)
-  {
+    TranslationSteps--;
     MotorLeft->onestep(BACKWARD, MICROSTEP);
     MotorRight->onestep(BACKWARD, MICROSTEP);    
+  }
+  else if(MotionType == MotionType_t::Rotate)
+  {
+    RotationSteps--;
+    MotorLeft->onestep(FORWARD, MICROSTEP);
+    MotorRight->onestep(BACKWARD, MICROSTEP);
   }
 }
 
 /** @brief Send to the host a stop response command.
- *  @param Void.
  *  @return Void.
  */
 void SendStopResponse()
@@ -555,7 +553,6 @@ void SendStopResponse()
 }
 
 /** @brief Send to the host a stop response command.
- *  @param Void.
  *  @return Void.
  */
 void SendRunResponse()
@@ -564,7 +561,6 @@ void SendRunResponse()
 }
 
 /** @brief Send to the host a greatings command.
- *  @param Void.
  *  @return Void.
  */
 void SendGreatingsResponse()
