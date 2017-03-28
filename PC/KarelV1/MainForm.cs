@@ -85,7 +85,7 @@ namespace KarelV1
 
         private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
-        private RobotVisualiser visuliser = new RobotVisualiser();
+        private RobotVisualiser visuliser;
 
         private ProgramController programController = new ProgramController();
 
@@ -107,7 +107,7 @@ namespace KarelV1
                 Properties.Settings.Default.DiameterOfWheel,
                 Properties.Settings.Default.DistanceBetweenWheels);
 
-            this.visuliser.AddControl(this.pbTerrain);
+            this.visuliser = new RobotVisualiser(this.pbTerrain);
 
             this.programController.OnExecutionIndexCanged += ProgramController_OnExecutionIndexCanged;
             this.programController.OnFinish += ProgramController_OnFinish;
@@ -177,11 +177,6 @@ namespace KarelV1
             this.robot.Stop();
         }
 
-        private void btnGetSensors_Click(object sender, EventArgs e)
-        {
-            this.GetRobotSensors();
-        }
-
         private void btnGetUltrasonic_Click(object sender, EventArgs e)
         {
             if (this.robot == null || !this.robot.IsConnected) return;
@@ -202,9 +197,24 @@ namespace KarelV1
             }
         }
 
-        private void btnGetRobotPos_Click(object sender, EventArgs e)
+        private void btnReadSonar_Click(object sender, EventArgs e)
         {
-            this.GetRobotPosition();
+            if (this.robot == null || !this.robot.IsConnected) return;
+
+            int position = 0;
+            if (int.TryParse(this.tbSensorPosition.Text, out position))
+            {
+                if (position > 180 || position < 0)
+                {
+                    return;
+                }
+
+                this.robot.GetDistanceSensors(position);
+            }
+            else
+            {
+                this.robot.GetDistanceSensors();
+            }
         }
 
         private void btnCapture_Click(object sender, EventArgs e)
@@ -531,7 +541,6 @@ namespace KarelV1
             {
                 this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName));
                 this.robot.OnMessage += myRobot_OnMessage;
-                this.robot.OnSensors += myRobot_OnSensors;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnStoped += myRobot_OnStoped;
@@ -556,7 +565,6 @@ namespace KarelV1
                     Properties.Settings.Default.MqttOutputTopic));
 
                 this.robot.OnMessage += myRobot_OnMessage;
-                this.robot.OnSensors += myRobot_OnSensors;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnStoped += myRobot_OnStoped;
@@ -604,7 +612,6 @@ namespace KarelV1
             }
 
             Position rp = new Position(distance, 0, Properties.Settings.Default.StepsPerSecond);
-            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
@@ -622,7 +629,6 @@ namespace KarelV1
             }
 
             Position rp = new Position(-distance, 0, Properties.Settings.Default.StepsPerSecond);
-            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
@@ -640,7 +646,6 @@ namespace KarelV1
             }
 
             Position rp = new Position(0, -phase, Properties.Settings.Default.StepsPerSecond);
-            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
@@ -658,7 +663,6 @@ namespace KarelV1
             }
 
             Position rp = new Position(0, phase, Properties.Settings.Default.StepsPerSecond);
-            this.visuliser.SetRobotPosition(rp);
 
             // Move the robot.
             if (this.robot == null || !this.robot.IsConnected) return;
@@ -679,18 +683,6 @@ namespace KarelV1
             int msD = (int)((stepsD / position.StepsPerSecond) * 1000) + 100;
             this.robot.TranslateSteps(stepsD);
             Thread.Sleep(msD);
-        }
-
-        private void GetRobotPosition()
-        {
-            if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GetPosition();
-        }
-
-        private void GetRobotSensors()
-        {
-            if (this.robot == null || !this.robot.IsConnected) return;
-            this.robot.GetSensors();
         }
 
         private void myRobot_OnMessage(object sender, StringEventArgs e)
@@ -727,12 +719,6 @@ namespace KarelV1
             this.UpdateSonarChart(sonarsData);
         }
 
-        private void myRobot_OnSensors(object sender, SensorsEventArgs e)
-        {
-            this.AddStatus(String.Format("Sensors: {0} {1}", e.Sensors.Left, e.Sensors.Right), Color.White);
-            this.visuliser.SetSideSensors(e.Sensors);
-        }
-
         private void myRobot_OnPosition(object sender, PositionEventArgs e)
         {
             // Extract and scale positional data.
@@ -756,24 +742,18 @@ namespace KarelV1
         {
             Position rp = this.programController.Commands[e.Value];
             this.visuliser.SetCurrentPoint(e.Value);
-
-            this.GetRobotPosition();
-            Thread.Sleep(100);
             this.GoToPosition(rp);
         }
-
-
+        
         private void ProgramController_OnFinish(object sender, EventArgs e)
         {
             this.visuliser.ResetCurrentPoint();
             this.visuliser.LockEditing = false;
-            this.GetRobotPosition();
         }
 
         private void ProgramController_OnRuning(object sender, EventArgs e)
         {
             this.visuliser.LockEditing = true;
-            this.GetRobotPosition();
         }
 
         #endregion
@@ -983,25 +963,6 @@ namespace KarelV1
 
         #endregion
 
-        private void btnReadSonar_Click(object sender, EventArgs e)
-        {
-            if (this.robot == null || !this.robot.IsConnected) return;
-
-            int position = 0;
-            if (int.TryParse(this.tbSensorPosition.Text, out position))
-            {
-                if (position > 180 || position < 0)
-                {
-                    return;
-                }
-
-                this.robot.GetDistanceSensors(position);
-            }
-            else
-            {
-                this.robot.GetDistanceSensors();
-            }
-        }
 
     }
 }

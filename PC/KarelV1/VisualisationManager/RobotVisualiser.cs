@@ -49,6 +49,13 @@ namespace KarelV1.VisualisationManager
         /// </summary>
         private Bitmap backgroundImage;
 
+        /// <summary>
+        /// Center of the coordinate system.
+        /// </summary>
+        private PointF centerOfCoordinateSystem = new PointF();
+
+        private RectangleF coordinateSystem = new RectangleF();
+
         #endregion
 
         #region Trajectory
@@ -140,18 +147,8 @@ namespace KarelV1.VisualisationManager
         /// </summary>
         private Pen robotPositionPen = new Pen(Color.Black, 2f);
         
-        /// <summary>
-        /// Left side sensor flag.
-        /// </summary>
-        private float robotLeftSensor = 0f;
-
-        /// <summary>
-        /// Right side sensor flag.
-        /// </summary>
-        private float robotRightSensor = 0f;
-
         #endregion
-
+        
         #endregion
 
         #region Properties
@@ -191,11 +188,14 @@ namespace KarelV1.VisualisationManager
 
         #region Constructor
 
-        public RobotVisualiser()
+        public RobotVisualiser(PictureBox canvasPictureBox)
         {
+            this.AddControl(canvasPictureBox);
             this.CaptureMode = CaptureMode.None;
             robotPositionPen.StartCap = LineCap.ArrowAnchor;
             robotPositionPen.EndCap = LineCap.RoundAnchor;
+
+            this.UpdateCenterOfCoordSys();
         }
 
         #endregion
@@ -216,7 +216,7 @@ namespace KarelV1.VisualisationManager
 
         private void pbCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            this.cursorPoint = e.Location;
+            this.cursorPoint = new Point(e.X - (int)this.centerOfCoordinateSystem.X, e.Y - (int)this.centerOfCoordinateSystem.Y);
             this.SafeGraphicsRefresh();
         }
 
@@ -228,10 +228,7 @@ namespace KarelV1.VisualisationManager
             { 
                 if (CaptureMode == CaptureMode.DefinePoints)
                 {
-                    double y = this.Map(e.Y, this.pbCanvas.Height, 0, this.pbCanvas.Height, 0);
-                    double x = this.Map(e.X, this.pbCanvas.Width , 0, this.pbCanvas.Width, 0);
-                    Point p = new Point((int)y, (int)x);
-                    this.Trajectory.Add(p, this.StepsPerSecond);
+                    this.Trajectory.Add(this.cursorPoint, this.StepsPerSecond);
                 }
             }
             else if(e.Button == MouseButtons.Right)
@@ -239,6 +236,12 @@ namespace KarelV1.VisualisationManager
                 this.trajectory.Clear();
             }
 
+            this.SafeGraphicsRefresh();
+        }
+
+        private void PbCanvas_Resize(object sender, EventArgs e)
+        {
+            this.UpdateCenterOfCoordSys();
             this.SafeGraphicsRefresh();
         }
 
@@ -258,6 +261,9 @@ namespace KarelV1.VisualisationManager
             // Clear the background.
             e.Graphics.Clear(Color.White);
 
+            // Translate everything to the center of the canvas.
+            e.Graphics.TranslateTransform(this.centerOfCoordinateSystem.X, this.centerOfCoordinateSystem.Y);
+            //e.Graphics.RotateTransform(90);
             #endregion
 
             #region Draw background
@@ -346,25 +352,37 @@ namespace KarelV1.VisualisationManager
             {
                 if (this.LockEditing)
                 {
-                    e.Graphics.DrawLine(this.lockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbCanvas.Height));
-                    e.Graphics.DrawLine(this.lockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbCanvas.Width, this.cursorPoint.Y));
+                    e.Graphics.DrawLine(this.lockedCursorPen, new Point(this.cursorPoint.X, (int)this.coordinateSystem.Top), new Point(this.cursorPoint.X, this.pbCanvas.Height));
+                    e.Graphics.DrawLine(this.lockedCursorPen, new Point((int)this.coordinateSystem.Left, this.cursorPoint.Y), new Point(this.pbCanvas.Width, this.cursorPoint.Y));
                     e.Graphics.DrawEllipse(this.lockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
                 }
                 else
                 {
-                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point(this.cursorPoint.X, 0), new Point(this.cursorPoint.X, this.pbCanvas.Height));
-                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point(0, this.cursorPoint.Y), new Point(this.pbCanvas.Width, this.cursorPoint.Y));
+                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point(this.cursorPoint.X, (int)this.coordinateSystem.Top), new Point(this.cursorPoint.X, (int)this.coordinateSystem.Bottom));
+                    e.Graphics.DrawLine(this.unlockedCursorPen, new Point((int)this.coordinateSystem.Left, this.cursorPoint.Y), new Point((int)this.coordinateSystem.Right, this.cursorPoint.Y));
                     e.Graphics.DrawEllipse(this.unlockedCursorPen, this.cursorPoint.X - this.cursorRadius, this.cursorPoint.Y - this.cursorRadius, this.cursorRadius * 2, this.cursorRadius * 2);
                 }
             }
 
             #endregion
 
+
+            Console.WriteLine(new Position(this.cursorPoint, this.StepsPerSecond).Phase);
         }
 
         #endregion
 
         #region Private Methods
+
+        private void UpdateCenterOfCoordSys()
+        {
+            if (this.pbCanvas == null) return;
+            // Set
+            this.centerOfCoordinateSystem = new PointF(this.pbCanvas.Width / 2, this.pbCanvas.Height / 2);
+            // Set coordinate system.
+            this.coordinateSystem = new RectangleF(new PointF(-(this.pbCanvas.Width / 2), -(this.pbCanvas.Height / 2)), pbCanvas.Size);
+
+        }
 
         private double Map(double value, double inMin, double inMax, double outMin, double outMax)
         {
@@ -390,16 +408,19 @@ namespace KarelV1.VisualisationManager
 
         #region Public Methods
 
-        public void AddControl(PictureBox controlToDrawOn)
+        public void AddControl(PictureBox pbCanvas)
         {
-            if (controlToDrawOn == null) return;
+            if (pbCanvas == null) return;
 
-            this.pbCanvas = controlToDrawOn;
+            // Add the canvas.
+            this.pbCanvas = pbCanvas;
+            // Attach events.
             this.pbCanvas.Paint += pbCanvas_Paint;
             this.pbCanvas.MouseDown += pbCanvas_MouseDown;
             this.pbCanvas.MouseMove += pbCanvas_MouseMove;
             this.pbCanvas.MouseEnter += pbCanvas_MouseEnter;
             this.pbCanvas.MouseLeave += pbCanvas_MouseLeave;
+            this.pbCanvas.Resize += PbCanvas_Resize;
 
             this.SafeGraphicsRefresh();
         }
@@ -426,13 +447,6 @@ namespace KarelV1.VisualisationManager
                 this.Trajectory.Add(position);
             }
 
-            this.SafeGraphicsRefresh();
-        }
-
-        public void SetSideSensors(Sensors sensors)
-        {
-            this.robotLeftSensor = sensors.Left;
-            this.robotRightSensor = sensors.Right;
             this.SafeGraphicsRefresh();
         }
 

@@ -112,5 +112,13 @@ namespace KarelV1Lib.Data
 
         #endregion
 
+        #region Public Static Methods
+
+        public bool IsDifference(Position point)
+        {
+            return (this.Distance != point.Distance && this.Phase != point.Phase);
+        }
+
+        #endregion
     }
 }

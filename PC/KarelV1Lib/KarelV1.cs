@@ -77,6 +77,11 @@ namespace KarelV1Lib
         /// </summary>
         private int communicationLatency = 0;
 
+        /// <summary>
+        /// Previous position.
+        /// </summary>
+        private Position previousPosition = new Position();
+
         #endregion
 
         #region Properties
@@ -134,11 +139,6 @@ namespace KarelV1Lib
         #region Events
 
         /// <summary>
-        /// Raise on sensor data arrives.
-        /// </summary>
-        public event EventHandler<SensorsEventArgs> OnSensors;
-
-        /// <summary>
         /// Raise on distance sensor data arrives.
         /// </summary>
         public event EventHandler<DistanceSensorsEventArgs> OnDistanceSensors;
@@ -151,7 +151,7 @@ namespace KarelV1Lib
         /// <summary>
         /// Raise on robot runs.
         /// </summary>
-        public event EventHandler<EventArgs> OnRun;
+        public event EventHandler<EventArgs> OnRuning;
 
         /// <summary>
         /// Raise gratings message is arrived.
@@ -280,17 +280,6 @@ namespace KarelV1Lib
         }
 
         /// <summary>
-        /// Get sensors.
-        /// </summary>
-        public void GetSensors()
-        {
-            if (this.adapter == null || !this.adapter.IsConnected) return;
-
-            string command = "?SENSORS";
-            this.adapter.SendRequest(command + TERMIN);
-        }
-
-        /// <summary>
         /// Get ultra sonic sensor.
         /// </summary>
         /// <param name="position">Position of the sensor.</param>
@@ -309,7 +298,7 @@ namespace KarelV1Lib
                 throw new ArgumentException(String.Format("Position must be great then -1, actual {0}", position));
             }
                 
-            string command = String.Format("?US{0:D3}", position);
+            string command = String.Format("?DS{0:D3}", position);
             this.adapter.SendRequest(command + TERMIN);
         }
 
@@ -320,18 +309,7 @@ namespace KarelV1Lib
         {
             if (this.adapter == null || !this.adapter.IsConnected) return;
 
-            string command = "?USA";
-            this.adapter.SendRequest(command + TERMIN);
-        }
-
-        /// <summary>
-        /// Get position of the robot.
-        /// </summary>
-        public void GetPosition()
-        {
-            if (this.adapter == null || !this.adapter.IsConnected) return;
-
-            string command = "?POSITION";
+            string command = "?DSA";
             this.adapter.SendRequest(command + TERMIN);
         }
 
@@ -391,62 +369,12 @@ namespace KarelV1Lib
                             continue;
                         }
 
-                        #region RUN
+                        #region GREATINGS
 
-                        if (token.Contains("RUN"))
+                        if (token.Contains("GREATINGS"))
                         {
-                            this.IsAlive = true;
-                            this.OnRun?.Invoke(this, new EventArgs());
-                        }
-
-                        #endregion
-
-                        #region STOP
-
-                        if (token.Contains("STOP"))
-                        {
-                            this.IsAlive = true;
-                            this.OnStoped?.Invoke(this, new EventArgs());
-                        }
-
-                        #endregion
-
-                        #region SENSORS
-
-                        if (token.Contains("SENSORS"))
-                        {
-                            string[] subTokens = token.Split(new char[] { ';', ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            if (subTokens[1] == "L" && subTokens[3] == "R")
-                            {
-                                int left = 0;
-                                int right = 0;
-
-                                if ((int.TryParse(subTokens[2], out left)) && (int.TryParse(subTokens[4], out right)))
-                                {
-                                    this.OnSensors?.Invoke(this, new SensorsEventArgs(new Sensors(left, right)));
-                                }
-                            }
-                        }
-
-                        #endregion
-
-                        #region ULTRA SONIC
-
-                        if (token.Contains("US"))
-                        {
-                            int phase = 0;
-                            int usTime = 0;
-                            int irAdc = 0;
-
-                            string tmpToken = token.Replace("#US;", "");
-
-                            string[] subTokens = tmpToken.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-
-                            if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out usTime)) && (int.TryParse(subTokens[2], out irAdc)))
-                            {
-                                this.OnDistanceSensors?.Invoke(this, new DistanceSensorsEventArgs(new DistanceSensors(phase, usTime, irAdc)));
-                            }
-
+                            string tmpToken = token.Replace("#GREATINGS;", "");
+                            this.OnGreatingsMessage?.Invoke(this, new StringEventArgs(tmpToken));
                         }
 
                         #endregion
@@ -457,31 +385,67 @@ namespace KarelV1Lib
                         {
                             int phase = 0;
                             int distance = 0;
+                            int leftSensor = 0;
+                            int rightSensor = 0;
+                            Position position = new Position();
+                            position.StepsPerSecond = 0;
+                            position.Sensors = new Sensors();
 
                             string tmpToken = token.Replace("#POSITION;", "");
 
                             string[] subTokens = tmpToken.Split(new char[] { ':', ';' }, StringSplitOptions.RemoveEmptyEntries);
-
-
+                            
                             if (subTokens[0] == "T" && subTokens[2] == "R")
                             {
                                 if ((int.TryParse(subTokens[1], out distance))
                                     && (int.TryParse(subTokens[3], out phase)))
                                 {
-                                    this.OnPosition?.Invoke(this, new PositionEventArgs(new Position(distance, phase, 0)));
+                                    position.Distance = distance;
+                                    position.Phase = phase;
+                                }
+                            }
+                            if(subTokens[4] == "L" && subTokens[6] == "R")
+                            {
+                                if ((int.TryParse(subTokens[5], out leftSensor))
+                                        && (int.TryParse(subTokens[7], out rightSensor)))
+                                {
+                                    position.Sensors.Left = leftSensor;
+                                    position.Sensors.Right = rightSensor;
                                 }
                             }
 
+                            if(previousPosition.IsDifference(position))
+                            { 
+                                previousPosition = position;
+                                this.OnRuning?.Invoke(this, null);
+                            }
+                            else
+                            {
+                                this.OnStoped?.Invoke(this, null);
+                            }
+
+                            this.OnPosition?.Invoke(this, new PositionEventArgs(position));
                         }
 
                         #endregion
 
-                        #region GREATINGS
+                        #region DISTANCE SENSOR
 
-                        if (token.Contains("GREATINGS"))
+                        if (token.Contains("DS"))
                         {
-                            string tmpToken = token.Replace("#GREATINGS;", "");
-                            this.OnGreatingsMessage?.Invoke(this, new StringEventArgs(tmpToken));
+                            int phase = 0;
+                            int usTime = 0;
+                            int irAdc = 0;
+
+                            string tmpToken = token.Replace("#DS;", "");
+
+                            string[] subTokens = tmpToken.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+
+                            if ((int.TryParse(subTokens[0], out phase)) && (int.TryParse(subTokens[1], out usTime)) && (int.TryParse(subTokens[2], out irAdc)))
+                            {
+                                this.OnDistanceSensors?.Invoke(this, new DistanceSensorsEventArgs(new DistanceSensors(phase, usTime, irAdc)));
+                            }
+
                         }
 
                         #endregion

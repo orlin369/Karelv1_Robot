@@ -71,6 +71,7 @@
     <Compile Include="Utils\DifferentialModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\PolarConversion.cs" />
+    <Compile Include="Utils\Quadrant.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

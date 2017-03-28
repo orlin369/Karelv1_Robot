@@ -90,8 +90,6 @@
             this.tlpProgram = new System.Windows.Forms.TableLayoutPanel();
             this.pbTerrain = new System.Windows.Forms.PictureBox();
             this.pnlTrajectory = new System.Windows.Forms.Panel();
-            this.btnGetSensors = new System.Windows.Forms.Button();
-            this.btnGetRobotPos = new System.Windows.Forms.Button();
             this.btnReadSonar = new System.Windows.Forms.Button();
             this.btnCapture = new System.Windows.Forms.Button();
             this.btnResumeProgram = new System.Windows.Forms.Button();
@@ -704,8 +702,6 @@
             // 
             // pnlTrajectory
             // 
-            this.pnlTrajectory.Controls.Add(this.btnGetSensors);
-            this.pnlTrajectory.Controls.Add(this.btnGetRobotPos);
             this.pnlTrajectory.Controls.Add(this.btnReadSonar);
             this.pnlTrajectory.Controls.Add(this.btnCapture);
             this.pnlTrajectory.Controls.Add(this.btnResumeProgram);
@@ -718,28 +714,6 @@
             this.pnlTrajectory.Size = new System.Drawing.Size(222, 438);
             this.pnlTrajectory.TabIndex = 1;
             // 
-            // btnGetSensors
-            // 
-            this.btnGetSensors.Image = global::KarelV1.Images.Sensor1;
-            this.btnGetSensors.Location = new System.Drawing.Point(9, 306);
-            this.btnGetSensors.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGetSensors.Name = "btnGetSensors";
-            this.btnGetSensors.Size = new System.Drawing.Size(97, 90);
-            this.btnGetSensors.TabIndex = 27;
-            this.btnGetSensors.UseVisualStyleBackColor = true;
-            this.btnGetSensors.Click += new System.EventHandler(this.btnGetSensors_Click);
-            // 
-            // btnGetRobotPos
-            // 
-            this.btnGetRobotPos.Image = global::KarelV1.Images.Sensor3;
-            this.btnGetRobotPos.Location = new System.Drawing.Point(113, 306);
-            this.btnGetRobotPos.Margin = new System.Windows.Forms.Padding(4);
-            this.btnGetRobotPos.Name = "btnGetRobotPos";
-            this.btnGetRobotPos.Size = new System.Drawing.Size(97, 90);
-            this.btnGetRobotPos.TabIndex = 26;
-            this.btnGetRobotPos.UseVisualStyleBackColor = true;
-            this.btnGetRobotPos.Click += new System.EventHandler(this.btnGetRobotPos_Click);
-            // 
             // btnReadSonar
             // 
             this.btnReadSonar.Image = global::KarelV1.Images.Sensor2;
@@ -749,6 +723,7 @@
             this.btnReadSonar.Size = new System.Drawing.Size(97, 90);
             this.btnReadSonar.TabIndex = 25;
             this.btnReadSonar.UseVisualStyleBackColor = true;
+            this.btnReadSonar.Click += new System.EventHandler(this.btnReadSonar_Click);
             // 
             // btnCapture
             // 
@@ -984,7 +959,6 @@
         private System.Windows.Forms.GroupBox gbTrajectoryMode;
         private System.Windows.Forms.RadioButton rbDefinePoints;
         private System.Windows.Forms.RadioButton rbRecord;
-        private System.Windows.Forms.Button btnGetRobotPos;
         private System.Windows.Forms.DataGridView dgvPositions;
         private System.Windows.Forms.DataGridViewTextBoxColumn Index;
         private System.Windows.Forms.DataGridViewTextBoxColumn Alpha;
@@ -992,7 +966,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn StepsPerSeconds;
         private System.Windows.Forms.DataGridViewTextBoxColumn XPos;
         private System.Windows.Forms.DataGridViewTextBoxColumn YPos;
-        private System.Windows.Forms.Button btnGetSensors;
     }
 }
 

@@ -205,7 +205,6 @@ void setup()
  */
 void loop()
 {
-  static bool isRuning = false;
   static unsigned long currentMillis = 0;
   static unsigned long previousMillis = 0;
 
@@ -215,12 +214,7 @@ void loop()
   //
   if(MotionType != MotionType_t::None)
   {
-    isRuning = MotionController.run();
-    
-    if(!isRuning)
-    {
-      MotionType = MotionType_t::None;
-    }
+    MotionController.run();
   }
  
   // Update time.
@@ -231,16 +225,8 @@ void loop()
   {
     // save the last time you blinked the LED
     previousMillis = currentMillis;
-    
-    // Check motion state.
-    if(MotionType == MotionType_t::None)
-    {
-      SendStopResponse();
-    }
-    else
-    {
-      SendRunResponse();    
-    }
+
+    SendSctualPosition();
   }
 }
 
@@ -331,22 +317,12 @@ boolean ValidateCommand(String command)
       }
     }
   }
-  if(command == "?SENSORS\n")
-  {
-    // If is valid.
-    isValid = true;
-  }
-  if(command == "?POSITION\n")
-  {
-    // If is valid.
-    isValid = true;
-  }
   if(command == "?STOP\n")
   {
     // If is valid.
     isValid = true;
   }
-  if(command == "?USA\n")
+  if(command == "?DSA\n")
   {
     // If is valid.
     isValid = true;
@@ -404,20 +380,6 @@ void ParseCommand(String command)
     MotionType = MotionType_t::Rotate;
     MotionController.move(steps);
   }
-  else if(command == "?SENSORS\n")
-  {
-    // Read sensors values.
-    int leftSensor = digitalRead(SensorLeftEdge);
-    int rightSensor = digitalRead(SensorRightEdge);
-    sprintf(PrintArr, "#SENSORS;L:%d;R:%d", leftSensor, rightSensor);
-    Serial.println(PrintArr);
-  }
-  else if(command == "?POSITION\n")
-  {
-    // Send positional data.
-    sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;", TranslationSteps, RotationSteps);
-    Serial.println(PrintArr);   
-  }
   else if(command == "?STOP\n")
   {
     // Stop the drivers.
@@ -425,7 +387,7 @@ void ParseCommand(String command)
     MotorLeft->release();
     MotorRight->release();
   }
-  else if(command == "?USA\n")
+  else if(command == "?DSA\n")
   {
     // Preventing errors in mesurments.
     SensorServo.write(0);
@@ -440,7 +402,7 @@ void ParseCommand(String command)
         microsecond = ReadDistanceUS();   
         irSensorValue = ReadDistanceIR();
 
-        Serial.print("#US;");
+        Serial.print("#DS;");
         Serial.print(indexPos);
         Serial.print(":");
         Serial.print(microsecond);
@@ -450,7 +412,7 @@ void ParseCommand(String command)
   }
   else if(command[0] == '?' && command[6] == '\n')
   {
-    if(command[1] == 'U' && command[2] == 'S')
+    if(command[1] == 'D' && command[2] == 'S')
     {
       // Convert commands from string to numbers.
       steps = atoi(command.substring(3, 6).c_str());
@@ -461,7 +423,7 @@ void ParseCommand(String command)
         microsecond = ReadDistanceUS();     
         irSensorValue = ReadDistanceIR();
 
-        Serial.print("#US;");
+        Serial.print("#DS;");
         Serial.print(steps);
         Serial.print(":");
         Serial.print(microsecond);
@@ -544,27 +506,29 @@ void CcwCb()
   }
 }
 
-/** @brief Send to the host a stop response command.
- *  @return Void.
- */
-void SendStopResponse()
-{
-  Serial.println("#STOP");
-}
-
-/** @brief Send to the host a stop response command.
- *  @return Void.
- */
-void SendRunResponse()
-{
-  Serial.println("#RUN");
-}
-
 /** @brief Send to the host a greatings command.
  *  @return Void.
  */
 void SendGreatingsResponse()
 {
   Serial.println("#GREATINGS;I am Karel v1 ");
+}
+
+/** @brief Send to the host a actual position command.
+ *  @return Void.
+ */
+void SendSctualPosition()
+{
+   // Variables
+   static int leftSensor = 0;
+   static int rightSensor = 0;
+   
+   // Read sensors values.
+   leftSensor = digitalRead(SensorLeftEdge);
+   rightSensor = digitalRead(SensorRightEdge);
+
+   // Send positional data.
+   sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;L:%d;R:%d;", TranslationSteps, RotationSteps, leftSensor, rightSensor);
+   Serial.println(PrintArr);  
 }
 
