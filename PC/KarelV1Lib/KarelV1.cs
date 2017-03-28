@@ -144,19 +144,9 @@ namespace KarelV1Lib
         #region Events
 
         /// <summary>
-        /// Raise on distance sensor data arrives.
+        /// Received command message.
         /// </summary>
-        public event EventHandler<DistanceSensorsEventArgs> OnDistanceSensors;
-
-        /// <summary>
-        /// Raise on robot stops.
-        /// </summary>
-        public event EventHandler<EventArgs> OnStoped;
-
-        /// <summary>
-        /// Raise on robot runs.
-        /// </summary>
-        public event EventHandler<EventArgs> OnRuning;
+        public event EventHandler<StringEventArgs> OnMessage;
 
         /// <summary>
         /// Raise gratings message is arrived.
@@ -169,10 +159,25 @@ namespace KarelV1Lib
         public event EventHandler<PositionEventArgs> OnPosition;
 
         /// <summary>
-        /// Received command message.
+        /// Raise on robot stops.
         /// </summary>
-        public event EventHandler<StringEventArgs> OnMessage;
+        public event EventHandler<EventArgs> OnStoped;
 
+        /// <summary>
+        /// Raise on robot runs.
+        /// </summary>
+        public event EventHandler<EventArgs> OnRuning;
+
+        /// <summary>
+        /// On sensor data arrived.
+        /// </summary>
+        public event EventHandler<SensorsEventArgs> OnSensors;
+
+        /// <summary>
+        /// Raise on distance sensor data arrives.
+        /// </summary>
+        public event EventHandler<DistanceSensorsEventArgs> OnDistanceSensors;
+        
         #endregion
 
         #region Constructor / Destructor
@@ -390,8 +395,8 @@ namespace KarelV1Lib
                         {
                             int phase = 0;
                             int distance = 0;
-                            int leftSensor = 0;
-                            int rightSensor = 0;
+                            int frontSensor = 0;
+                            int backSensor = 0;
                             Position position = new Position();
                             position.StepsPerSecond = 0;
                             position.Sensors = new Sensors();
@@ -409,16 +414,16 @@ namespace KarelV1Lib
                                     position.Phase = phase;
                                 }
                             }
-                            if(subTokens[4] == "L" && subTokens[6] == "R")
+                            if(subTokens[4] == "F" && subTokens[6] == "B")
                             {
-                                if ((int.TryParse(subTokens[5], out leftSensor))
-                                        && (int.TryParse(subTokens[7], out rightSensor)))
+                                if ((int.TryParse(subTokens[5], out frontSensor))
+                                        && (int.TryParse(subTokens[7], out backSensor)))
                                 {
-                                    position.Sensors.Left = leftSensor;
-                                    position.Sensors.Right = rightSensor;
+                                    position.Sensors.Front = frontSensor;
+                                    position.Sensors.Back = backSensor;
                                 }
                             }
-
+                            
                             if(position.IsDifference(previousPosition))
                             { 
                                 this.IsMoving = true;
@@ -429,7 +434,7 @@ namespace KarelV1Lib
                                 this.IsMoving = false;
                                 this.OnStoped?.Invoke(this, null);
                             }
-
+                            
                             // Update previous position.
                             previousPosition = position;
 
@@ -438,6 +443,9 @@ namespace KarelV1Lib
 
                             // Call event for position update.
                             this.OnPosition?.Invoke(this, new PositionEventArgs(position));
+
+                            // Call event for sensor data.
+                            this.OnSensors?.Invoke(this, new SensorsEventArgs(position.Sensors));
                         }
 
                         #endregion
