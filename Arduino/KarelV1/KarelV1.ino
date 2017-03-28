@@ -528,7 +528,7 @@ void SendSctualPosition()
    rightSensor = digitalRead(SensorRightEdge);
 
    // Send positional data.
-   sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;L:%d;R:%d;", TranslationSteps, RotationSteps, leftSensor, rightSensor);
+   sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;F:%d;B:%d;", TranslationSteps, RotationSteps, leftSensor, rightSensor);
    Serial.println(PrintArr);  
 }
 
