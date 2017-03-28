@@ -555,7 +555,6 @@ namespace KarelV1
             try
             {
                 this.robot = new KarelV1Lib.KarelV1(new SerialAdapter(this.robotSerialPortName));
-                this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnPosition += myRobot_OnPosition;
@@ -578,7 +577,6 @@ namespace KarelV1
                     Properties.Settings.Default.MqttInputTopic,
                     Properties.Settings.Default.MqttOutputTopic));
 
-                this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnPosition += myRobot_OnPosition;
@@ -698,11 +696,6 @@ namespace KarelV1
             Thread.Sleep(msD);
         }
 
-        private void myRobot_OnMessage(object sender, StringEventArgs e)
-        {
-            this.AddStatus(e.Message, Color.White);
-        }
-
         private void myRobot_OnGreatingsMessage(object sender, StringEventArgs e)
         {
             this.AddStatus(e.Message, Color.White);
@@ -729,17 +722,21 @@ namespace KarelV1
 
         private void myRobot_OnPosition(object sender, PositionEventArgs e)
         {
-            // Extract and scale positional data.
-            double distanceMm = this.differentialModel.StepToMm((int)e.Position.Distance);
-            double alphaDeg = this.differentialModel.StepToMm((int)e.Position.Phase);
+            if (this.robot.IsMoving)
+            {
+                // Extract and scale positional data.
+                double distanceMm = this.differentialModel.StepToMm((int)e.Position.Distance);
+                double alphaDeg = this.differentialModel.StepToMm((int)e.Position.Phase);
 
-            // Recreate data.
-            Position scaledPosition = new Position(distanceMm, alphaDeg, Properties.Settings.Default.StepsPerSecond);
+                // Recreate data.
+                Position scaledPosition = new Position(distanceMm, alphaDeg, Properties.Settings.Default.StepsPerSecond);
 
-            // Set the visualization.
-            this.visuliser.SetRobotPosition(scaledPosition);
+                // Set the visualization.
+                this.visuliser.SetRobotPosition(scaledPosition);
 
-            this.AddStatus(String.Format("Position: P:{0:F3} D:{1:F3}", e.Position.Phase, e.Position.Distance), Color.White);
+                // Add status.
+                this.AddStatus(String.Format("Position: P:{0:F3} D:{1:F3}", e.Position.Phase, e.Position.Distance), Color.White);
+            }
         }
 
         #endregion
