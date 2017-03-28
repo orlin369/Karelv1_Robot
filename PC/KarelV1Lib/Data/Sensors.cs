@@ -35,12 +35,12 @@ namespace KarelV1Lib.Data
         /// <summary>
         /// Left sensor value.
         /// </summary>
-        public int Left { get; set; }
+        public int Front { get; set; }
 
         /// <summary>
         /// Right sensor value.
         /// </summary>
-        public int Right { get; set; }
+        public int Back { get; set; }
 
         #endregion
 
@@ -57,12 +57,12 @@ namespace KarelV1Lib.Data
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="left">Left sensor value.</param>
-        /// <param name="right">Right sensor value.</param>
-        public Sensors(int left, int right)
+        /// <param name="front">Left sensor value.</param>
+        /// <param name="back">Right sensor value.</param>
+        public Sensors(int front, int back)
         {
-            this.Left = left;
-            this.Right = right;
+            this.Front = front;
+            this.Back = back;
         }
 
         #endregion
