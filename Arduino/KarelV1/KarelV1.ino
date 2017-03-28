@@ -306,7 +306,7 @@ boolean ValidateCommand(String command)
   }
   if(command[0] == '?' && command[6] == '\n')
   {
-    if(command[1] == 'U' && command[2] == 'S')
+    if(command[1] == 'D' && command[2] == 'S')
     {
       // Convert commands from string to numbers.
       numValue = atoi(command.substring(3, 6).c_str());       
