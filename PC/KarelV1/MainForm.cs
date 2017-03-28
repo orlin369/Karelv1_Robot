@@ -101,6 +101,8 @@ namespace KarelV1
         /// </summary>
         private ProgramController programController = new ProgramController();
 
+        private bool frontBit = false;
+
         #endregion
 
         #region Constructor
@@ -558,6 +560,7 @@ namespace KarelV1
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnPosition += myRobot_OnPosition;
+                this.robot.OnSensors += Robot_OnSensors;
                 this.robot.Connect();
                 this.robot.Reset();
             }
@@ -566,7 +569,7 @@ namespace KarelV1
                 this.AddStatus(exception.ToString(), Color.White);
             }
         }
-        
+
         private void ConnectToRobotViaMqtt()
         {
             try
@@ -580,6 +583,7 @@ namespace KarelV1
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
                 this.robot.OnPosition += myRobot_OnPosition;
+                this.robot.OnSensors += Robot_OnSensors;
                 this.robot.Connect();
                 this.robot.Reset();
             }
@@ -698,7 +702,7 @@ namespace KarelV1
 
         private void myRobot_OnGreatingsMessage(object sender, StringEventArgs e)
         {
-            this.AddStatus(e.Message, Color.White);
+            this.Talk(e.Message);
         }
 
         private void myRobot_OnDistanceSensors(object sender, DistanceSensorsEventArgs e)
@@ -736,6 +740,19 @@ namespace KarelV1
 
                 // Add status.
                 this.AddStatus(String.Format("Position: P:{0:F3} D:{1:F3}", e.Position.Phase, e.Position.Distance), Color.White);
+            }
+        }
+
+        private void Robot_OnSensors(object sender, SensorsEventArgs e)
+        {
+            if(e.Sensors.Front == 0 && this.frontBit == false)
+            {
+                this.frontBit = true;
+                this.Talk("The robot are seeing a wall.");
+            }
+            else if (e.Sensors.Front == 1)
+            {
+                this.frontBit = false;
             }
         }
 
@@ -951,6 +968,43 @@ namespace KarelV1
             }
         }
         
+        /// <summary>
+        /// Robot can talk via computer voices.
+        /// </summary>
+        /// <param name="text"></param>
+        private void Talk(string text)
+        {
+            Thread worker = new Thread(
+                new ThreadStart(
+                    delegate ()
+            {
+                // Initialize a new instance of the SpeechSynthesizer.
+                using (SpeechSynthesizer synth = new SpeechSynthesizer())
+                {
+
+                    // Output information about all of the installed voices. 
+                    //Console.WriteLine("Installed voices -");
+
+                    var voices = synth.GetInstalledVoices();
+                    foreach (InstalledVoice voice in voices)
+                    {
+                        VoiceInfo info = voice.VoiceInfo;
+                        //Console.WriteLine(" Voice Name: " + info.Name);
+                    }
+
+                    // Configure the audio output. 
+                    synth.SetOutputToDefaultAudioDevice();
+                    synth.SelectVoice("Microsoft Zira Desktop");
+
+                    // Speak a string.
+                    synth.Speak(text);
+                }
+            }));
+
+            // Start the worker thread.
+            worker.Start();
+        }
+
         #endregion
 
         #region Radio Buttons
@@ -967,7 +1021,6 @@ namespace KarelV1
 
 
         #endregion
-
 
     }
 }
