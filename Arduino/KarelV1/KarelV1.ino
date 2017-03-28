@@ -119,9 +119,9 @@ const uint8_t SensorPinTrig = 4;
 /** \brief Ultrasonic sensor echo pin 5.*/
 const uint8_t SensorPinEcho = 5;
 /** \brief Left sensor pin 6. */
-const uint8_t SensorLeftEdge = 6;
+const uint8_t SensorFrontEdge = 6;
 /** \brief Left sensor pin 7. */
-const uint8_t SensorRightEdge = 7;
+const uint8_t SensorBackEdge = 7;
 /** \brief Servo pin that cotrols the sensor position.*/
 const uint8_t ServoPinUltrasonicSensor = 9;
 /** \brief IR sensor pin.*/
@@ -179,8 +179,8 @@ long RotationSteps = 0;
 void setup()
 {
   // Initialize the digital pin as an output.
-  pinMode(SensorLeftEdge , INPUT);
-  pinMode(SensorRightEdge, INPUT);
+  pinMode(SensorFrontEdge , INPUT);
+  pinMode(SensorBackEdge, INPUT);
   
   // Create with the default frequency 1.6KHz.
   MotorShield.begin();
@@ -524,8 +524,8 @@ void SendSctualPosition()
    static int rightSensor = 0;
    
    // Read sensors values.
-   leftSensor = digitalRead(SensorLeftEdge);
-   rightSensor = digitalRead(SensorRightEdge);
+   leftSensor = digitalRead(SensorFrontEdge);
+   rightSensor = digitalRead(SensorBackEdge);
 
    // Send positional data.
    sprintf(PrintArr, "#POSITION;T:%ld;R:%ld;F:%d;B:%d;", TranslationSteps, RotationSteps, leftSensor, rightSensor);
