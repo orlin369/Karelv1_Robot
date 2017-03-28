@@ -81,12 +81,24 @@ namespace KarelV1
         /// </summary>
         private object syncLockCapture = new object();
 
+        /// <summary>
+        /// Sensor data.
+        /// </summary>
         private DistanceSensorsList sonarsData = new DistanceSensorsList();
 
+        /// <summary>
+        /// IR sensor model.
+        /// </summary>
         private GP2Y0A21YK irSensor = new GP2Y0A21YK(5, 1024);
 
+        /// <summary>
+        /// Robot visualizer.
+        /// </summary>
         private RobotVisualiser visuliser;
 
+        /// <summary>
+        /// Program controller.
+        /// </summary>
         private ProgramController programController = new ProgramController();
 
         #endregion
@@ -107,8 +119,11 @@ namespace KarelV1
                 Properties.Settings.Default.DiameterOfWheel,
                 Properties.Settings.Default.DistanceBetweenWheels);
 
+            // Setup visualizer.
             this.visuliser = new RobotVisualiser(this.pbTerrain);
+            this.visuliser.StepsPerSecond = Properties.Settings.Default.StepsPerSecond;
 
+            // Setup program controll.
             this.programController.OnExecutionIndexCanged += ProgramController_OnExecutionIndexCanged;
             this.programController.OnFinish += ProgramController_OnFinish;
             this.programController.OnRuning += ProgramController_OnRuning;
@@ -543,7 +558,6 @@ namespace KarelV1
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
-                this.robot.OnStoped += myRobot_OnStoped;
                 this.robot.OnPosition += myRobot_OnPosition;
                 this.robot.Connect();
                 this.robot.Reset();
@@ -567,7 +581,6 @@ namespace KarelV1
                 this.robot.OnMessage += myRobot_OnMessage;
                 this.robot.OnDistanceSensors += myRobot_OnDistanceSensors;
                 this.robot.OnGreatingsMessage += myRobot_OnGreatingsMessage;
-                this.robot.OnStoped += myRobot_OnStoped;
                 this.robot.OnPosition += myRobot_OnPosition;
                 this.robot.Connect();
                 this.robot.Reset();
@@ -693,11 +706,6 @@ namespace KarelV1
         private void myRobot_OnGreatingsMessage(object sender, StringEventArgs e)
         {
             this.AddStatus(e.Message, Color.White);
-        }
-
-        private void myRobot_OnStoped(object sender, EventArgs e)
-        {
-            this.AddStatus("Stopped", Color.White);
         }
 
         private void myRobot_OnDistanceSensors(object sender, DistanceSensorsEventArgs e)

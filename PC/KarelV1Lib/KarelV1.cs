@@ -134,6 +134,11 @@ namespace KarelV1Lib
             }
         }
 
+        /// <summary>
+        /// Indicates when the robot is moving.
+        /// </summary>
+        public bool IsMoving { get; private set; }
+
         #endregion
 
         #region Events
@@ -414,16 +419,24 @@ namespace KarelV1Lib
                                 }
                             }
 
-                            if(previousPosition.IsDifference(position))
+                            if(position.IsDifference(previousPosition))
                             { 
-                                previousPosition = position;
+                                this.IsMoving = true;
                                 this.OnRuning?.Invoke(this, null);
                             }
                             else
                             {
+                                this.IsMoving = false;
                                 this.OnStoped?.Invoke(this, null);
                             }
 
+                            // Update previous position.
+                            previousPosition = position;
+
+                            // Keep alive.
+                            this.IsAlive = true;
+
+                            // Call event for position update.
                             this.OnPosition?.Invoke(this, new PositionEventArgs(position));
                         }
 

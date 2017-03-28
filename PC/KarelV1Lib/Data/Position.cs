@@ -110,15 +110,17 @@ namespace KarelV1Lib.Data
             return PolarConversion.PolarToCartesian(this.Distance, this.Phase);
         }
 
-        #endregion
-
-        #region Public Static Methods
-
+        /// <summary>
+        /// Determine difference between two robot positions.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
         public bool IsDifference(Position point)
         {
-            return (this.Distance != point.Distance && this.Phase != point.Phase);
+            return (this.Distance != point.Distance || this.Phase != point.Phase);
         }
 
         #endregion
+
     }
 }
