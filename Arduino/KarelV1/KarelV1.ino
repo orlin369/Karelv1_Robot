@@ -81,13 +81,19 @@ Version:
 
   //
 
+//#define MOTOR_CONTROLLER
+
 /* -- Includes -- */
 /* I2C */
 #include <Wire.h>
+
+#ifdef MOTOR_CONTROLLER
 /* Motor driver/shield */
 #include <Adafruit_MotorShield.h>
 /* String and standart functions. */
 #include "utility/Adafruit_PWMServoDriver.h"
+#endif
+
 /* Stepper motor controller. */
 #include <AccelStepper.h>
 /* Servo driver */
@@ -151,12 +157,16 @@ const long HartReat = 1000;
 /* -- Peripheral objects. -- */
 /** \brief Ultra soic sensor: HC-SR04 */
 Ultrasonic UltraSonic(SensorPinTrig, SensorPinEcho);
+
+#ifdef MOTOR_CONTROLLER
 /** \brief The motor shield. */
 Adafruit_MotorShield MotorShield(ShieldAddress);  
 /** \brief Left motors on chanel 1. */
 Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MotorSteps, 1);
 /** \brief Right motors on chanel 2. */
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MotorSteps, 2);
+#endif
+
 /** \brief Motion acceleration controller. */
 AccelStepper MotionController (CwCb, CcwCb);
 /** \brief Ultrasonic sensor servo controller. */
@@ -181,11 +191,13 @@ void setup()
   // Initialize the digital pin as an output.
   pinMode(SensorFrontEdge , INPUT);
   pinMode(SensorBackEdge, INPUT);
-  
+
+#ifdef MOTOR_CONTROLLER
   // Create with the default frequency 1.6KHz.
   MotorShield.begin();
   //MotorShield.begin(1000);  // OR with a different frequency, say 1KHz
-  
+#endif
+
   // Attaches the servo on pin 9 to the servo object.
   SensorServo.attach(ServoPinUltrasonicSensor);
   // Sets the servo position to the hoe position.
@@ -384,8 +396,10 @@ void ParseCommand(String command)
   {
     // Stop the drivers.
     MotionType = MotionType_t::None;
+#ifdef MOTOR_CONTROLLER
     MotorLeft->release();
     MotorRight->release();
+#endif
   }
   else if(command == "?DSA\n")
   {
@@ -476,14 +490,18 @@ void CwCb()
   if(MotionType == MotionType_t::Translate)
   {
     TranslationSteps++;
+#ifdef MOTOR_CONTROLLER
     MotorLeft->onestep(FORWARD, MICROSTEP);
     MotorRight->onestep(FORWARD, MICROSTEP);
+#endif
   }
   else if(MotionType == MotionType_t::Rotate)
   {
     RotationSteps++;
+#ifdef MOTOR_CONTROLLER
     MotorLeft->onestep(BACKWARD, MICROSTEP);
     MotorRight->onestep(FORWARD, MICROSTEP);
+#endif
   }
 }
 
@@ -495,14 +513,19 @@ void CcwCb()
   if(MotionType == MotionType_t::Translate)
   {
     TranslationSteps--;
+#ifdef MOTOR_CONTROLLER
     MotorLeft->onestep(BACKWARD, MICROSTEP);
     MotorRight->onestep(BACKWARD, MICROSTEP);    
+#endif
   }
   else if(MotionType == MotionType_t::Rotate)
   {
     RotationSteps--;
+    
+#ifdef MOTOR_CONTROLLER
     MotorLeft->onestep(FORWARD, MICROSTEP);
     MotorRight->onestep(BACKWARD, MICROSTEP);
+#endif
   }
 }
 
