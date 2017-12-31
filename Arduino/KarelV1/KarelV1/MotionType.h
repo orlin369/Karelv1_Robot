@@ -24,20 +24,26 @@ SOFTWARE.
 
 /** @file MotionType.h
  *  @brief Firmware of the mobile robot Karel v1.
- *
- *  This project is created for demonstrading, Karel v1 abilities. 
- *
  *  @author Orlin Dimnitrov (orlin369)
+ *
+ *  The purpose of this file to create the enumeration of the motion state of the robot.
+ *
  */
 
 #ifndef _MOTION_TYPE_H_
 #define _MOTION_TYPE_H_
 
+ /** \brief The enumeration of motion types. */
 enum MotionType_t
 {
+	/** \brief No motion state. */
     None = 0,
-    Rotate = 1,
-    Translate = 2
+
+	/** \brief Rotation state of the robot motion controller. */
+	Rotate = 1,
+
+	/** \brief Translation state of the robot motion controller. */
+	Translate = 2
 };
 
 #endif 

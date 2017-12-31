@@ -24,10 +24,10 @@ SOFTWARE.
 
 /** @file MotionType.h
  *  @brief Firmware of the mobile robot Karel v1.
- *
- *  This project is created for demonstrading, Karel v1 abilities. 
- *
  *  @author Orlin Dimnitrov (orlin369)
+ *
+ *  The purpose of this file it to hold the configuration of the robot. 
+ *
  */
 
 #ifndef _KAREL_CONFIGURATION_H_
@@ -41,7 +41,7 @@ SOFTWARE.
 #define PIN_IRDS_FRONT 6
 /** \brief Back sensor pin 7. */
 #define PIN_IRDS_BACK 7
-/** \brief Servo pin that cotrols the sensor position.*/
+/** \brief Servo pin that controls the sensor position.*/
 #define PIN_US_SERVO 9
 /** \brief IR sensor pin.*/
 #define PIN_IRDS 0

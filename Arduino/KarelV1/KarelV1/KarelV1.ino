@@ -24,10 +24,10 @@ SOFTWARE.
 
 /** @file KarelV1.ino
  *  @brief Firmware of the mobile robot Karel v1.
- *
- *  This project is created for demonstrading, Karel v1 abilities. 
- *
  *  @author Orlin Dimnitrov (orlin369)
+ *
+ *  This project is created for demonstrating, Karel v1 abilities. 
+ *
  */
 
 /*
@@ -43,7 +43,7 @@ Protocol of communication.
 Move robot:
 ?R+9999\n
 |||||||||
-|||||||\\- Termin
+|||||||\\- Terminal
 ||\\\\\--- Degree value [-180 : +180].
 ||\------- Direction index .
 |\-------- Motion type - in this case rotation.
@@ -51,7 +51,7 @@ Move robot:
 
 ?M+9999\n
 |||||||||
-|||||||\\- Termin
+|||||||\\- Terminal
 ||\\\\\--- Degree value [-999 : +999].
 ||\------- Direction index .
 |\-------- Motion type - in this case move.
@@ -60,14 +60,14 @@ Move robot:
 Read ultrasonic sensor value:
 ?US180\n
 ||||||||
-||||||\\- Termin symbol.
+||||||\\- Terminal symbol.
 |||\\\--- Sensor position value.
 |\\------ Command marker.
 \-------- Request symbol.
 
 ?USA\n
 ||||||
-||||\\- Termin symbol.
+||||\\- Terminal symbol.
 |||\--- Sensor position value.
 |\\---- Command marker.
 \------ Request symbol.
@@ -75,7 +75,7 @@ Read ultrasonic sensor value:
 Version:
 ?VERSION\n
 ||||||||||
-||||||||\\- Termin symbol.
+||||||||\\- Terminal symbol.
 |\\\\\\\--- Command marker.
 \---------- Request symbol.
 */
@@ -91,32 +91,37 @@ Version:
 
 #pragma region Headers
 
+/** \brief Configuration of the robot. */
 #include "KarelConfiguration.h"
 
+/** \brief Motion state library. */
 #include "MotionType.h"
 
-/* I2C */
+/** \brief I2C library. */
 #include <Wire.h>
-/* Stepper motor controller. */
+
+/** \brief Acceleration stepper motor controller library. */
 #include <AccelStepper.h>
-/* Servo driver */
+
+/** \brief Servo driver library. */
 #include <Servo.h>
-/* String */
+
+/** \brief String library. */
 #include <String.h>
-/* Standart library. */
+
+/* Standard library. */
 #include <stdlib.h>
 
 #ifndef FAKE_USSD
 
-/* Ultrsconic sensor HC-SR04. */
+/** \brief Ultrasonic sensor HC-SR04 library. */
 #include <Ultrasonic.h>
 
 #endif
 
 #ifdef ADAFRUIT_MOTOR_SHIELD_V2
-/* Motor driver/shield */
+/** \brief Motor shield driver. */
 #include <Adafruit_MotorShield.h>
-/* String and standart functions. */
 #include "utility/Adafruit_PWMServoDriver.h"
 #endif
 
@@ -125,47 +130,47 @@ Version:
 
 #pragma region Prototypes
 
-/** @brief Read incomming data from the serial buffer.
+/** @brief Read incoming data from the serial buffer.
 *  @return Void.
 */
 void read_command();
 
-/** @brief Validate the incomming commands.
+/** @brief Validate the incoming commands.
 *  @param command The command string.
 *  @return True if successful; or False if failed.
 */
 boolean validate_command(String command);
 
-/** @brief Parse and execute the incomming commands.
+/** @brief Parse and execute the incoming commands.
 *  @param command The command string.
 *  @return Void.
 */
 void parse_command(String command);
 
-/** @brief This fuctions read distance between sensor and the object.
+/** @brief This function read distance between sensor and the object.
 *  @return Time that signals travel in [us].
 */
 long read_distance_us();
 
-/** @brief This fuctions read distance between sensor and the object.
+/** @brief This function read distance between sensor and the object.
 *  @return Time that signals travel in [us].
 */
 long read_distance_ir();
 
-/** @brief This fuctions is callbacck for CW motion.
+/** @brief This function is callback for CW motion.
 *  @return Void.
 */
 void cw_callback();
 
-/** @brief This fuctions is callbacck for CCW motion.
+/** @brief This function is callback for CCW motion.
 *  @return Void.
 */
 void ccw_callback();
 
-/** @brief Send to the host a greatings command.
+/** @brief Send to the host a gratings command.
 *  @return Void.
 */
-void send_greatings();
+void send_greetings();
 
 /** @brief Send to the host a actual position command.
 *  @return Void.
@@ -184,15 +189,15 @@ void send_actual_robot_position();
 /** \brief The motor shield. */
 Adafruit_MotorShield MotorShield(MOTOR_SHIELD_ADDRESS);
 
-/** \brief Left motors on chanel 1. */
+/** \brief Left motors on channel 1. */
 Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MOTORS_STEPS, LEFT_MOTOR_INDEX);
 
-/** \brief Right motors on chanel 2. */
+/** \brief Right motors on channel 2. */
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MOTORS_STEPS, RIGHT_MOTOR_INDEX);
 
 #endif
 
-/** \brief Ultra soic sensor: HC-SR04 */
+/** \brief Ultrasonic sensor: HC-SR04 */
 Ultrasonic UltraSonic(PIN_US_TRIG, PIN_US_ECHO);
 
 /** \brief Motion acceleration controller. */
@@ -245,8 +250,8 @@ void setup()
   // Setup Serial port at 115200 bps.
   Serial.begin(115200);
 
-  // Send the reatings messages.
-  send_greatings();
+  // Send the greetings messages.
+  send_greetings();
 
 }
 
@@ -276,14 +281,14 @@ void loop()
     // save the last time you blinked the LED
     previousMillis = currentMillis;
 
-	// Send theposition.
+	// Send the position.
     send_actual_robot_position();
   }
 }
 
 #pragma region Funtions
 
-/** @brief Read incomming data from the serial buffer.
+/** @brief Read incoming data from the serial buffer.
 *  @return Void.
 */
 void read_command()
@@ -310,7 +315,7 @@ void read_command()
 			// Print command for feedback.
 			if (Echo_g)
 			{
-				Serial.print("Cmd; ");
+				Serial.print("Command; ");
 				Serial.println(IncommingCommnadL);
 			}
 		}
@@ -320,7 +325,7 @@ void read_command()
 	IncommingCommnadL = "";
 }
 
-/** @brief Validate the incomming commands.
+/** @brief Validate the incoming commands.
 *  @param command The command string.
 *  @return True if successful; or False if failed.
 */
@@ -385,7 +390,7 @@ boolean validate_command(String command)
 	return isValid;
 }
 
-/** @brief Parse and execute the incomming commands.
+/** @brief Parse and execute the incoming commands.
 *  @param command The command string.
 *  @return Void.
 */
@@ -454,7 +459,7 @@ void parse_command(String command)
 		SensorServo_g.write(MIN_SONAR_YAW);
 #endif // INVERTED_SONAR_YAW
 
-		// Preventing errors in mesurments.
+		// Preventing errors in measurements.
 		int position = SensorServo_g.read();
 		position += 1000;
 		delay(position);
@@ -501,7 +506,7 @@ void parse_command(String command)
 	}
 }
 
-/** @brief This fuctions read distance between sensor and the object.
+/** @brief This function read distance between sensor and the object.
 *  @return Time that signals travel in [us].
 */
 long read_distance_us()
@@ -521,7 +526,7 @@ long read_distance_us()
 	return sum / AVG_FILTER_SAMPLES;
 }
 
-/** @brief This fuctions read distance between sensor and the object.
+/** @brief This function read distance between sensor and the object.
 *  @return Time that signals travel in [us].
 */
 long read_distance_ir()
@@ -541,7 +546,7 @@ long read_distance_ir()
 	return sum / AVG_FILTER_SAMPLES;
 }
 
-/** @brief This fuctions is callbacck for CW motion.
+/** @brief This function is callback for CW motion.
 *  @return Void.
 */
 void cw_callback()
@@ -566,7 +571,7 @@ void cw_callback()
 	}
 }
 
-/** @brief This fuctions is callbacck for CCW motion.
+/** @brief This function is callback for CCW motion.
 *  @return Void.
 */
 void ccw_callback()
@@ -591,10 +596,10 @@ void ccw_callback()
 	}
 }
 
-/** @brief Send to the host a greatings command.
+/** @brief Send to the host a gratings command.
 *  @return Void.
 */
-void send_greatings()
+void send_greetings()
 {
 	Serial.println("#GREATINGS;I am Karel v1 ");
 }
@@ -612,7 +617,7 @@ void send_actual_robot_position()
 	FrontDistanceSensorValueL = digitalRead(PIN_IRDS_FRONT);
 	BackDistanceSensorValueL = digitalRead(PIN_IRDS_BACK);
 
-	// Construck the message.
+	// Construct the message.
 	sprintf(ActualPositionMessage_g, "#POSITION;T:%ld;R:%ld;F:%d;B:%d;", TranslationSteps_g, RotationSteps_g, FrontDistanceSensorValueL, BackDistanceSensorValueL);
 
 	// Send positional data.
