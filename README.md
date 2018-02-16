@@ -1,13 +1,9 @@
-KarelV1 Offline Programming
+KarelV1
 =======================
 
 Introduction
 ------------
-This is a simple aplication for Adrduino Uno board.
-Application purpose is to control the robot via buttons in offline mode.
-The protocol of programming is base on 4 simple directions.
-The robot are build to help young roboticist to learn how to program:
-embedded systems, use peripheral modules, sensor processing and motor contrl.
+Educational robot.
 
 ### What we are using
 

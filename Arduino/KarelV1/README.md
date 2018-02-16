@@ -1,11 +1,13 @@
-KarelV1 Offline Programming
+WiFi
 =======================
 
 Introduction
 ------------
 This is a simple aplication for Adrduino Uno board.
-Application purpose is to control the robot via buttons in offline mode.
-The protocol of programming is base on 4 simple directions.
+Application control the motors and read the sensors in the robot.
+The connection between Host and the robot is via UART.
+The protocol is custum and it is based on ASCII, so the user can easily control/test
+the robot in simple serial terminal.
 The robot are build to help young roboticist to learn how to program:
 embedded systems, use peripheral modules, sensor processing and motor contrl.
 
