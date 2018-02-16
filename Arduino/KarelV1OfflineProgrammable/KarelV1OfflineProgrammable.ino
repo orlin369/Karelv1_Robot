@@ -69,6 +69,9 @@ SOFTWARE.
 /** \brief Motor shield driver. */
 #include <Adafruit_MotorShield.h>
 
+/** \brief IR remote library. */
+#include <IRremote.h>
+
 #endif
 
 #pragma endregion
@@ -209,6 +212,9 @@ int TranslationSteps_g = 0;
 /** \brief Rotation steps count. */
 int RotationSteps_g = 0;
 
+/** \brief IR receiver. */
+IRrecv IRRecv_g(PIN_IR_RECV);
+
 #pragma endregion
 
 /** @brief Setup the peripheral hardware and variables.
@@ -234,7 +240,6 @@ void setup()
 	DEBUG_PRINT.print("Rotation stepss: ");
 	DEBUG_PRINT.println(RotationSteps_g);
 #endif // DEBUG_PRINT
-
 
 #ifdef ADAFRUIT_MOTOR_SHIELD_V2
 	// Create with the default frequency 1.6KHz.
@@ -288,6 +293,9 @@ void setup()
 
 	// Turn OFF the buzzer.
 	digitalWrite(PIN_STATUS_LED, LOW);
+
+	// Start the IR receiver.
+	IRRecv_g.enableIRIn();
 
 	// Set the hard coded program.
 	SetHardCodedProgram();
@@ -727,5 +735,103 @@ void beep(uint16_t time = 50U)
 	delay(time);
 	digitalWrite(PIN_BUZZER, LOW);
 }
+
+/** @brief IR Service function.
+ *  @return Void.
+ */
+void IRService()
+{
+	static unsigned long CurrentMillisTimeL = 0;
+	static unsigned long PreviousMillisTimeL = 0;
+	decode_results ResultL;
+
+	// Update time.
+	CurrentMillisTimeL = millis();
+
+	// Receive.
+	if (IRRecv_g.decode(&ResultL))
+	{
+		// Check and send motion state.
+		if (CurrentMillisTimeL - PreviousMillisTimeL >= 250)
+		{
+			// save the last time you blinked the LED
+			PreviousMillisTimeL = CurrentMillisTimeL;
+
+		}
+
+#ifdef  DEBUG_PRINT
+		// Dump the result.
+		ir_dump(&ResultL);
+#endif //  DEBUG_PRINT
+
+		// Receive the next value.
+		IRRecv_g.resume();
+
+		// Beep after receive the 
+		beep(BUTTON_BEEP);
+	}
+}
+
+#ifdef DEBUG_PRINT
+
+/** @brief Dumps out the decode_results structure.
+ *  @param results, Data for decoding.
+ *  @return Void.
+ */
+void ir_dump(decode_results *results)
+{
+	int count = results->rawlen;
+
+	if (results->decode_type == UNKNOWN)
+	{
+		DEBUG_PRINT.println("Could not decode message");
+	}
+	else
+	{
+		if (results->decode_type == NEC)
+		{
+			DEBUG_PRINT.print("Decoded NEC: ");
+		}
+		else if (results->decode_type == SONY)
+		{
+			DEBUG_PRINT.print("Decoded SONY: ");
+		}
+		else if (results->decode_type == RC5)
+		{
+			DEBUG_PRINT.print("Decoded RC5: ");
+		}
+		else if (results->decode_type == RC6)
+		{
+			DEBUG_PRINT.print("Decoded RC6: ");
+		}
+
+		DEBUG_PRINT.print(results->value, HEX);
+		DEBUG_PRINT.print(" (");
+		DEBUG_PRINT.print(results->bits, DEC);
+		DEBUG_PRINT.println(" bits)");
+	}
+
+	DEBUG_PRINT.print("Raw (");
+	DEBUG_PRINT.print(count, DEC);
+	DEBUG_PRINT.print("): ");
+
+	for (int i = 0; i < count; i++)
+	{
+		if ((i % 2) == 1)
+		{
+			DEBUG_PRINT.print(results->rawbuf[i] * USECPERTICK, DEC);
+		}
+		else
+		{
+			DEBUG_PRINT.print(-(int)results->rawbuf[i] * USECPERTICK, DEC);
+		}
+
+		DEBUG_PRINT.print(" ");
+	}
+
+	DEBUG_PRINT.println("");
+}
+
+#endif // DEBUG_PRINT
 
 #pragma endregion

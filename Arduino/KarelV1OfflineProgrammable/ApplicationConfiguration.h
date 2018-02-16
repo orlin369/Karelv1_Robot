@@ -47,6 +47,10 @@ SOFTWARE.
 #define DEBUG_PRINT Serial  // Comment this out to disable prints and save space
 
 
+/** \brief IR receiver pin. */
+#define PIN_IR_RECV 11
+
+
 /** \brief Status LED pin. */
 #define PIN_STATUS_LED 13
 
