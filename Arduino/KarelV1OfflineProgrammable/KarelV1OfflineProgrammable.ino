@@ -48,6 +48,9 @@ SOFTWARE.
 /** \brief Execution state library. */
 #include "ExecutionState.h"
 
+/** \brief IR command set library. */
+#include "IRCommands.h"
+
 /** \brief Button denounce library. */
 #include <ButtonDebounce.h>
 
@@ -60,8 +63,8 @@ SOFTWARE.
 #if defined ADAFRUIT_MOTOR_SHIELD_V1
 
 /** \brief Motor shield driver.
-* Requires the AFMotor library (https://github.com/adafruit/Adafruit-Motor-Shield-library)
-*/
+ * Requires the AFMotor library (https://github.com/adafruit/Adafruit-Motor-Shield-library)
+ */
 #include <AFMotor.h>
 
 #elif defined ADAFRUIT_MOTOR_SHIELD_V2
@@ -123,22 +126,22 @@ void BtnPause_callback(int state);
 /** @brief Go trough command set.
  *  @return Void.
  */
-void GoTroughCommands();
+void go_trough_commands();
 
 /** @brief Run the indication.
  *  @return Void.
  */
-void Indication();
+void update_indication();
 
 /** @brief This function is callback for CW motion.
  *  @return Void.
  */
-void cw_callback();
+void MotionController_CW_CB();
 
 /** @brief This function is callback for CCW motion.
  *  @return Void.
  */
-void ccw_callback();
+void MotionController_CCW_CB();
 
 /** @brief This function is callback for CCW motion.
  *  @param time, Time to beep.
@@ -172,7 +175,7 @@ ButtonDebounce BtnClear_g(PIN_BTN_CLEAR, BTN_DEBOUNCE_TIME);
 ButtonDebounce BtnPause_g(PIN_BTN_PAUSE, BTN_DEBOUNCE_TIME);
 
 /** \brief Motion acceleration controller. */
-AccelStepper MotionController_g(cw_callback, ccw_callback);
+AccelStepper MotionController_g(MotionController_CW_CB, MotionController_CCW_CB);
 
 #if defined ADAFRUIT_MOTOR_SHIELD_V1
 
@@ -298,15 +301,15 @@ void setup()
 	IRRecv_g.enableIRIn();
 
 	// Set the hard coded program.
-	SetHardCodedProgram();
+	set_demo_program();
 
 	// Ready
 	beep(READY_BEEP);
 }
 
 /** @brief Main loop of the program.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void loop()
 {
 	// Update the buttons states.
@@ -318,17 +321,21 @@ void loop()
 	BtnClear_g.update();
 	BtnPause_g.update();
 
+	read_ir_reciever();
+
 	// Run the robot.
-	GoTroughCommands();
+	go_trough_commands();
 
 	// Run the motion controller.
 	MotionController_g.run();
 
 	// Update indication.
-	Indication();
+	update_indication();
 }
 
 #pragma region Funtions
+
+#pragma region Buttons
 
 /** @brief Button forward callback.
  *  @param state, button state [LOW : HIGH]
@@ -338,20 +345,7 @@ void BtnForward_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			if (Commands_g.length() < MAX_COMMAND_LENGTH)
-			{
-				Commands_g.push_back(CMD_FORWARD);
-
-#ifdef DEBUG_PRINT
-				DEBUG_PRINT.println("Button: FORWARD");
-#endif //DEBUG_PRINT
-
-				// Feed back to the user.
-				beep(BUTTON_BEEP);
-			}
-		}
+		add_command(CMD_FORWARD);
 	}
 }
 
@@ -363,20 +357,7 @@ void BtnBackward_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			if (Commands_g.length() < MAX_COMMAND_LENGTH)
-			{
-				Commands_g.push_back(CMD_BACKWARD);
-
-#ifdef DEBUG_PRINT
-				DEBUG_PRINT.println("Button: BACKWARD");
-#endif //DEBUG_PRINT
-
-				// Feed back to the user.
-				beep(BUTTON_BEEP);
-			}
-		}
+		add_command(CMD_BACKWARD);
 	}
 }
 
@@ -388,20 +369,7 @@ void BtnLeft_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			if (Commands_g.length() < MAX_COMMAND_LENGTH)
-			{
-				Commands_g.push_back(CMD_LEFT);
-
-#ifdef DEBUG_PRINT
-				DEBUG_PRINT.println("Button: LEFT");
-#endif //DEBUG_PRINT
-
-				// Feed back to the user.
-				beep(BUTTON_BEEP);
-			}
-		}
+		add_command(CMD_LEFT);
 	}
 }
 
@@ -413,20 +381,7 @@ void BtnRight_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			if (Commands_g.length() < MAX_COMMAND_LENGTH)
-			{
-				Commands_g.push_back(CMD_RIGHT);
-
-#ifdef DEBUG_PRINT
-				DEBUG_PRINT.println("Button: RIGHT");
-#endif //DEBUG_PRINT
-
-				// Feed back to the user.
-				beep(BUTTON_BEEP);
-			}
-		}
+		add_command(CMD_RIGHT);
 	}
 }
 
@@ -438,20 +393,7 @@ void BtnGo_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			ExecutionState_g = ExecutionState_t::Run;
-
-#ifdef DEBUG_PRINT
-			DEBUG_PRINT.println("Button: GO");
-#endif //DEBUG_PRINT
-
-			// Feed back to the user.
-			beep(BUTTON_BEEP);
-
-			// Wait before start.
-			delay(300);
-		}
+		go();
 	}
 }
 
@@ -463,29 +405,7 @@ void BtnClear_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g != ExecutionState_t::Run)
-		{
-			// Change the state.
-			ExecutionState_g = ExecutionState_t::Stop;
-
-			// End the motion type.
-			MotionType_g = MotionType_t::None;
-
-			// Clear command index.
-			CommandIndex_g = 0;
-
-			// Clear the queue.
-			Commands_g.clear();
-
-			MotionController_g.setCurrentPosition(0);
-
-#ifdef DEBUG_PRINT
-			DEBUG_PRINT.println("Button: CLEAR");
-#endif //DEBUG_PRINT
-
-			// Feed back to the user.
-			beep(BUTTON_BEEP);
-		}
+		clear_commands();
 	}
 }
 
@@ -497,16 +417,104 @@ void BtnPause_callback(int state)
 {
 	if (state == LOW)
 	{
-		if (ExecutionState_g == ExecutionState_t::Run)
-		{
-			// Go to pause state.
-			ExecutionState_g = ExecutionState_t::Pause;
+		pause();
+	}
+}
 
-			// Stop the motion controller.
-			MotionType_g = MotionType_t::None;
+#pragma endregion
+
+#pragma region IR Reciever
+
+/** @brief IR Service function.
+ *  @return Void.
+ */
+void read_ir_reciever()
+{
+	static unsigned long CurrentMillisTimeL = 0;
+	static unsigned long PreviousMillisTimeL = 0;
+	decode_results ResultL;
+	static unsigned long IRValueL = 0;
+
+	// Update time.
+	CurrentMillisTimeL = millis();
+
+	// Check and send motion state.
+	if (CurrentMillisTimeL - PreviousMillisTimeL >= BTN_DEBOUNCE_TIME)
+	{
+		// sSave the last time you blinked the LED
+		PreviousMillisTimeL = CurrentMillisTimeL;
+
+		// Begin Reading
+		if (IRRecv_g.decode(&ResultL))
+		{
+			// Read value.
+			IRValueL = ResultL.value;
 
 #ifdef DEBUG_PRINT
-			DEBUG_PRINT.println("Button: PAUSE");
+			DEBUG_PRINT.print("IR code in [DEC]: ");
+			DEBUG_PRINT.println(IRValueL, DEC);
+#endif // DEBUG_PRINT
+
+			// Forward
+			if (IRValueL == IR_CMD_FORWARED_LONG || IRValueL == IR_CMD_FORWARED_SHORT)
+			{
+				add_command(CMD_FORWARD);
+			}
+			// Backward
+			else if (IRValueL == IR_CMD_BACWARD_LONG || IRValueL == IR_CMD_BACKWARD_SHORT)
+			{
+				add_command(CMD_BACKWARD);
+			}
+			// Left
+			else if (IRValueL == IR_CMD_LEFT_LONG || IRValueL == IR_CMD_LEFT_SHORT)
+			{
+				add_command(CMD_LEFT);
+			}
+			// Right
+			else if (IRValueL == IR_CMD_RIGHT_LONG || IRValueL == IR_CMD_RIGHT_SHORT)
+			{
+				add_command(CMD_RIGHT);
+			}
+			// GO
+			else if (IRValueL == IR_CMD_GO_LONG || IRValueL == IR_CMD_GO_SHORT)
+			{
+				go();
+			}
+			// Clear
+			else if (IRValueL == IR_CMD_CLEAR_LONG || IRValueL == IR_CMD_FORWARED_SHORT)
+			{
+				clear_commands();
+			}
+			// Pause
+			else if (IRValueL == IR_CMD_RIGHT_LONG || IRValueL == IR_CMD_PAUSE_SHORT)
+			{
+				pause();
+			}
+
+			// Receive the next value.
+			IRRecv_g.resume();
+
+			// Beep after receive the 
+			beep(BUTTON_BEEP);
+		}
+	}
+}
+
+#pragma endregion
+
+#pragma region Queue
+
+void add_command(char command)
+{
+	if (ExecutionState_g != ExecutionState_t::Run)
+	{
+		if (Commands_g.length() < MAX_COMMAND_LENGTH)
+		{
+			Commands_g.push_back(command);
+
+#ifdef DEBUG_PRINT
+			DEBUG_PRINT.print("Action: ");
+			DEBUG_PRINT.println(command);
 #endif //DEBUG_PRINT
 
 			// Feed back to the user.
@@ -515,10 +523,78 @@ void BtnPause_callback(int state)
 	}
 }
 
+void clear_commands()
+{
+	if (ExecutionState_g != ExecutionState_t::Run)
+	{
+		// Change the state.
+		ExecutionState_g = ExecutionState_t::Stop;
+
+		// End the motion type.
+		MotionType_g = MotionType_t::None;
+
+		// Clear command index.
+		CommandIndex_g = 0;
+
+		// Clear the queue.
+		Commands_g.clear();
+
+		MotionController_g.setCurrentPosition(0);
+
+#ifdef DEBUG_PRINT
+		DEBUG_PRINT.println("Action: CLEAR");
+#endif //DEBUG_PRINT
+
+		// Feed back to the user.
+		beep(BUTTON_BEEP);
+	}
+}
+
+#pragma endregion
+
+#pragma region Command Execution
+
+void go()
+{
+	if (ExecutionState_g != ExecutionState_t::Run)
+	{
+		ExecutionState_g = ExecutionState_t::Run;
+
+#ifdef DEBUG_PRINT
+		DEBUG_PRINT.println("Action: GO");
+#endif //DEBUG_PRINT
+
+		// Feed back to the user.
+		beep(BUTTON_BEEP);
+
+		// Wait before start.
+		delay(300);
+	}
+}
+
+void pause()
+{
+	if (ExecutionState_g == ExecutionState_t::Run)
+	{
+		// Go to pause state.
+		ExecutionState_g = ExecutionState_t::Pause;
+
+		// Stop the motion controller.
+		MotionType_g = MotionType_t::None;
+
+#ifdef DEBUG_PRINT
+		DEBUG_PRINT.println("Action: PAUSE");
+#endif //DEBUG_PRINT
+
+		// Feed back to the user.
+		beep(BUTTON_BEEP);
+	}
+}
+
 /** @brief Go trough command set.
  *  @return Void.
  */
-void GoTroughCommands()
+void go_trough_commands()
 {
 	// If we run go to run sequence.
 	if (ExecutionState_g == ExecutionState_t::Run)
@@ -613,10 +689,87 @@ void GoTroughCommands()
 	}
 }
 
+#pragma endregion
+
+#pragma region Motion controller
+
+/** @brief This function is callback for CW motion.
+ *  @return Void.
+ */
+void MotionController_CW_CB()
+{
+	if (MotionType_g == MotionType_t::Translate)
+	{
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+		MotorLeft.onestep(FORWARD, MICROSTEP);
+		MotorRight.onestep(FORWARD, MICROSTEP);
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+		MotorLeft_g->onestep(FORWARD, SINGLE);
+		MotorRight_g->onestep(FORWARD, SINGLE);
+#endif
+	}
+	else if (MotionType_g == MotionType_t::Rotate)
+	{
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+		MotorLeft.onestep(BACKWARD, MICROSTEP);
+		MotorRight.onestep(FORWARD, MICROSTEP);
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+		MotorLeft_g->onestep(BACKWARD, SINGLE);
+		MotorRight_g->onestep(FORWARD, SINGLE);
+#endif
+	}
+}
+
+/** @brief This function is callback for CCW motion.
+ *  @return Void.
+ */
+void MotionController_CCW_CB()
+{
+	if (MotionType_g == MotionType_t::Translate)
+	{
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+		MotorLeft.onestep(BACKWARD, MICROSTEP);
+		MotorRight.onestep(BACKWARD, MICROSTEP);
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+		MotorLeft_g->onestep(BACKWARD, SINGLE);
+		MotorRight_g->onestep(BACKWARD, SINGLE);
+#endif
+	}
+	else if (MotionType_g == MotionType_t::Rotate)
+	{
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+		MotorLeft.onestep(FORWARD, MICROSTEP);
+		MotorRight.onestep(BACKWARD, MICROSTEP);
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+		MotorLeft_g->onestep(FORWARD, SINGLE);
+		MotorRight_g->onestep(BACKWARD, SINGLE);
+#endif
+	}
+}
+
+#pragma endregion
+
+/** @brief Set the hard coded program.
+ *  @return Void.
+ */
+void set_demo_program()
+{
+	//
+	CommandIndex_g = 0;
+
+	//
+	Commands_g.push_back(CMD_FORWARD);
+	Commands_g.push_back(CMD_LEFT);
+	Commands_g.push_back(CMD_LEFT);
+	Commands_g.push_back(CMD_FORWARD);
+	Commands_g.push_back(CMD_RIGHT);
+	Commands_g.push_back(CMD_RIGHT);
+}
+
 /** @brief Run the indication.
  *  @return Void.
  */
-void Indication()
+void update_indication()
 {
 	static unsigned long CurrentMillisTimeL = 0;
 	static unsigned long PreviousMillisTimeL = 0;
@@ -654,77 +807,6 @@ void Indication()
 	}
 }
 
-/** @brief This function is callback for CW motion.
- *  @return Void.
- */
-void cw_callback()
-{
-	if (MotionType_g == MotionType_t::Translate)
-	{
-#if defined ADAFRUIT_MOTOR_SHIELD_V1
-		MotorLeft.onestep(FORWARD, MICROSTEP);
-		MotorRight.onestep(FORWARD, MICROSTEP);
-#elif defined ADAFRUIT_MOTOR_SHIELD_V2
-		MotorLeft_g->onestep(FORWARD, SINGLE);
-		MotorRight_g->onestep(FORWARD, SINGLE);
-#endif
-	}
-	else if (MotionType_g == MotionType_t::Rotate)
-	{
-#if defined ADAFRUIT_MOTOR_SHIELD_V1
-		MotorLeft.onestep(BACKWARD, MICROSTEP);
-		MotorRight.onestep(FORWARD, MICROSTEP);
-#elif defined ADAFRUIT_MOTOR_SHIELD_V2
-		MotorLeft_g->onestep(BACKWARD, SINGLE);
-		MotorRight_g->onestep(FORWARD, SINGLE);
-#endif
-	}
-}
-
-/** @brief This function is callback for CCW motion.
- *  @return Void.
- */
-void ccw_callback()
-{
-	if (MotionType_g == MotionType_t::Translate)
-	{
-#if defined ADAFRUIT_MOTOR_SHIELD_V1
-		MotorLeft.onestep(BACKWARD, MICROSTEP);
-		MotorRight.onestep(BACKWARD, MICROSTEP);
-#elif defined ADAFRUIT_MOTOR_SHIELD_V2
-		MotorLeft_g->onestep(BACKWARD, SINGLE);
-		MotorRight_g->onestep(BACKWARD, SINGLE);
-#endif
-	}
-	else if (MotionType_g == MotionType_t::Rotate)
-	{
-#if defined ADAFRUIT_MOTOR_SHIELD_V1
-		MotorLeft.onestep(FORWARD, MICROSTEP);
-		MotorRight.onestep(BACKWARD, MICROSTEP);
-#elif defined ADAFRUIT_MOTOR_SHIELD_V2
-		MotorLeft_g->onestep(FORWARD, SINGLE);
-		MotorRight_g->onestep(BACKWARD, SINGLE);
-#endif
-	}
-}
-
-/** @brief Set the hard coded program.
- *  @return Void.
- */
-void SetHardCodedProgram()
-{
-	//
-	CommandIndex_g = 0;
-
-	//
-	Commands_g.push_back(CMD_FORWARD);
-	Commands_g.push_back(CMD_LEFT);
-	Commands_g.push_back(CMD_LEFT);
-	Commands_g.push_back(CMD_FORWARD);
-	Commands_g.push_back(CMD_RIGHT);
-	Commands_g.push_back(CMD_RIGHT);
-}
-
 /** @brief This function is callback for CCW motion.
  *  @param time, Time to beep.
  *  @return Void.
@@ -736,78 +818,42 @@ void beep(uint16_t time = 50U)
 	digitalWrite(PIN_BUZZER, LOW);
 }
 
-/** @brief IR Service function.
- *  @return Void.
- */
-void IRService()
-{
-	static unsigned long CurrentMillisTimeL = 0;
-	static unsigned long PreviousMillisTimeL = 0;
-	decode_results ResultL;
-
-	// Update time.
-	CurrentMillisTimeL = millis();
-
-	// Receive.
-	if (IRRecv_g.decode(&ResultL))
-	{
-		// Check and send motion state.
-		if (CurrentMillisTimeL - PreviousMillisTimeL >= 250)
-		{
-			// save the last time you blinked the LED
-			PreviousMillisTimeL = CurrentMillisTimeL;
-
-		}
-
-#ifdef  DEBUG_PRINT
-		// Dump the result.
-		ir_dump(&ResultL);
-#endif //  DEBUG_PRINT
-
-		// Receive the next value.
-		IRRecv_g.resume();
-
-		// Beep after receive the 
-		beep(BUTTON_BEEP);
-	}
-}
-
 #ifdef DEBUG_PRINT
 
 /** @brief Dumps out the decode_results structure.
- *  @param results, Data for decoding.
+ *  @param ResultL, Data for decoding.
  *  @return Void.
  */
-void ir_dump(decode_results *results)
+void ir_dump(decode_results *ResultL)
 {
-	int count = results->rawlen;
+	int count = ResultL->rawlen;
 
-	if (results->decode_type == UNKNOWN)
+	if (ResultL->decode_type == UNKNOWN)
 	{
 		DEBUG_PRINT.println("Could not decode message");
 	}
 	else
 	{
-		if (results->decode_type == NEC)
+		if (ResultL->decode_type == NEC)
 		{
 			DEBUG_PRINT.print("Decoded NEC: ");
 		}
-		else if (results->decode_type == SONY)
+		else if (ResultL->decode_type == SONY)
 		{
 			DEBUG_PRINT.print("Decoded SONY: ");
 		}
-		else if (results->decode_type == RC5)
+		else if (ResultL->decode_type == RC5)
 		{
 			DEBUG_PRINT.print("Decoded RC5: ");
 		}
-		else if (results->decode_type == RC6)
+		else if (ResultL->decode_type == RC6)
 		{
 			DEBUG_PRINT.print("Decoded RC6: ");
 		}
 
-		DEBUG_PRINT.print(results->value, HEX);
+		DEBUG_PRINT.print(ResultL->value, HEX);
 		DEBUG_PRINT.print(" (");
-		DEBUG_PRINT.print(results->bits, DEC);
+		DEBUG_PRINT.print(ResultL->bits, DEC);
 		DEBUG_PRINT.println(" bits)");
 	}
 
@@ -819,11 +865,11 @@ void ir_dump(decode_results *results)
 	{
 		if ((i % 2) == 1)
 		{
-			DEBUG_PRINT.print(results->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(ResultL->rawbuf[i] * USECPERTICK, DEC);
 		}
 		else
 		{
-			DEBUG_PRINT.print(-(int)results->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(-(int)ResultL->rawbuf[i] * USECPERTICK, DEC);
 		}
 
 		DEBUG_PRINT.print(" ");

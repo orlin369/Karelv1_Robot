@@ -30,6 +30,9 @@
     <ClInclude Include="MotionType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="IRCommands.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DifferentialModel.cpp">
