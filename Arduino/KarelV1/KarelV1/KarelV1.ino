@@ -236,10 +236,10 @@ boolean Echo_g = false;
 /** \brief Motion state holder. */
 MotionType_t MotionType_g = MotionType_t::None; 
 
-/** \brief Translation StepsNumbersL */
+/** \brief Translation steps. */
 long TranslationSteps_g = 0;
 
-/** \brief Rotation StepsNumbersL */
+/** \brief Rotation steps. */
 long RotationSteps_g = 0;
 
 #pragma endregion
