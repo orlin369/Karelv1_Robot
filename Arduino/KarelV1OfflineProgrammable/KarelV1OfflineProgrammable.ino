@@ -450,11 +450,6 @@ void read_ir_reciever()
 			// Read value.
 			IRValueL = ResultL.value;
 
-#ifdef DEBUG_PRINT
-			DEBUG_PRINT.print("IR code in [DEC]: ");
-			DEBUG_PRINT.println(IRValueL, DEC);
-#endif // DEBUG_PRINT
-
 			// Forward
 			if (IRValueL == IR_CMD_FORWARED_LONG || IRValueL == IR_CMD_FORWARED_SHORT)
 			{
@@ -490,12 +485,19 @@ void read_ir_reciever()
 			{
 				pause();
 			}
+			else
+			{
+#ifdef DEBUG_PRINT
+				DEBUG_PRINT.print("IR code in [DEC]: ");
+				DEBUG_PRINT.println(IRValueL, DEC);
+#endif // DEBUG_PRINT
+
+				// Beep after receive the 
+				beep(BUTTON_BEEP);
+			}
 
 			// Receive the next value.
 			IRRecv_g.resume();
-
-			// Beep after receive the 
-			beep(BUTTON_BEEP);
 		}
 	}
 }
