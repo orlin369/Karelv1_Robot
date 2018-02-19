@@ -100,17 +100,20 @@ Version:
 /** \brief I2C library. */
 #include <Wire.h>
 
-/** \brief Acceleration stepper motor controller library. */
-#include <AccelStepper.h>
-
 /** \brief Servo driver library. */
 #include <Servo.h>
 
 /** \brief String library. */
 #include <String.h>
 
-/* Standard library. */
+/** \brief Standard library. */
 #include <stdlib.h>
+
+/** \brief Acceleration stepper motor controller library.
+ * AccelStepper with AFMotor support
+ * (https://github.com/adafruit/AccelStepper)
+ */
+#include <AccelStepper.h>
 
 #ifndef FAKE_USSD
 
@@ -119,12 +122,22 @@ Version:
 
 #endif
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
-/** \brief Motor shield driver. */
-#include <Adafruit_MotorShield.h>
-#include "utility/Adafruit_PWMServoDriver.h"
-#endif
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
 
+/** \brief Motor shield driver. 
+ * Requires the AFMotor library (https://github.com/adafruit/Adafruit-Motor-Shield-library)
+ */
+#include <AFMotor.h>
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
+/** \brief Motor shield driver.
+ * Requires the Adafruit_Motorshield v2 library
+ * https://github.com/adafruit/Adafruit_Motor_Shield_V2_Library
+ */
+#include <Adafruit_MotorShield.h>
+
+#endif
 
 #pragma endregion
 
@@ -183,22 +196,30 @@ void send_actual_robot_position();
 
 #if defined ADAFRUIT_MOTOR_SHIELD_V1
 
+/** \brief Left motor on channel 1. */
+AF_Stepper MotorLeft(MOTORS_STEPS, LEFT_MOTOR_INDEX);
+
+/** \brief Right motor on channel 2. */
+AF_Stepper MotorRight(MOTORS_STEPS, RIGHT_MOTOR_INDEX);
 
 #elif defined ADAFRUIT_MOTOR_SHIELD_V2
-
 /** \brief The motor shield. */
 Adafruit_MotorShield MotorShield(MOTOR_SHIELD_ADDRESS);
 
-/** \brief Left motors on channel 1. */
+/** \brief Left motor on channel 1. */
 Adafruit_StepperMotor *MotorLeft = MotorShield.getStepper(MOTORS_STEPS, LEFT_MOTOR_INDEX);
 
-/** \brief Right motors on channel 2. */
+/** \brief Right motor on channel 2. */
 Adafruit_StepperMotor *MotorRight = MotorShield.getStepper(MOTORS_STEPS, RIGHT_MOTOR_INDEX);
 
 #endif
 
+#ifndef FAKE_USSD
+
 /** \brief Ultrasonic sensor: HC-SR04 */
 Ultrasonic UltraSonic(PIN_US_TRIG, PIN_US_ECHO);
+
+#endif
 
 /** \brief Motion acceleration controller. */
 AccelStepper MotionController_g (cw_callback, ccw_callback);
@@ -215,10 +236,10 @@ boolean Echo_g = false;
 /** \brief Motion state holder. */
 MotionType_t MotionType_g = MotionType_t::None; 
 
-/** \brief Translation steps */
+/** \brief Translation StepsNumbersL */
 long TranslationSteps_g = 0;
 
-/** \brief Rotation steps */
+/** \brief Rotation StepsNumbersL */
 long RotationSteps_g = 0;
 
 #pragma endregion
@@ -233,9 +254,11 @@ void setup()
   pinMode(PIN_IRDS_BACK, INPUT_PULLUP);
 
 #ifdef ADAFRUIT_MOTOR_SHIELD_V2
+
   // Create with the default frequency 1.6KHz.
   MotorShield.begin();
   //MotorShield.begin(1000);  // OR with a different frequency, say 1KHz
+
 #endif
 
   // Attaches the servo on pin 9 to the servo object.
@@ -260,8 +283,8 @@ void setup()
  */
 void loop()
 {
-  static unsigned long currentMillis = 0;
-  static unsigned long previousMillis = 0;
+  static unsigned long CurrentMillisTimeL = 0;
+  static unsigned long PreviousMillisTimeL = 0;
 
   // Read command from the serial port.
   read_command();
@@ -273,13 +296,13 @@ void loop()
   }
  
   // Update time.
-  currentMillis = millis();
+  CurrentMillisTimeL = millis();
 
   // Check and send motion state.
-  if (currentMillis - previousMillis >= HART_REAT)
+  if (CurrentMillisTimeL - PreviousMillisTimeL >= HART_REAT)
   {
     // save the last time you blinked the LED
-    previousMillis = currentMillis;
+    PreviousMillisTimeL = CurrentMillisTimeL;
 
 	// Send the position.
     send_actual_robot_position();
@@ -289,8 +312,8 @@ void loop()
 #pragma region Funtions
 
 /** @brief Read incoming data from the serial buffer.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void read_command()
 {
 	static String IncommingCommnadL = "";
@@ -307,8 +330,8 @@ void read_command()
 	// If command if not empty parse it.
 	if (IncommingCommnadL != "")
 	{
-		boolean isValid = validate_command(IncommingCommnadL);
-		if (isValid)
+		boolean IsValidL = validate_command(IncommingCommnadL);
+		if (IsValidL)
 		{
 			parse_command(IncommingCommnadL);
 
@@ -326,17 +349,18 @@ void read_command()
 }
 
 /** @brief Validate the incoming commands.
-*  @param command The command string.
-*  @return True if successful; or False if failed.
-*/
+ *  @param command The command string.
+ *  @return True if successful; or False if failed.
+ */
 boolean validate_command(String command)
 {
 	// Variable definitions.
-	static boolean isValid;
-	static int numValue;
+	static boolean IsValidL;
+	static int NumericalValueL;
 
-	numValue = 0;
-	isValid = false;
+	// Clear the content.
+	IsValidL = false;
+	NumericalValueL = 0;
 
 	if (command[0] == '?' && command[7] == '\n')
 	{
@@ -345,19 +369,19 @@ boolean validate_command(String command)
 			if (command[1] == 'T')
 			{
 				// Convert commands from string to numbers.
-				numValue = atoi(command.substring(3, 7).c_str());
-				if (numValue <= MAX_MOTORS_STEPS && numValue >= -MAX_MOTORS_STEPS)
+				NumericalValueL = atoi(command.substring(3, 7).c_str());
+				if (NumericalValueL <= MAX_MOTORS_STEPS && NumericalValueL >= -MAX_MOTORS_STEPS)
 				{
 					// If is valid.
-					isValid = true;
+					IsValidL = true;
 				}
 			}
 			if (command[1] == 'R')
 			{
-				if (numValue <= MAX_MOTORS_STEPS && numValue >= -MAX_MOTORS_STEPS)
+				if (NumericalValueL <= MAX_MOTORS_STEPS && NumericalValueL >= -MAX_MOTORS_STEPS)
 				{
 					// If is valid.
-					isValid = true;
+					IsValidL = true;
 				}
 			}
 		}
@@ -367,52 +391,53 @@ boolean validate_command(String command)
 		if (command[1] == 'D' && command[2] == 'S')
 		{
 			// Convert commands from string to numbers.
-			numValue = atoi(command.substring(3, 6).c_str());
-			if (numValue >= MIN_SONAR_YAW && numValue <= MAX_SONAR_YAW)
+			NumericalValueL = atoi(command.substring(3, 6).c_str());
+			if (NumericalValueL >= MIN_SONAR_YAW && NumericalValueL <= MAX_SONAR_YAW)
 			{
 				// If is valid.
-				isValid = true;
+				IsValidL = true;
 			}
 		}
 	}
 	if (command == "?STOP\n")
 	{
 		// If is valid.
-		isValid = true;
+		IsValidL = true;
 	}
 	if (command == "?DSA\n")
 	{
 		// If is valid.
-		isValid = true;
+		IsValidL = true;
 	}
 
 	// If is not valid.
-	return isValid;
+	return IsValidL;
 }
 
 /** @brief Parse and execute the incoming commands.
-*  @param command The command string.
-*  @return Void.
-*/
+ *  @param command The command string.
+ *  @return Void.
+ */
 void parse_command(String command)
 {
 	// Number value.
-	static int steps;
+	static int StepsNumbersL;
 	static long USTimeValueL;
 	static long IRDistanceValueL;
 
-	steps = 0;
+	// Clear the content.
+	StepsNumbersL = 0;
 	USTimeValueL = 0;
 	IRDistanceValueL = 0;
 
 	if (command[1] == 'T')
 	{
 		// Convert commands from string to numbers.
-		steps = atoi(command.substring(3, 7).c_str());
+		StepsNumbersL = atoi(command.substring(3, 7).c_str());
 
 		if (command[2] == '-')
 		{
-			steps *= -1;
+			StepsNumbersL *= -1;
 		}
 		//else if (command[2] == '+')
 		//{
@@ -421,16 +446,16 @@ void parse_command(String command)
 
 		// Enable the regulation of the motor.
 		MotionType_g = MotionType_t::Translate;
-		MotionController_g.move(steps);
+		MotionController_g.move(StepsNumbersL);
 	}
 	else if (command[1] == 'R')
 	{
 		// Convert commands from string to numbers.
-		steps = atoi(command.substring(3, 7).c_str());
+		StepsNumbersL = atoi(command.substring(3, 7).c_str());
 
 		if (command[2] == '-')
 		{
-			steps *= -1;
+			StepsNumbersL *= -1;
 		}
 		//else if (command[2] == '+')
 		//{
@@ -439,16 +464,23 @@ void parse_command(String command)
 		
 		// Enable the regulation of the motor.
 		MotionType_g = MotionType_t::Rotate;
-		MotionController_g.move(steps);
+		MotionController_g.move(StepsNumbersL);
 	}
 	else if (command == "?STOP\n")
 	{
 		// Stop the drivers.
 		MotionType_g = MotionType_t::None;
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+
+		MotorLeft.release();
+		MotorRight.release();
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
 		MotorLeft->release();
 		MotorRight->release();
+
 #endif
 	}
 	else if (command == "?DSA\n")
@@ -489,15 +521,15 @@ void parse_command(String command)
 		if (command[1] == 'D' && command[2] == 'S')
 		{
 			// Convert commands from string to numbers.
-			steps = atoi(command.substring(3, 6).c_str());
+			StepsNumbersL = atoi(command.substring(3, 6).c_str());
 
-			SensorServo_g.write(steps);
+			SensorServo_g.write(StepsNumbersL);
 			USTimeValueL = read_distance_us();
 			IRDistanceValueL = read_distance_ir();
 
 			// Send the message.
 			Serial.print("#DS;");
-			Serial.print(steps);
+			Serial.print(StepsNumbersL);
 			Serial.print(":");
 			Serial.print(USTimeValueL);
 			Serial.print(":");
@@ -507,8 +539,8 @@ void parse_command(String command)
 }
 
 /** @brief This function read distance between sensor and the object.
-*  @return Time that signals travel in [us].
-*/
+ *  @return Time that signals travel in [us].
+ */
 long read_distance_us()
 {
 	long sum = 0;
@@ -527,8 +559,8 @@ long read_distance_us()
 }
 
 /** @brief This function read distance between sensor and the object.
-*  @return Time that signals travel in [us].
-*/
+ *  @return Time that signals travel in [us].
+ */
 long read_distance_ir()
 {
 	long sum = 0;
@@ -547,68 +579,99 @@ long read_distance_ir()
 }
 
 /** @brief This function is callback for CW motion.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void cw_callback()
 {
 	if (MotionType_g == MotionType_t::Translate)
 	{
 		TranslationSteps_g++;
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+
+		MotorLeft.onestep(FORWARD, MICROSTEP);
+		MotorRight.onestep(FORWARD, MICROSTEP);
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
 		MotorLeft->onestep(FORWARD, MICROSTEP);
 		MotorRight->onestep(FORWARD, MICROSTEP);
+
 #endif
+
 	}
 	else if (MotionType_g == MotionType_t::Rotate)
 	{
 		RotationSteps_g++;
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+
+		MotorLeft.onestep(BACKWARD, MICROSTEP);
+		MotorRight.onestep(FORWARD, MICROSTEP);
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
 		MotorLeft->onestep(BACKWARD, MICROSTEP);
 		MotorRight->onestep(FORWARD, MICROSTEP);
+
 #endif
+
 	}
 }
 
 /** @brief This function is callback for CCW motion.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void ccw_callback()
 {
 	if (MotionType_g == MotionType_t::Translate)
 	{
 		TranslationSteps_g--;
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+
+		MotorLeft.onestep(BACKWARD, MICROSTEP);
+		MotorRight.onestep(BACKWARD, MICROSTEP);
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
 		MotorLeft->onestep(BACKWARD, MICROSTEP);
 		MotorRight->onestep(BACKWARD, MICROSTEP);
+
 #endif
 	}
 	else if (MotionType_g == MotionType_t::Rotate)
 	{
 		RotationSteps_g--;
 
-#ifdef ADAFRUIT_MOTOR_SHIELD_V2
+#if defined ADAFRUIT_MOTOR_SHIELD_V1
+
+		MotorLeft.onestep(FORWARD, MICROSTEP);
+		MotorRight.onestep(BACKWARD, MICROSTEP);
+
+#elif defined ADAFRUIT_MOTOR_SHIELD_V2
+
 		MotorLeft->onestep(FORWARD, MICROSTEP);
 		MotorRight->onestep(BACKWARD, MICROSTEP);
+
 #endif
+
 	}
 }
 
 /** @brief Send to the host a gratings command.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void send_greetings()
 {
 	Serial.println("#GREATINGS;I am Karel v1 ");
 }
 
 /** @brief Send to the host a actual position command.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void send_actual_robot_position()
-{
+{	
 	// Variables
 	static int FrontDistanceSensorValueL = 0;
 	static int BackDistanceSensorValueL = 0;
