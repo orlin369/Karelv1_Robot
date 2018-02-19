@@ -933,7 +933,7 @@ void ir_dump(decode_results *results)
 			DEBUG_PRINT.print("Decoded RC6: ");
 		}
 
-		DEBUG_PRINT.print(results->value, HEX);
+		DEBUG_PRINT.print(results->value, DEC);
 		DEBUG_PRINT.print(" (");
 		DEBUG_PRINT.print(results->bits, DEC);
 		DEBUG_PRINT.println(" bits)");
