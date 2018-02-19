@@ -48,7 +48,10 @@ SOFTWARE.
 
 
 /** \brief IR receiver pin. */
-#define PIN_IR_RECV 11
+#define PIN_IR_RECV 10
+
+/** \brief IR receiver debounce time. */
+#define IR_RECV_DEBOUNCE_TIME 500
 
 
 /** \brief Status LED pin. */

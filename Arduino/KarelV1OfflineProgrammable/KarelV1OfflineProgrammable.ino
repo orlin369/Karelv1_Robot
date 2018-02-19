@@ -439,7 +439,7 @@ void read_ir_reciever()
 	CurrentMillisTimeL = millis();
 
 	// Check and send motion state.
-	if (CurrentMillisTimeL - PreviousMillisTimeL >= BTN_DEBOUNCE_TIME)
+	if (CurrentMillisTimeL - PreviousMillisTimeL >= IR_RECV_DEBOUNCE_TIME)
 	{
 		// sSave the last time you blinked the LED
 		PreviousMillisTimeL = CurrentMillisTimeL;
@@ -481,12 +481,12 @@ void read_ir_reciever()
 				go();
 			}
 			// Clear
-			else if (IRValueL == IR_CMD_CLEAR_LONG || IRValueL == IR_CMD_FORWARED_SHORT)
+			else if (IRValueL == IR_CMD_CLEAR_LONG || IRValueL == IR_CMD_CLEAR_SHORT)
 			{
 				clear_commands();
 			}
 			// Pause
-			else if (IRValueL == IR_CMD_RIGHT_LONG || IRValueL == IR_CMD_PAUSE_SHORT)
+			else if (IRValueL == IR_CMD_PAUSE_LONG || IRValueL == IR_CMD_PAUSE_SHORT)
 			{
 				pause();
 			}
