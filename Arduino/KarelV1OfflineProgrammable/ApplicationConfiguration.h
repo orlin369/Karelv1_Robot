@@ -108,6 +108,7 @@ SOFTWARE.
 /** \brief Maximum commands length. */
 #define MAX_COMMAND_LENGTH 100
 
+
 #ifdef ADAFRUIT_MOTOR_SHIELD_V2
 
 /** \brief Motor shield address. */

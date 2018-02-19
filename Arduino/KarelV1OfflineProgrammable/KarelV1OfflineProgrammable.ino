@@ -23,16 +23,16 @@ SOFTWARE.
 */
 
 /** @file KarelV1.ino
-*  @brief Firmware of the mobile robot Karel v1.
-*  @author Orlin Dimnitrov (orlin369)
-*
-*  This project is created for demonstrating, Karel v1 abilities.
-*
-*  ButtonDebounce library: https://github.com/maykon/ButtonDebounce/
-*  AccelStepper library: https://github.com/adafruit/AccelStepper
-*  QList library: https://github.com/SloCompTech/QList
-*  Adafruit_MotorShield_g v2: https://github.com/adafruit/Adafruit_Motor_Shield_V2_Library
-*/
+ *  @brief Firmware of the mobile robot Karel v1.
+ *  @author Orlin Dimnitrov (orlin369)
+ *
+ *  This project is created for demonstrating, Karel v1 abilities.
+ *
+ *  ButtonDebounce library: https://github.com/maykon/ButtonDebounce/
+ *  AccelStepper library: https://github.com/adafruit/AccelStepper
+ *  QList library: https://github.com/SloCompTech/QList
+ *  Adafruit_MotorShield_g v2: https://github.com/adafruit/Adafruit_Motor_Shield_V2_Library
+ */
 
 #pragma region Headers
 
@@ -188,6 +188,7 @@ void MotionController_CCW_CB();
  *  @return Void.
  */
 void set_demo_program();
+
 /** @brief Run the indication.
  *  @return Void.
  */
@@ -205,7 +206,7 @@ void beep(uint16_t time);
  *  @param ResultL, Data for decoding.
  *  @return Void.
  */
-void ir_dump(decode_results *ResultL);
+void ir_dump(decode_results *results);
 
 #endif // DEBUG_PRINT
 
@@ -555,8 +556,7 @@ void read_ir_reciever()
 			else
 			{
 #ifdef DEBUG_PRINT
-				DEBUG_PRINT.print("IR code in [DEC]: ");
-				DEBUG_PRINT.println(IRValueL, DEC);
+				ir_dump(&ResultL);
 #endif // DEBUG_PRINT
 
 				// Beep after receive the 
@@ -684,7 +684,7 @@ void go_trough_commands()
 		// If motor is not running iterate trough sequence.
 		if (!MotionController_g.isRunning())
 		{
-			// If command index is greate
+			// If command index is great.
 			if (!(CommandIndex_g >= Commands_g.length()))
 			{
 				if (Commands_g[CommandIndex_g] == CMD_FORWARD)
@@ -906,36 +906,36 @@ void beep(uint16_t time = 50U)
  *  @param ResultL, Data for decoding.
  *  @return Void.
  */
-void ir_dump(decode_results *ResultL)
+void ir_dump(decode_results *results)
 {
-	int count = ResultL->rawlen;
+	int count = results->rawlen;
 
-	if (ResultL->decode_type == UNKNOWN)
+	if (results->decode_type == UNKNOWN)
 	{
 		DEBUG_PRINT.println("Could not decode message");
 	}
 	else
 	{
-		if (ResultL->decode_type == NEC)
+		if (results->decode_type == NEC)
 		{
 			DEBUG_PRINT.print("Decoded NEC: ");
 		}
-		else if (ResultL->decode_type == SONY)
+		else if (results->decode_type == SONY)
 		{
 			DEBUG_PRINT.print("Decoded SONY: ");
 		}
-		else if (ResultL->decode_type == RC5)
+		else if (results->decode_type == RC5)
 		{
 			DEBUG_PRINT.print("Decoded RC5: ");
 		}
-		else if (ResultL->decode_type == RC6)
+		else if (results->decode_type == RC6)
 		{
 			DEBUG_PRINT.print("Decoded RC6: ");
 		}
 
-		DEBUG_PRINT.print(ResultL->value, HEX);
+		DEBUG_PRINT.print(results->value, HEX);
 		DEBUG_PRINT.print(" (");
-		DEBUG_PRINT.print(ResultL->bits, DEC);
+		DEBUG_PRINT.print(results->bits, DEC);
 		DEBUG_PRINT.println(" bits)");
 	}
 
@@ -947,11 +947,11 @@ void ir_dump(decode_results *ResultL)
 	{
 		if ((i % 2) == 1)
 		{
-			DEBUG_PRINT.print(ResultL->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(results->rawbuf[i] * USECPERTICK, DEC);
 		}
 		else
 		{
-			DEBUG_PRINT.print(-(int)ResultL->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(-(int)results->rawbuf[i] * USECPERTICK, DEC);
 		}
 
 		DEBUG_PRINT.print(" ");
