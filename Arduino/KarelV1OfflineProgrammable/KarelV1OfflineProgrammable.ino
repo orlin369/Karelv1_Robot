@@ -199,6 +199,16 @@ void update_indication();
  */
 void beep(uint16_t time);
 
+#ifdef DEBUG_PRINT
+
+/** @brief Dumps out the decode_results structure.
+ *  @param ResultL, Data for decoding.
+ *  @return Void.
+ */
+void ir_dump(decode_results *ResultL);
+
+#endif // DEBUG_PRINT
+
 #pragma endregion
 
 #pragma region Variables
