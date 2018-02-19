@@ -81,6 +81,8 @@ SOFTWARE.
 
 #pragma region Prototypes
 
+#pragma region Buttons
+
 /** @brief Button forward callback.
  *  @param state, button state [LOW : HIGH]
  *  @return Void.
@@ -123,15 +125,52 @@ void BtnClear_callback(int state);
  */
 void BtnPause_callback(int state);
 
+#pragma endregion
+
+#pragma region IR Reciever
+
+/** @brief IR Service function.
+ *  @return Void.
+ */
+void read_ir_reciever();
+
+#pragma endregion
+
+#pragma region Queue
+
+/** @brief Add command to queue function.
+ *  @param command, command to be add.
+ *  @return Void.
+ */
+void add_command(char command);
+
+/** @brief Clear all commands from queue function.
+ *  @return Void.
+ */
+void clear_commands();
+
+#pragma endregion
+
+#pragma region Command Execution
+
+/** @brief Run the sequence function.
+ *  @return Void.
+ */
+void go();
+
+/** @brief Pause the sequence function.
+ *  @return Void.
+ */
+void pause();
+
 /** @brief Go trough command set.
  *  @return Void.
  */
 void go_trough_commands();
 
-/** @brief Run the indication.
- *  @return Void.
- */
-void update_indication();
+#pragma endregion
+
+#pragma region Motion controller
 
 /** @brief This function is callback for CW motion.
  *  @return Void.
@@ -142,6 +181,17 @@ void MotionController_CW_CB();
  *  @return Void.
  */
 void MotionController_CCW_CB();
+
+#pragma endregion
+
+/** @brief Set the hard coded program.
+ *  @return Void.
+ */
+void set_demo_program();
+/** @brief Run the indication.
+ *  @return Void.
+ */
+void update_indication();
 
 /** @brief This function is callback for CCW motion.
  *  @param time, Time to beep.
@@ -221,8 +271,8 @@ IRrecv IRRecv_g(PIN_IR_RECV);
 #pragma endregion
 
 /** @brief Setup the peripheral hardware and variables.
-*  @return Void.
-*/
+ *  @return Void.
+ */
 void setup()
 {
 #ifdef DEBUG_PRINT
@@ -430,10 +480,17 @@ void BtnPause_callback(int state)
  */
 void read_ir_reciever()
 {
+	/** \brief Current time stamp. */
 	static unsigned long CurrentMillisTimeL = 0;
+
+	/** \brief Previous time stamp. */
 	static unsigned long PreviousMillisTimeL = 0;
-	decode_results ResultL;
+
+	/** \brief Current value from IR remote. */
 	static unsigned long IRValueL = 0;
+
+	/** \brief Current value from IR parser. */
+	decode_results ResultL;
 
 	// Update time.
 	CurrentMillisTimeL = millis();
@@ -506,6 +563,10 @@ void read_ir_reciever()
 
 #pragma region Queue
 
+/** @brief Add command to queue function.
+ *  @param command, command to be add.
+ *  @return Void.
+ */
 void add_command(char command)
 {
 	if (ExecutionState_g != ExecutionState_t::Run)
@@ -525,6 +586,9 @@ void add_command(char command)
 	}
 }
 
+/** @brief Clear all commands from queue function.
+ *  @return Void.
+ */
 void clear_commands()
 {
 	if (ExecutionState_g != ExecutionState_t::Run)
@@ -556,6 +620,9 @@ void clear_commands()
 
 #pragma region Command Execution
 
+/** @brief Run the sequence function.
+ *  @return Void.
+ */
 void go()
 {
 	if (ExecutionState_g != ExecutionState_t::Run)
@@ -574,6 +641,9 @@ void go()
 	}
 }
 
+/** @brief Pause the sequence function.
+ *  @return Void.
+ */
 void pause()
 {
 	if (ExecutionState_g == ExecutionState_t::Run)
