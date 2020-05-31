@@ -78,21 +78,32 @@ Version:
 ||||||||\\- Terminal symbol.
 |\\\\\\\--- Command marker.
 \---------- Request symbol.
+
 */
 
-#pragma region Definitions
+/*
 
-//#define ADAFRUIT_MOTOR_SHIELD_V1
-#define ADAFRUIT_MOTOR_SHIELD_V2
-//#define FAKE_USSD 100
-//#define FAKE_IRSD 500
+Motor wiring table for Adafruit Motor Shield V2.X.
 
-#pragma endregion
++-------+-------+----------+
+| Motor | Color | Terminal |
++-------+-------+----------+
+| Left  | BLK   | M3       |
+| Left  | GRN   | M3       |
+| Left  | BLU   | M4       |
+| Left  | RED   | M4       |
+| Right | BLK   | M2       |
+| Right | GRN   | M2       |
+| Right | BLU   | M1       |
+| Right | RED   | M1       |
++-------+-------+----------+
+
+*/
 
 #pragma region Headers
 
 /** \brief Configuration of the robot. */
-#include "KarelConfiguration.h"
+#include "ApplicationConfiguration.h"
 
 /** \brief Motion state library. */
 #include "MotionType.h"

@@ -24,7 +24,7 @@
     <ClInclude Include="MotionType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="KarelConfiguration.h">
+    <ClInclude Include="ApplicationConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
