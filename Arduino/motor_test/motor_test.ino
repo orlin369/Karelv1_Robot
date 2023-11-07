@@ -95,6 +95,10 @@ Motor wiring table for Adafruit Motor Shield V2.X.
 
 #pragma region Prototypes
 
+void turn(long steps);
+
+void move(long steps);
+
 /** @brief This function is callback for CW motion.
 *  @return Void.
 */
@@ -170,26 +174,44 @@ void setup()
  */
 void loop()
 {
-	// Run the motion controller.
-	if(MotionType_g != MotionType_t::None)
+	// Update the motor controller.
+    MotionController_g.run();
+
+	// If motor is done reset motion type.
+	if (MotionController_g.distanceToGo() == 0)
 	{
-    	MotionController_g.run();
+		MotionType_g = MotionType_t::None;
 	}
- 
-	MotionType_g = MotionType_t::Translate;
-	MotionController_g.move(500);
 
+	// If the motion type is done turn off the motors.
+	// Just to save some battery.
+	if(MotionType_g == MotionType_t::None)
+	{
 #if defined ADAFRUIT_MOTOR_SHIELD_V1
-	MotorLeft_g.release();
-	MotorRight_g.release();
+		MotorLeft_g.release();
+		MotorRight_g.release();
 #elif defined ADAFRUIT_MOTOR_SHIELD_V2
-
-	MotorLeft_g->release();
-	MotorRight_g->release();
+		MotorLeft_g->release();
+		MotorRight_g->release();
 #endif
+	}
 }
 
 #pragma region Fuctions
+
+void turn(long steps)
+{
+	// Call this combination to run left of right.
+	MotionType_g = MotionType_t::Rotate;
+	MotionController_g.move(steps);
+}
+
+void move(long steps)
+{
+	// Call this combination to run forward.
+	MotionType_g = MotionType_t::Translate;
+	MotionController_g.move(steps);
+}
 
 /** @brief This function is callback for CW motion.
  *  @return Void.
