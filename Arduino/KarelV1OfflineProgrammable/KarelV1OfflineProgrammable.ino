@@ -127,12 +127,12 @@ void BtnPause_callback(int state);
 
 #pragma endregion
 
-#pragma region IR Reciever
+#pragma region IR Receiver
 
 /** @brief IR Service function.
  *  @return Void.
  */
-void read_ir_reciever();
+void read_ir_receiver();
 
 #pragma endregion
 
@@ -301,7 +301,7 @@ void setup()
 #ifdef DEBUG_PRINT
 	DEBUG_PRINT.print("Translation steps: ");
 	DEBUG_PRINT.println(TranslationSteps_g);
-	DEBUG_PRINT.print("Rotation stepss: ");
+	DEBUG_PRINT.print("Rotation steps: ");
 	DEBUG_PRINT.println(RotationSteps_g);
 #endif // DEBUG_PRINT
 
@@ -382,7 +382,7 @@ void loop()
 	BtnClear_g.update();
 	BtnPause_g.update();
 
-	read_ir_reciever();
+	read_ir_receiver();
 
 	// Run the robot.
 	go_trough_commands();
@@ -394,7 +394,7 @@ void loop()
 	update_indication();
 }
 
-#pragma region Funtions
+#pragma region Fuctions
 
 #pragma region Buttons
 
@@ -484,12 +484,12 @@ void BtnPause_callback(int state)
 
 #pragma endregion
 
-#pragma region IR Reciever
+#pragma region IR Receiver
 
 /** @brief IR Service function.
  *  @return Void.
  */
-void read_ir_reciever()
+void read_ir_receiver()
 {
 	/** \brief Current time stamp. */
 	static unsigned long CurrentMillisTimeL = 0;
@@ -519,12 +519,12 @@ void read_ir_reciever()
 			IRValueL = ResultL.value;
 
 			// Forward
-			if (IRValueL == IR_CMD_FORWARED_LONG || IRValueL == IR_CMD_FORWARED_SHORT)
+			if (IRValueL == IR_CMD_FORWARD_LONG || IRValueL == IR_CMD_FORWARD_SHORT)
 			{
 				add_command(CMD_FORWARD);
 			}
 			// Backward
-			else if (IRValueL == IR_CMD_BACWARD_LONG || IRValueL == IR_CMD_BACKWARD_SHORT)
+			else if (IRValueL == IR_CMD_BACKWARD_LONG || IRValueL == IR_CMD_BACKWARD_SHORT)
 			{
 				add_command(CMD_BACKWARD);
 			}
@@ -943,15 +943,15 @@ void ir_dump(decode_results *results)
 	DEBUG_PRINT.print(count, DEC);
 	DEBUG_PRINT.print("): ");
 
-	for (int i = 0; i < count; i++)
+	for (int index = 0; index < count; index++)
 	{
-		if ((i % 2) == 1)
+		if ((index % 2) == 1)
 		{
-			DEBUG_PRINT.print(results->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(results->rawbuf[index] * USECPERTICK, DEC);
 		}
 		else
 		{
-			DEBUG_PRINT.print(-(int)results->rawbuf[i] * USECPERTICK, DEC);
+			DEBUG_PRINT.print(-(int)results->rawbuf[index] * USECPERTICK, DEC);
 		}
 
 		DEBUG_PRINT.print(" ");

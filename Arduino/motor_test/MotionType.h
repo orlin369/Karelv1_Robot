@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) [2018] [Orlin Dimitrov]
+Copyright (c) [2016] [Orlin Dimitrov]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,30 @@ SOFTWARE.
 
 */
 
-#ifndef _IRCOMMANDS_h
-#define _IRCOMMANDS_h
+/** @file MotionType.h
+ *  @brief Firmware of the mobile robot Karel v1.
+ *  @author Orlin Dimnitrov (orlin369)
+ *
+ *  The purpose of this file to create the enumeration of the motion state of the robot.
+ *
+ */
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "arduino.h"
-#else
-	#include "WProgram.h"
-#endif
+#ifndef _MOTION_TYPE_H_
+#define _MOTION_TYPE_H_
 
-// Forward
-#define IR_CMD_FORWARD_LONG 2080
-#define IR_CMD_FORWARD_SHORT 32
+ /** \brief The enumeration of motion types. */
+enum MotionType_t
+{
+	/** \brief No motion state. */
+    None = 0,
 
-// Backward
-#define IR_CMD_BACKWARD_LONG 2081
-#define IR_CMD_BACKWARD_SHORT 33
+	/** \brief Rotation state of the robot motion controller. */
+	Rotate = 1,
 
-// Left
-#define IR_CMD_LEFT_LONG 2069
-#define IR_CMD_LEFT_SHORT 21
+	/** \brief Translation state of the robot motion controller. */
+	Translate = 2
+};
 
-// Right
-#define IR_CMD_RIGHT_LONG 2070
-#define IR_CMD_RIGHT_SHORT 22
+#endif 
 
-// GO
-#define IR_CMD_GO_LONG 2066
-#define IR_CMD_GO_SHORT 18
-
-// Clear
-#define IR_CMD_CLEAR_LONG 2065
-#define IR_CMD_CLEAR_SHORT 17
-
-// Pause
-#define IR_CMD_PAUSE_LONG 2064
-#define IR_CMD_PAUSE_SHORT 16
-
-#endif
 
