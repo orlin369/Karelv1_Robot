@@ -167,6 +167,8 @@ void setup()
 
   // Setup Serial port at 115200 bps.
   Serial.begin(115200);
+
+  turn(-2500);
 }
 
 /** @brief Main loop of the program.
